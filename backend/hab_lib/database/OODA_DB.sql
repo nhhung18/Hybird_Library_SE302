@@ -14,6 +14,7 @@ CREATE TABLE `users` (
   `updated_at` TIMESTAMP
 );
 alter table users add column address varchar(255)
+alter table users modify column phone_num VARCHAR(20) unique 
 
 CREATE TABLE `roles` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,

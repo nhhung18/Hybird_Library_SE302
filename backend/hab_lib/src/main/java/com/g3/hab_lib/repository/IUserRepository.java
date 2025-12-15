@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 
 public interface IUserRepository extends JpaRepository<User, Integer> {
     @Query(
@@ -23,4 +25,8 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
             nativeQuery = true
     )
     Page<User> findAllStaff(Pageable pageable);
+
+    Optional<User> deleteUserById(int id);
+
+    Optional<User> findUserById(int id);
 }

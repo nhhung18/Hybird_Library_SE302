@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HAB</title>
-
+    <link rel="icon" href="image/icon_text.png">
     <link
       rel="stylesheet"
       href="https://unpkg.com/swiper@7/swiper-bundle.min.css"
@@ -16,7 +16,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- custom css file link  -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -131,12 +131,12 @@
 
         <!-- Login Form -->
         <div id="loginFormContent">
-          <span>Email</span>
+          <span>UserName</span>
           <input
-            type="email"
+            type="text"
             class="box"
-            placeholder="nhập email của bạn"
-            id="loginEmail"
+            placeholder="nhập username của bạn"
+            id="loginUserName"
             required
           />
           <span>Mật khẩu</span>
@@ -180,16 +180,23 @@
             font-size: 1.2rem;
           "
         >
-          <p style="margin: 0.5rem 0"><strong>Admin:</strong></p>
-          <p style="margin: 0.5rem 0">Email: admin@lib.com</p>
-          <p style="margin: 0.5rem 0">Password: admin123</p>
+          <!-- <p style="margin: 0.5rem 0"><strong>Admin:</strong></p>
+          <p style="margin: 0.5rem 0">Email: admin@admin</p>
+          <p style="margin: 0.5rem 0">Password: admin</p>
           <p style="margin: 1rem 0 0.5rem 0"><strong>Nhân viên:</strong></p>
-          <p style="margin: 0.5rem 0">Email: librarian@lib.com</p>
-          <p style="margin: 0.5rem 0">Password: librarian123</p>
+          <p style="margin: 0.5rem 0">Email: lib</p>
+          <p style="margin: 0.5rem 0">Password: lib</p> -->
         </div>
 
         <!-- Register Form (hidden) -->
         <div id="registerFormContent" style="display: none">
+          <span>Username</span>
+          <input
+            type="text"
+            class="box"
+            placeholder="nhập username"
+            id="registerUserName"
+          />
           <span>Họ và tên</span>
           <input
             type="text"

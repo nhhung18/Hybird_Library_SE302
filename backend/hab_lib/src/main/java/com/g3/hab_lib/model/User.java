@@ -36,7 +36,7 @@ public class User extends BaseIdObject {
     @Column(name = "role_id", nullable = true)
     private int roleId;
 
-    @Column(name = "phone_num", unique = true, nullable = false, length = 20)
+    @Column(name = "phone_num", unique = true, nullable = false, length = 10)
     private String phoneNum;
 
     @Column(name = "avatar_url", length = 255)

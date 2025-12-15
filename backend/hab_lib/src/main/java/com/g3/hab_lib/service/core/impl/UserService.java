@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService implements IUserService {
@@ -44,5 +45,32 @@ public class UserService implements IUserService {
         user.setRoleId(form.getRoleId());
         IUserRepository.save(user);
         return modelMapper.map(user, UserReq.class);
+    }
+
+    @Override
+    @Transactional
+    public Object deleteUser(int id) throws Exception {
+        User user = IUserRepository.findUserById(id).orElseThrow(() -> new Exception("User not found"));
+        IUserRepository.deleteUserById(id);
+        return null;
+    }
+
+    @Override
+    public UserReq updateUser(int id, UserReq form) throws Exception {
+        User user = IUserRepository.findUserById(id).orElseThrow(() -> new Exception("User not found"));
+        user.setUserName(form.getUserName());
+        user.setFullName(form.getFullName());
+        user.setPassword(form.getPassword());
+        user.setEmail(form.getEmail());
+        user.setPhoneNum(form.getPhoneNum());
+        user.setAddress(form.getAddress());
+        user.setRoleId(form.getRoleId());
+        IUserRepository.save(user);
+        return modelMapper.map(user, UserReq.class);
+    }
+
+    @Override
+    public UserReq getUserById(int id) throws Exception {
+        return null;
     }
 }

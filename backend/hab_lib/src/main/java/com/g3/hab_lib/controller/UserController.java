@@ -48,4 +48,36 @@ public class UserController {
         return new ResponseEntity<String>("Create User is Successfully", HttpStatus.OK);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) throws Exception {
+            return ResponseEntity.ok(
+                ResponseWrapper.builder()
+                        .status(HttpStatus.OK)
+                        .code(200)
+                        .data(iUserService.deleteUser(id))
+                        .build()
+            );
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody UserReq form) throws Exception {
+        return ResponseEntity.ok(
+                ResponseWrapper.builder()
+                        .status(HttpStatus.OK)
+                        .code(200)
+                        .data(iUserService.updateUser(id, form))
+                        .build()
+        );
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<?> getUserById(@PathVariable int id) throws Exception {
+        return ResponseEntity.ok(
+                ResponseWrapper.builder()
+                        .status(HttpStatus.OK)
+                        .code(200)
+                        .data(iUserService.getUserById(id))
+                        .build()
+        );
+    }
 }

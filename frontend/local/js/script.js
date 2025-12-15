@@ -134,12 +134,13 @@ let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 // Initialize demo accounts (Admin & Librarian)
 function initializeDemoAccounts() {
   // Check if demo accounts already exist
-  const adminExists = users.find(u => u.email === 'admin@lib.com');
-  const librarianExists = users.find(u => u.email === 'librarian@lib.com');
+  const adminExists = users.find(u => u.username === 'admin');
+  const staffExists = users.find(u => u.username === 'staff');
   
   if (!adminExists) {
     users.push({ 
       name: 'Admin HAB', 
+      userName: 'admin',
       email: 'admin@lib.com', 
       password: 'admin123', 
       role: 'admin',
@@ -147,12 +148,13 @@ function initializeDemoAccounts() {
     });
   }
   
-  if (!librarianExists) {
+  if (!staffExists) {
     users.push({ 
       name: 'Nhân viên HAB', 
-      email: 'librarian@lib.com', 
-      password: 'librarian123', 
-      role: 'librarian',
+      userName:'staff',
+      email: 'staff@lib.com', 
+      password: 'staff123', 
+      role: 'staff',
       membershipTier: 'gold'
     });
   }
@@ -359,6 +361,7 @@ function handleLogin(event) {
   if (isRegister) {
     // Register logic
     const name = document.getElementById('registerName').value;
+    const userName = document.getElementById('registerUserName').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
@@ -370,27 +373,29 @@ function handleLogin(event) {
     }
     
     if (users.find(u => u.email === email)) {
-      alert('Email đã được đăng ký!');
+      alert('Email đã tồn tại!');
       return;
+    }else if (users.find(u => u.userName === userName)){
+      alert('Username đã tồn tại!')
     }
     
-    users.push({ name, email, password, role: 'customer', membershipTier: tier });
+    users.push({ userName, name, email, password, role: 'customer', membershipTier: tier });
     localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify({ name, email, role: 'customer', membershipTier: tier }));
+    localStorage.setItem('currentUser', JSON.stringify({userName, name, email, role: 'customer', membershipTier: tier }));
     showNotification(`✓ Tạo tài khoản thành công! Bạn là hạng ${tierConfig[tier].name}`);
     setTimeout(() => location.reload(), 1500);
   } else {
     // Login logic
-    const email = document.getElementById('loginEmail').value;
+    const userName = document.getElementById('loginUserName').value;
     const password = document.getElementById('loginPassword').value;
     
     let user;
     if (userType === 'staff') {
-      // Staff login - admin or librarian
-      user = users.find(u => u.email === email && u.password === password && (u.role === 'admin' || u.role === 'librarian'));
+      // Staff login - admin or staff
+      user = users.find(u => u.userName === userName && u.password === password && (u.role === 'admin' || u.role === 'staff'));
     } else {
       // Customer login
-      user = users.find(u => u.email === email && u.password === password && u.role === 'customer');
+      user = users.find(u => u.userName === userName && u.password === password && u.role === 'customer');
     }
     
     if (user) {
@@ -399,7 +404,7 @@ function handleLogin(event) {
       loginForm.classList.remove('active');
       
       // Redirect dựa trên role
-      if (user.role === 'admin' || user.role === 'librarian') {
+      if (user.role === 'admin' || user.role === 'staff') {
         setTimeout(() => window.location.href = 'admin.html', 1500);
       } else {
         setTimeout(() => location.reload(), 1500);
