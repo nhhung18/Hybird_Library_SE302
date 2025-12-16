@@ -1,6 +1,117 @@
-let readersData = [];
+let readersData = [
+  {
+    id: "RDR001",
+    userName: "reader01",
+    fullName: "Phạm Minh Đức",
+    email: "reader01@library.vn",
+    phoneNum: "0901111111",
+    roleId: "8",
+    address: "123 Đường A, TP.HCM",
+    createAt: "2024-01-05"
+  },
+  {
+    id: "RDR002",
+    userName: "guest01",
+    fullName: "Võ Thị Mai",
+    email: "guest01@library.vn",
+    phoneNum: "0902222222",
+    roleId: "9",
+    address: "456 Đường B, Hà Nội",
+    createAt: "2024-02-10"
+  },
+  {
+    id: "RDR003",
+    userName: "reader02",
+    fullName: "Hoàng Văn Nam",
+    email: "reader02@library.vn",
+    phoneNum: "0903333333",
+    roleId: "8",
+    address: "789 Đường C, Đà Nẵng",
+    createAt: "2024-03-15"
+  },
+  {
+    id: "RDR004",
+    userName: "guest02",
+    fullName: "Trương Thị Hoa",
+    email: "guest02@library.vn",
+    phoneNum: "0904444444",
+    roleId: "9",
+    address: "321 Đường D, TP.HCM",
+    createAt: "2024-04-20"
+  },
+  {
+    id: "RDR005",
+    userName: "reader03",
+    fullName: "Đinh Quang Huy",
+    email: "reader03@library.vn",
+    phoneNum: "0905555555",
+    roleId: "8",
+    address: "654 Đường E, Cần Thơ",
+    createAt: "2024-05-08"
+  }
+];
 
-let employeesData = [];
+let employeesData = [
+    {
+      id: "EMP001",
+      userName: "admin",
+      fullName: "Nguyễn Huy Hùng",
+      email: "admin@lib.com",
+      phoneNum: "0901234567",
+      roleId: "1",
+      createAt: "2024-01-15"
+    },
+    {
+      id: "EMP002",
+      userName: "staff01",
+      fullName: "Trần Thị B",
+      email: "staff01@library.vn",
+      phoneNum: "0912345678",
+      roleId: "2",
+      createAt: "2024-02-20"
+    },
+    {
+      id: "EMP003",
+      userName: "staff02",
+      fullName: "Lê Văn C",
+      email: "staff02@library.vn",
+      phoneNum: "0923456789",
+      roleId: "2",
+      createAt: "2024-03-10"
+    }
+  ];
+  // Mock datasets for new modules
+  let borrowData = [
+    {
+      id: 'B001',
+      readerId: 'RDR001',
+      readerName: 'Phạm Minh Đức',
+      bookTitle: 'Lập trình JavaScript',
+      borrowDate: '2024-10-01',
+      dueDate: '2024-10-15',
+      status: 'Đang mượn'
+    }
+  ];
+
+  let readerCardData = [
+    { id: 'C001', readerId: 'RDR001', readerName: 'Phạm Minh Đức', issueDate: '2024-01-05', expireDate: '2025-01-05', status: 'Hoạt động' }
+  ];
+
+  let booksData = [
+    { id: 'BK001', title: 'Lập trình JavaScript', author: 'Nguyễn A', publisher: 'NXB Khoa học', year: 2020, quantity: 5 }
+  ];
+
+  let paymentData = [
+    { id: 'P001', readerId: 'RDR002', readerName: 'Võ Thị Mai', date: '2024-06-01', amount: 50000, reason: 'Phạt quá hạn', status: 'Đã thanh toán' }
+  ];
+
+  let shiftData = [
+    { id: 'S001', empId: 'EMP002', empName: 'Trần Thị B', date: '2024-12-01', start: '08:00', end: '12:00', status: 'Xác nhận' }
+  ];
+
+  let attendanceData = [
+    { id: 'A001', empId: 'EMP002', empName: 'Trần Thị B', date: '2024-12-01', checkIn: '08:05', checkOut: '12:00', status: 'Có mặt' }
+  ];
 // current sort for readers table (none | id | username | fullname | email | role | createAt)
 let currentReaderSort = "none";
 
@@ -61,7 +172,13 @@ document.addEventListener("DOMContentLoaded", () => {
 function renderAllTables() {
   // always pass the current readersData so renderReaderTable has a defined array
   renderReaderTable(readersData);
-  renderEmployeeTable();
+  renderEmployeeTable(employeesData);
+  renderBorrowTable(borrowData);
+  renderReaderCardTable(readerCardData);
+  renderBookTable(booksData);
+  renderPaymentTable(paymentData);
+  renderShiftTable(shiftData);
+  renderAttendanceTable(attendanceData);
 }
 
 // apply the selected readers sort and re-render
@@ -121,30 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-async function loadReaders() {
-  try {
-    const res = await fetch("http://localhost:8080/api/users/customers");
-    const json = await res.json();
-
-    const data = json?.data?.content ?? json;
-
-    if (!Array.isArray(data)) {
-      console.error("Dữ liệu API không phải array:", data);
-      return;
-    }
-
-    if (data.length === 0) {
-      // tbody.innerHTML = `<tr><td colspan="8" class="no-data">Hiện không có Khách hoặc Độc giả nào trong hệ thống</td></tr>`;
-      console.error("Không có dữ liệu trong hệ thống");
-      return;
-    }
-
-    // update the shared readersData and re-render (apply current sort)
-    readersData = data;
-    applyReaderSortAndRender();
-  } catch (err) {
-    console.error("loadReaders error:", err);
-  }
+function loadReaders() {
+  applyReaderSortAndRender();
 }
 
 function renderReaderTable(data = readersData) {
@@ -200,7 +295,7 @@ function renderReaderTable(data = readersData) {
                     <button class="btn-edit" data-id="${item.id}">Sửa</button>
                     <button class="btn-delete" data-id="${item.id}">Xóa</button>
                   </div>
-                </td>
+    </td>
             </tr>`;
   });
   // attach handlers to dynamically created delete buttons
@@ -211,26 +306,17 @@ function renderReaderTable(data = readersData) {
 // xử lý ấn nút sửa / xóa
 function attachDeleteEvents() {
   document.querySelectorAll(".btn-delete").forEach((btn) => {
-    btn.onclick = async function () {
+    btn.onclick = function () {
       const id = btn.getAttribute("data-id");
 
       if (!confirm("Bạn có chắc chắn muốn xóa không?")) return;
 
-      try {
-        const res = await fetch(`http://localhost:8080/api/users/${id}`, {
-          method: "DELETE",
-        });
-
-        if (res.ok) {
-          alert("Xóa thành công!");
-          this.closest("tr").remove(); // xoá dòng
-        } else {
-          alert("Xóa thất bại!");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Lỗi kết nối API");
-      }
+      // Delete from local readersData
+      readersData = readersData.filter((x) => x.id != id);
+      
+      alert("Xóa thành công!");
+      applyReaderSortAndRender();
+      updateDashboardStats();
     };
   });
 }
@@ -260,51 +346,60 @@ function attachEditEvents() {
 // Create guest or librarian
 document
   .getElementById("formCreateReader")
-  .addEventListener("submit", async function (e) {
+  .addEventListener("submit", function (e) {
     e.preventDefault();
 
     const roleName = document.getElementById("readerRole").value;
-    const convertRole = roleName === "GUEST" ? 8 : 9;
+    const convertRole = roleName === "GUEST" ? 9 : 8;
 
-    const payload = {
-      userName: document.getElementById("username").value,
-      fullName: document.getElementById("fullname").value,
-      email: document.getElementById("email").value,
-      password: document.getElementById("password").value,
+    const userName = document.getElementById("username").value.trim();
+    const fullName = document.getElementById("fullname").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const phoneNum = document.getElementById("phone").value.trim();
+    const address = document.getElementById("readerAddress").value.trim();
+
+    // Validate
+    if (!userName || !fullName || !email || !password || !phoneNum) {
+      alert("Vui lòng điền đầy đủ các trường bắt buộc");
+      return;
+    }
+
+    // Check if username or email already exists
+    if (readersData.some(r => r.userName === userName)) {
+      alert("Tên đăng nhập đã tồn tại!");
+      return;
+    }
+    if (readersData.some(r => r.email === email)) {
+      alert("Email đã tồn tại!");
+      return;
+    }
+
+    // Create new user object
+    const newUser = {
+      id: "READER_" + Date.now(),
+      userName: userName,
+      fullName: fullName,
+      email: email,
+      password: password,
       roleId: convertRole,
-      phoneNum: document.getElementById("phone").value,
-      address: document.getElementById("readerAddress").value,
+      phoneNum: phoneNum,
+      address: address,
+      createAt: new Date().toISOString().split('T')[0]
     };
 
-    try {
-      const res = await fetch("http://localhost:8080/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    // Add to local data
+    readersData.push(newUser);
 
-      // Nếu API trả về status 200 hoặc 201 → thành công
-      if (res.ok) {
-        // close modal, reset form, refresh readers list and stats
-        try {
-          closeModal("readerModal");
-        } catch (e) {}
-        const formEl = document.getElementById("formCreateReader");
-        if (formEl) formEl.reset();
-        // reload latest readers from server and update counts
-        await loadReaders();
-        updateDashboardStats();
-        alert("Tạo thành công!");
-      } else {
-        alert("Tạo thất bại! Nhập lại dữ liệu.");
-      }
-      const data = await res.json();
-      console.log("API trả về:", data);
-    } catch (error) {
-      console.error(error);
-    }
+    // close modal, reset form, refresh list and stats
+    try {
+      closeModal("readerModal");
+    } catch (e) {}
+    const formEl = document.getElementById("formCreateReader");
+    if (formEl) formEl.reset();
+    applyReaderSortAndRender();
+    updateDashboardStats();
+    alert("Tạo thành công!");
   });
 
 // RENDER EMPLOYEE
@@ -323,27 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-async function loadEmployees() {
-  try {
-    const res = await fetch("http://localhost:8080/api/users/staffs");
-    const json = await res.json();
-
-    // API may return { data: { content: [...] } } or directly return an array
-    const data = json?.data?.content ?? json;
-
-    if (!Array.isArray(data)) {
-      console.error("Dữ liệu API không phải array:", data);
-      return;
-    }
-
-    // update the shared readersData and re-render
-    employeesData = data;
-    renderEmployeeTable(employeesData);
-  } catch (err) {
-    console.error("loadEmployees error:", err);
-  }
-}
 
 function renderEmployeeTable(data = employeesData) {
   const tbody = document.querySelector("#employeeTable tbody");
@@ -394,13 +468,276 @@ function renderEmployeeTable(data = employeesData) {
       item.createAt
     }</td>
                 <td class="action-icons">
-                    <button class="action-btn delete" onclick="deleteItem('employee', '${
-                      item.id
-                    }')"><i class="fas fa-trash"></i></button>
-                </td>
+                  <div class="action-buttons">
+                    <button class="btn-edit" data-id="${item.id}">Sửa</button>
+                    <button class="btn-delete" data-id="${item.id}">Xóa</button>
+                  </div>
             </tr>`;
   });
 }
+
+  // --- Additional renderers for new modules ---
+  function renderBorrowTable(data = borrowData) {
+    const tbody = document.querySelector('#borrowTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${item.readerId}</td>
+          <td>${escapeHtml(item.readerName)}</td>
+          <td>${escapeHtml(item.bookTitle)}</td>
+          <td>${item.borrowDate}</td>
+          <td>${item.dueDate}</td>
+          <td>${item.status}</td>
+          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="borrow">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="borrow">Xóa</button></td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('borrow');
+  }
+
+  function renderReaderCardTable(data = readerCardData) {
+    const tbody = document.querySelector('#readerCardTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.readerName)} (${item.readerId})</td>
+          <td>${item.issueDate}</td>
+          <td>${item.expireDate}</td>
+          <td>${item.status}</td>
+          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="card">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="card">Xóa</button></td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('card');
+  }
+
+  function renderBookTable(data = booksData) {
+    const tbody = document.querySelector('#bookTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.title)}</td>
+          <td>${escapeHtml(item.author)}</td>
+          <td>${escapeHtml(item.publisher)}</td>
+          <td>${item.year}</td>
+          <td>${item.quantity}</td>
+          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="book">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="book">Xóa</button></td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('book');
+  }
+
+  function renderPaymentTable(data = paymentData) {
+    const tbody = document.querySelector('#paymentTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.readerName)}</td>
+          <td>${item.date}</td>
+          <td>${item.amount}</td>
+          <td>${escapeHtml(item.reason)}</td>
+          <td>${item.status}</td>
+          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="payment">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="payment">Xóa</button></td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('payment');
+  }
+
+  function renderShiftTable(data = shiftData) {
+    const tbody = document.querySelector('#shiftTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.empName)}</td>
+          <td>${item.date}</td>
+          <td>${item.start}</td>
+          <td>${item.end}</td>
+          <td>${item.status}</td>
+          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="shift">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="shift">Xóa</button></td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('shift');
+  }
+
+  function renderAttendanceTable(data = attendanceData) {
+    const tbody = document.querySelector('#attendanceTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.empName)}</td>
+          <td>${item.date}</td>
+          <td>${item.checkIn || ''}</td>
+          <td>${item.checkOut || ''}</td>
+          <td>${item.status}</td>
+          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="attendance">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="attendance">Xóa</button></td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('attendance');
+  }
+
+  function deleteRecord(type, id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) return;
+    switch(type) {
+      case 'borrow': borrowData = borrowData.filter(x => x.id !== id); renderBorrowTable(); break;
+      case 'card': readerCardData = readerCardData.filter(x => x.id !== id); renderReaderCardTable(); break;
+      case 'book': booksData = booksData.filter(x => x.id !== id); renderBookTable(); break;
+      case 'payment': paymentData = paymentData.filter(x => x.id !== id); renderPaymentTable(); break;
+      case 'shift': shiftData = shiftData.filter(x => x.id !== id); renderShiftTable(); break;
+      case 'attendance': attendanceData = attendanceData.filter(x => x.id !== id); renderAttendanceTable(); break;
+    }
+  }
+
+  function attachEditDeleteEvents(type) {
+    document.querySelectorAll(`[data-type="${type}"]`).forEach(btn => {
+      if (btn.classList.contains('btn-delete')) {
+        btn.onclick = function() {
+          const id = btn.getAttribute('data-id');
+          deleteRecord(type, id);
+        };
+      }
+      if (btn.classList.contains('btn-edit')) {
+        btn.onclick = function() {
+          const id = btn.getAttribute('data-id');
+          let data;
+          switch(type) {
+            case 'borrow': data = borrowData.find(x => x.id === id); break;
+            case 'card': data = readerCardData.find(x => x.id === id); break;
+            case 'book': data = booksData.find(x => x.id === id); break;
+            case 'payment': data = paymentData.find(x => x.id === id); break;
+            case 'shift': data = shiftData.find(x => x.id === id); break;
+            case 'attendance': data = attendanceData.find(x => x.id === id); break;
+          }
+          if (!data) { alert('Không tìm thấy bản ghi'); return; }
+          
+          // Map type to modal ID and populate form
+          const modalMap = { borrow: 'borrowModal', card: 'readerCardModal', book: 'bookModal', payment: 'paymentModal', shift: 'shiftModal', attendance: 'attendanceModal' };
+          openModal(modalMap[type]);
+        };
+      }
+    });
+  }
+
+  function handleFormSubmit(event, type) {
+    event.preventDefault();
+    if (type === 'reader') return; // existing handler manages reader creation
+
+    if (type === 'employee') {
+      const name = document.getElementById('empName').value.trim();
+      const role = document.getElementById('empRole').value;
+      const shift = document.getElementById('empShift').value;
+      const newEmp = { id: 'EMP_' + Date.now(), userName: name.replace(/\s+/g,'').toLowerCase(), fullName: name, email: '', phoneNum: '', roleId: '2', createAt: new Date().toISOString().split('T')[0], shift };
+      employeesData.push(newEmp);
+      try{ closeModal('employeeModal'); }catch(e){}
+      renderEmployeeTable(); updateDashboardStats(); alert('Thêm nhân sự thành công');
+      return;
+    }
+
+    if (type === 'borrow') {
+      const readerId = document.getElementById('borrowReaderId').value.trim();
+      const bookId = document.getElementById('borrowBookId').value.trim();
+      const borrowDate = document.getElementById('borrowDate').value;
+      const dueDate = document.getElementById('dueDate').value;
+      borrowData.push({ id: 'B' + Date.now(), readerId, readerName: (readersData.find(r=>r.id===readerId)||{}).fullName || '', bookTitle: bookId, borrowDate, dueDate, status: 'Đang mượn' });
+      try{ closeModal('borrowModal'); }catch(e){}
+      renderBorrowTable(); alert('Tạo phiếu mượn thành công');
+      return;
+    }
+
+    if (type === 'readerCard') {
+      const readerId = document.getElementById('cardReaderId').value.trim();
+      const issue = document.getElementById('cardIssueDate').value;
+      const expire = document.getElementById('cardExpireDate').value;
+      readerCardData.push({ id: 'C' + Date.now(), readerId, readerName: (readersData.find(r=>r.id===readerId)||{}).fullName || '', issueDate: issue, expireDate: expire, status: 'Hoạt động' });
+      try{ closeModal('readerCardModal'); }catch(e){}
+      renderReaderCardTable(); alert('Cấp thẻ thành công');
+      return;
+    }
+
+    if (type === 'book') {
+      const title = document.getElementById('bookTitle').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+      const publisher = document.getElementById('bookPublisher').value.trim();
+      const year = document.getElementById('bookYear').value;
+      const qty = document.getElementById('bookQuantity').value;
+      booksData.push({ id: 'BK' + Date.now(), title, author, publisher, year: parseInt(year,10), quantity: parseInt(qty,10) });
+      try{ closeModal('bookModal'); }catch(e){}
+      renderBookTable(); alert('Thêm sách thành công');
+      return;
+    }
+
+    if (type === 'payment') {
+      const readerId = document.getElementById('paymentReaderId').value.trim();
+      const date = document.getElementById('paymentDate').value;
+      const amount = document.getElementById('paymentAmount').value;
+      const reason = document.getElementById('paymentReason').value.trim();
+      paymentData.push({ id: 'P' + Date.now(), readerId, readerName: (readersData.find(r=>r.id===readerId)||{}).fullName || '', date, amount: parseFloat(amount), reason, status: 'Chưa thanh toán' });
+      try{ closeModal('paymentModal'); }catch(e){}
+      renderPaymentTable(); alert('Thêm hóa đơn thành công');
+      return;
+    }
+
+    if (type === 'shift') {
+      const empId = document.getElementById('shiftEmpId').value.trim();
+      const date = document.getElementById('shiftDate').value;
+      const start = document.getElementById('shiftStart').value;
+      const end = document.getElementById('shiftEnd').value;
+      shiftData.push({ id: 'S' + Date.now(), empId, empName: (employeesData.find(e=>e.id===empId)||{}).fullName || '', date, start, end, status: 'Mới' });
+      try{ closeModal('shiftModal'); }catch(e){}
+      renderShiftTable(); alert('Tạo ca làm thành công');
+      return;
+    }
+
+    if (type === 'attendance') {
+      const empId = document.getElementById('attendanceEmpId').value.trim();
+      const date = document.getElementById('attendanceDate').value;
+      const inTime = document.getElementById('attendanceCheckIn').value;
+      const outTime = document.getElementById('attendanceCheckOut').value;
+      attendanceData.push({ id: 'A' + Date.now(), empId, empName: (employeesData.find(e=>e.id===empId)||{}).fullName || '', date, checkIn: inTime, checkOut: outTime, status: 'Có mặt' });
+      try{ closeModal('attendanceModal'); }catch(e){}
+      renderAttendanceTable(); alert('Chấm công thành công');
+      return;
+    }
+  }
 
 // --- 5. XỬ LÝ XÓA VÀ CẬP NHẬT ---
 

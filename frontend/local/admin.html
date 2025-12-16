@@ -48,9 +48,9 @@
 
           <a
             href="#"
-            id="menu-readers"
+            id="menu-borrowing"
             class="menu-item"
-            onclick="switchTab('readers', this)"
+            onclick="switchTab('borrowing', this)"
           >
             <i class="fa-brands fa-leanpub"></i>
             <span class="menu-text">QL Mượn trả</span>
@@ -58,9 +58,9 @@
 
           <a
             href="#"
-            id="menu-readers"
+            id="menu-readercard"
             class="menu-item"
-            onclick="switchTab('readers', this)"
+            onclick="switchTab('readercard', this)"
           >
             <i class="fa-regular fa-credit-card"></i>
             <span class="menu-text">QL Thẻ đọc</span>
@@ -69,9 +69,9 @@
 
           <a
             href="#"
-            id="menu-readers"
+            id="menu-books"
             class="menu-item"
-            onclick="switchTab('readers', this)"
+            onclick="switchTab('books', this)"
           >
             <i class="fa-solid fa-book"></i>
             <span class="menu-text">QL Sách</span>
@@ -80,9 +80,9 @@
 
           <a
             href="#"
-            id="menu-readers"
+            id="menu-payment"
             class="menu-item"
-            onclick="switchTab('readers', this)"
+            onclick="switchTab('payment', this)"
           >
             <i class="fa-solid fa-money-bill-1-wave"></i>
             <span class="menu-text">QL Thanh toán</span>
@@ -102,9 +102,9 @@
 
           <a
             href="#"
-            id="menu-employees"
+            id="menu-shifts"
             class="menu-item"
-            onclick="switchTab('employees', this)"
+            onclick="switchTab('shifts', this)"
           >
             <i class="fa-solid fa-calendar"></i>
             <span class="menu-text">QL Ca làm</span>
@@ -112,9 +112,9 @@
 
           <a
             href="#"
-            id="menu-employees"
+            id="menu-attendance"
             class="menu-item"
-            onclick="switchTab('employees', this)"
+            onclick="switchTab('attendance', this)"
           >
             <i class="fa-regular fa-hand-pointer"></i>
             <span class="menu-text">QL Chấm công</span>
@@ -186,21 +186,20 @@
             </div>
             <div class="table-responsive">
               <table id="readerTable">
-                <tbody>
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Tên người dùng</th>
-                      <th>Họ tên đầy đủ</th>
-                      <th>Email</th>
-                      <th>SĐT</th>
-                      <th>Quyền</th>
-                      <th>Ngày đăng ký</th>
-                      <!-- <th>Hạng thẻ</th> -->
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-                </tbody>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tên người dùng</th>
+                    <th>Họ tên đầy đủ</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Quyền</th>
+                    <th>Ngày đăng ký</th>
+                    <!-- <th>Hạng thẻ</th> -->
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
               </table>
             </div>
           </div>
@@ -247,6 +246,204 @@
             </div>
           </div>
         </div>
+
+        <div id="borrowing" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-brands fa-leanpub"></i> Quản lý Mượn/Trả Sách</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('borrowModal')">
+                  <i class="fas fa-plus"></i> Mượn sách
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="borrowTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Mã độc giả</th>
+                    <th>Tên độc giả</th>
+                    <th>Tên sách</th>
+                    <th>Ngày mượn</th>
+                    <th>Ngày hết hạn</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="8" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="readercard" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-regular fa-credit-card"></i> Quản lý Thẻ Đọc</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('readerCardModal')">
+                  <i class="fas fa-plus"></i> Cấp thẻ mới
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="readerCardTable">
+                <thead>
+                  <tr>
+                    <th>Mã thẻ</th>
+                    <th>Độc giả</th>
+                    <th>Ngày cấp</th>
+                    <th>Hạn hữu dụng</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="6" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="books" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-solid fa-book"></i> Quản lý Sách</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('bookModal')">
+                  <i class="fas fa-plus"></i> Thêm sách
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="bookTable">
+                <thead>
+                  <tr>
+                    <th>Mã sách</th>
+                    <th>Tên sách</th>
+                    <th>Tác giả</th>
+                    <th>Nhà xuất bản</th>
+                    <th>Năm XB</th>
+                    <th>Số lượng</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="payment" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-solid fa-money-bill-1-wave"></i> Quản lý Thanh toán</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('paymentModal')">
+                  <i class="fas fa-plus"></i> Thêm hóa đơn
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="paymentTable">
+                <thead>
+                  <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Độc giả</th>
+                    <th>Ngày lập</th>
+                    <th>Số tiền</th>
+                    <th>Lý do</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="shifts" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-solid fa-calendar"></i> Quản lý Ca làm</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('shiftModal')">
+                  <i class="fas fa-plus"></i> Tạo ca làm
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="shiftTable">
+                <thead>
+                  <tr>
+                    <th>Mã ca</th>
+                    <th>Nhân sự</th>
+                    <th>Ngày làm</th>
+                    <th>Giờ bắt đầu</th>
+                    <th>Giờ kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="attendance" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-regular fa-hand-pointer"></i> Quản lý Chấm công</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('attendanceModal')">
+                  <i class="fas fa-plus"></i> Chấm công
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="attendanceTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nhân sự</th>
+                    <th>Ngày</th>
+                    <th>Giờ vào</th>
+                    <th>Giờ ra</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        
       </div>
     </div>
 
@@ -386,6 +583,186 @@
               <option value="Chiều">Chiều</option>
               <option value="Full-time">Full-time</option>
             </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="borrowModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Mượn Sách</h3>
+          <span class="close-btn" onclick="closeModal('borrowModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'borrow')">
+          <div class="form-group">
+            <label>Mã độc giả<span style="color: red">*</span></label>
+            <input type="text" id="borrowReaderId" required />
+          </div>
+          <div class="form-group">
+            <label>Mã sách<span style="color: red">*</span></label>
+            <input type="text" id="borrowBookId" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày mượn<span style="color: red">*</span></label>
+            <input type="date" id="borrowDate" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày hết hạn<span style="color: red">*</span></label>
+            <input type="date" id="dueDate" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="readerCardModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Cấp Thẻ Đọc</h3>
+          <span class="close-btn" onclick="closeModal('readerCardModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'readerCard')">
+          <div class="form-group">
+            <label>Mã độc giả<span style="color: red">*</span></label>
+            <input type="text" id="cardReaderId" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày cấp<span style="color: red">*</span></label>
+            <input type="date" id="cardIssueDate" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày hết hạn<span style="color: red">*</span></label>
+            <input type="date" id="cardExpireDate" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="bookModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Thêm Sách</h3>
+          <span class="close-btn" onclick="closeModal('bookModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'book')">
+          <div class="form-group">
+            <label>Tên sách<span style="color: red">*</span></label>
+            <input type="text" id="bookTitle" required />
+          </div>
+          <div class="form-group">
+            <label>Tác giả<span style="color: red">*</span></label>
+            <input type="text" id="bookAuthor" required />
+          </div>
+          <div class="form-group">
+            <label>Nhà xuất bản<span style="color: red">*</span></label>
+            <input type="text" id="bookPublisher" required />
+          </div>
+          <div class="form-group">
+            <label>Năm xuất bản<span style="color: red">*</span></label>
+            <input type="number" id="bookYear" required />
+          </div>
+          <div class="form-group">
+            <label>Số lượng<span style="color: red">*</span></label>
+            <input type="number" id="bookQuantity" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Thêm Hóa Đơn</h3>
+          <span class="close-btn" onclick="closeModal('paymentModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'payment')">
+          <div class="form-group">
+            <label>Mã độc giả<span style="color: red">*</span></label>
+            <input type="text" id="paymentReaderId" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày lập<span style="color: red">*</span></label>
+            <input type="date" id="paymentDate" required />
+          </div>
+          <div class="form-group">
+            <label>Số tiền<span style="color: red">*</span></label>
+            <input type="number" id="paymentAmount" required />
+          </div>
+          <div class="form-group">
+            <label>Lý do<span style="color: red">*</span></label>
+            <input type="text" id="paymentReason" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="shiftModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Tạo Ca Làm</h3>
+          <span class="close-btn" onclick="closeModal('shiftModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'shift')">
+          <div class="form-group">
+            <label>Nhân sự<span style="color: red">*</span></label>
+            <input type="text" id="shiftEmpId" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày làm<span style="color: red">*</span></label>
+            <input type="date" id="shiftDate" required />
+          </div>
+          <div class="form-group">
+            <label>Giờ bắt đầu<span style="color: red">*</span></label>
+            <input type="time" id="shiftStart" required />
+          </div>
+          <div class="form-group">
+            <label>Giờ kết thúc<span style="color: red">*</span></label>
+            <input type="time" id="shiftEnd" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="attendanceModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Chấm Công</h3>
+          <span class="close-btn" onclick="closeModal('attendanceModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'attendance')">
+          <div class="form-group">
+            <label>Nhân sự<span style="color: red">*</span></label>
+            <input type="text" id="attendanceEmpId" required />
+          </div>
+          <div class="form-group">
+            <label>Ngày<span style="color: red">*</span></label>
+            <input type="date" id="attendanceDate" required />
+          </div>
+          <div class="form-group">
+            <label>Giờ vào<span style="color: red">*</span></label>
+            <input type="time" id="attendanceCheckIn" required />
+          </div>
+          <div class="form-group">
+            <label>Giờ ra</label>
+            <input type="time" id="attendanceCheckOut" />
           </div>
           <div class="form-actions">
             <button type="submit" class="btn-save">Lưu lại</button>

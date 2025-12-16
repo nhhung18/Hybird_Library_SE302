@@ -10,65 +10,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
     <link rel="stylesheet" href="css/style.css" />
-
-    <style>
-      /* CSS riêng cho trang danh sách sách để hiển thị dạng lưới */
-      .products .box-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
-        gap: 1.5rem;
-      }
-
-      .products .box-container .box {
-        border: var(--border);
-        position: relative;
-        overflow: hidden;
-        text-align: center;
-        background: #fff;
-      }
-
-      .products .box-container .box:hover {
-        border: var(--border-hover);
-      }
-
-      .products .box-container .box .image {
-        padding: 1rem;
-        background: linear-gradient(15deg, #eee 30%, #fff 30.1%);
-        height: 25rem;
-        overflow: hidden;
-      }
-
-      .products .box-container .box .image img {
-        height: 100%;
-        object-fit: contain;
-      }
-
-      .products .box-container .box:hover .image img {
-        transform: scale(1.1);
-      }
-
-      .products .box-container .box .content {
-        padding: 1.5rem;
-      }
-
-      .products .box-container .box h3 {
-        font-size: 2rem;
-        color: var(--black);
-      }
-
-      .products .box-container .box .price {
-        font-size: 2.2rem;
-        color: var(--black);
-        padding-top: 1rem;
-      }
-
-      .products .box-container .box .price span {
-        font-size: 1.5rem;
-        color: var(--light-color);
-        text-decoration: line-through;
-        margin-left: 0.5rem;
-      }
-    </style>
   </head>
   <body>
     <header class="header">
@@ -95,10 +36,10 @@
 
       <div class="header-2">
         <nav class="navbar">
-          <a href="index.html">trang chủ</a>
-          <a href="books.html">sách</a>
-          <a href="index.html#arrivals">tin tức</a>
-          <a href="index.html#reviews">đánh giá</a>
+          <a href="index.html">Trang chủ</a>
+          <a href="books.html">Sách</a>
+          <a href="#reviews">Đánh giá</a>
+          <a href="#blogs">Về chúng tôi</a>
         </nav>
       </div>
     </header>
@@ -244,7 +185,6 @@
           <h3>quick links</h3>
           <a href="#"> <i class="fas fa-arrow-right"></i> home </a>
           <a href="#"> <i class="fas fa-arrow-right"></i> featured </a>
-          <a href="#"> <i class="fas fa-arrow-right"></i> arrivals </a>
           <a href="#"> <i class="fas fa-arrow-right"></i> reviews </a>
           <a href="#"> <i class="fas fa-arrow-right"></i> blogs </a>
         </div>

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HAB</title>
-    <link rel="icon" href="image/icon_text.png">
+    <link rel="icon" href="image/icon_text.png" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/swiper@7/swiper-bundle.min.css"
@@ -14,7 +14,7 @@
     <!-- font awesome cdn link  -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- custom css file link  -->
@@ -53,7 +53,12 @@
           >
             <span id="cart-count" class="cart-badge">0</span>
           </a>
-          <div id="login-btn" class="fas fa-user" title="Tài khoản"></div>
+          <a
+            href="#"
+            id="login-btn"
+            class="fa-solid fa-right-to-bracket"
+            title="Đăng ký / Đăng nhập"
+          ></a>
         </div>
       </div>
 
@@ -61,9 +66,7 @@
         <nav class="navbar">
           <a href="#home">Trang chủ</a>
           <a href="books.html">Sách</a>
-          <a href="#arrivals">Tin tức</a>
           <a href="#reviews">Đánh giá</a>
-          <a href="#blogs">Về chúng tôi</a>
           <a href="my-account.html" id="myAccountLink" style="display: none"
             >Tài Khoản</a
           >
@@ -71,14 +74,9 @@
       </div>
     </header>
 
-    <!-- header section ends -->
-
-    <!-- bottom navbar  -->
-
     <nav class="bottom-navbar">
       <a href="#home" class="fas fa-home"></a>
       <a href="#featured" class="fas fa-list"></a>
-      <a href="#arrivals" class="fas fa-tags"></a>
       <a href="#reviews" class="fas fa-comments"></a>
       <a href="#blogs" class="fas fa-blog"></a>
     </nav>
@@ -290,37 +288,36 @@
     <!-- home section ense  -->
 
     <!-- icons section starts  -->
-
     <section class="icons-container">
       <div class="icons">
-        <i class="fas fa-shipping-fast"></i>
+        <i class="fas fa-cloud-download-alt"></i>
         <div class="content">
-          <h3>free shipping</h3>
-          <p>order over $100</p>
+          <h3>Truy cập mọi lúc</h3>
+          <p>Đọc và tải tài liệu số 24/7 trên mọi thiết bị</p>
         </div>
       </div>
 
       <div class="icons">
-        <i class="fas fa-lock"></i>
+        <i class="fas fa-user-shield"></i>
         <div class="content">
-          <h3>secure payment</h3>
-          <p>100 secure payment</p>
+          <h3>Bảo mật tài khoản</h3>
+          <p>Thông tin người dùng được bảo vệ an toàn</p>
         </div>
       </div>
 
       <div class="icons">
-        <i class="fas fa-redo-alt"></i>
+        <i class="fas fa-sync-alt"></i>
         <div class="content">
-          <h3>easy returns</h3>
-          <p>10 days returns</p>
+          <h3>Gia hạn linh hoạt</h3>
+          <p>Dễ dàng gia hạn thời gian mượn tài liệu số</p>
         </div>
       </div>
 
       <div class="icons">
         <i class="fas fa-headset"></i>
         <div class="content">
-          <h3>24/7 support</h3>
-          <p>call us anytime</p>
+          <h3>Hỗ trợ trực tuyến</h3>
+          <p>Giải đáp thắc mắc nhanh chóng qua hệ thống</p>
         </div>
       </div>
     </section>
@@ -330,7 +327,7 @@
     <!-- featured section starts  -->
 
     <section class="featured" id="featured">
-      <h1 class="heading"><span>featured books</span></h1>
+      <h1 class="heading"><span>sách nổi bật</span></h1>
       <div class="swiper featured-slider">
         <div class="swiper-wrapper" id="featuredBooksWrapper">
           <!-- Featured books sẽ được render bằng JavaScript -->
@@ -343,22 +340,7 @@
 
     <!-- featured section ends -->
 
-    <!-- newsletter section starts -->
-
-    <section class="newsletter">
-      <form id="newsletterForm" onsubmit="handleNewsletter(event)">
-        <h3>Đăng ký nhận tin tức</h3>
-        <input
-          type="email"
-          placeholder="nhập email của bạn"
-          id="newsletterEmail"
-          required
-          class="box"
-        />
-        <input type="submit" value="Đăng ký" class="btn" />
-        <p id="newsletterMsg"></p>
-      </form>
-    </section>
+    <!-- newsletter section starts --
 
     <!-- newsletter section ends -->
 
@@ -391,192 +373,6 @@
       </div>
     </div>
 
-    <!-- arrivals section starts  -->
-
-    <section class="arrivals" id="arrivals">
-      <h1 class="heading"><span>new arrivals</span></h1>
-
-      <div class="swiper arrivals-slider">
-        <div class="swiper-wrapper">
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-1.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-2.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-3.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-4.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-5.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <div class="swiper arrivals-slider">
-        <div class="swiper-wrapper">
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-6.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-7.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-8.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-9.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" class="swiper-slide box">
-            <div class="image">
-              <img src="image/book-10.png" alt="" />
-            </div>
-            <div class="content">
-              <h3>new arrivals</h3>
-              <div class="price">$15.99 <span>$20.99</span></div>
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- arrivals section ends -->
-
     <!-- deal section starts  -->
 
     <section class="deal">
@@ -601,17 +397,16 @@
     <!-- reviews section starts  -->
 
     <section class="reviews" id="reviews">
-      <h1 class="heading"><span>client's reviews</span></h1>
+      <h1 class="heading"><span>Đánh giá từ độc giả</span></h1>
 
       <div class="swiper reviews-slider">
         <div class="swiper-wrapper">
           <div class="swiper-slide box">
             <img src="image/pic-1.png" alt="" />
-            <h3>john</h3>
+            <h3>Đức</h3>
             <p>
-              The website is very good and responsive, all the books available
-              in this website are original and very cheap, you can buy them
-              comfortably. Payment can also be done easily.
+              Thư viện số rất tiện lợi, tôi có thể đọc sách và tài liệu mọi lúc,
+              mọi nơi. Giao diện dễ sử dụng và tìm kiếm tài liệu rất nhanh.
             </p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -624,11 +419,10 @@
 
           <div class="swiper-slide box">
             <img src="image/pic-2.png" alt="" />
-            <h3>Juliyana</h3>
+            <h3>Ngọc</h3>
             <p>
-              The website is very good and responsive, all the books available
-              in this website are original and very cheap, you can buy them
-              comfortably. Payment can also be done easily.
+              Kho tài liệu số phong phú, đặc biệt hữu ích cho học tập và nghiên
+              cứu. Tôi rất hài lòng với trải nghiệm mượn và đọc sách trực tuyến.
             </p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -641,11 +435,10 @@
 
           <div class="swiper-slide box">
             <img src="image/pic-3.png" alt="" />
-            <h3>Joy</h3>
+            <h3>Nam</h3>
             <p>
-              The website is very good and responsive, all the books available
-              in this website are original and very cheap, you can buy them
-              comfortably. Payment can also be done easily.
+              Hệ thống hoạt động ổn định, tốc độ tải nhanh. Việc đăng nhập và
+              quản lý tài khoản rất thuận tiện.
             </p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -655,13 +448,13 @@
               <i class="fas fa-star-half-alt"></i>
             </div>
           </div>
+
           <div class="swiper-slide box">
             <img src="image/pic-4.png" alt="" />
-            <h3>Oliveya</h3>
+            <h3>Nữ</h3>
             <p>
-              The website is very good and responsive, all the books available
-              in this website are original and very cheap, you can buy them
-              comfortably. Payment can also be done easily.
+              Tôi đánh giá cao tính năng gia hạn tài liệu số và lịch sử mượn rõ
+              ràng. Rất phù hợp cho sinh viên và người nghiên cứu.
             </p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -674,11 +467,11 @@
 
           <div class="swiper-slide box">
             <img src="image/pic-5.png" alt="" />
-            <h3>William</h3>
+            <h3>Văn</h3>
             <p>
-              The website is very good and responsive, all the books available
-              in this website are original and very cheap, you can buy them
-              comfortably. Payment can also be done easily.
+              Thư viện số giúp tiết kiệm rất nhiều thời gian so với thư viện
+              truyền thống. Tôi có thể tra cứu và đọc tài liệu ngay trên điện
+              thoại.
             </p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -691,11 +484,10 @@
 
           <div class="swiper-slide box">
             <img src="image/pic-6.png" alt="" />
-            <h3>Ava</h3>
+            <h3>Linh</h3>
             <p>
-              The website is very good and responsive, all the books available
-              in this website are original and very cheap, you can buy them
-              comfortably. Payment can also be done easily.
+              Dịch vụ hỗ trợ trực tuyến phản hồi nhanh, hệ thống dễ sử dụng. Tôi
+              rất hài lòng khi sử dụng thư viện số này.
             </p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -708,95 +500,6 @@
         </div>
       </div>
     </section>
-
-    <!-- reviews section ends -->
-
-    <!-- blogs section starts  -->
-
-    <section class="blogs" id="blogs">
-      <h1 class="heading"><span>our blogs</span></h1>
-
-      <div class="swiper blogs-slider">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide box">
-            <div class="image">
-              <img src="image/blog-1.jpg" alt="" />
-            </div>
-            <div class="content">
-              <h3>blog title goes here</h3>
-              <p>
-                Book is very beneficial for our life. We should read a book
-                daily, it sharpens the mind. All the successful people of the
-                world read the book every day.
-              </p>
-              <a href="#" class="btn">read more</a>
-            </div>
-          </div>
-
-          <div class="swiper-slide box">
-            <div class="image">
-              <img src="image/blog-2.jpg" alt="" />
-            </div>
-            <div class="content">
-              <h3>blog title goes here</h3>
-              <p>
-                Book is very beneficial for our life. We should read a book
-                daily, it sharpens the mind. All the successful people of the
-                world read the book every day.
-              </p>
-              <a href="#" class="btn">read more</a>
-            </div>
-          </div>
-
-          <div class="swiper-slide box">
-            <div class="image">
-              <img src="image/blog-3.jpg" alt="" />
-            </div>
-            <div class="content">
-              <h3>blog title goes here</h3>
-              <p>
-                Book is very beneficial for our life. We should read a book
-                daily, it sharpens the mind. All the successful people of the
-                world read the book every day.
-              </p>
-              <a href="#" class="btn">read more</a>
-            </div>
-          </div>
-
-          <div class="swiper-slide box">
-            <div class="image">
-              <img src="image/blog-4.jpg" alt="" />
-            </div>
-            <div class="content">
-              <h3>blog title goes here</h3>
-              <p>
-                Book is very beneficial for our life. We should read a book
-                daily, it sharpens the mind. All the successful people of the
-                world read the book every day.
-              </p>
-              <a href="#" class="btn">read more</a>
-            </div>
-          </div>
-
-          <div class="swiper-slide box">
-            <div class="image">
-              <img src="image/blog-5.jpg" alt="" />
-            </div>
-            <div class="content">
-              <h3>blog title goes here</h3>
-              <p>
-                Book is very beneficial for our life. We should read a book
-                daily, it sharpens the mind. All the successful people of the
-                world read the book every day.
-              </p>
-              <a href="#" class="btn">read more</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- blogs section ends -->
 
     <!-- footer section starts  -->
 
@@ -810,7 +513,6 @@
           <h3>quick links</h3>
           <a href="#"> <i class="fas fa-arrow-right"></i> home </a>
           <a href="#"> <i class="fas fa-arrow-right"></i> featured </a>
-          <a href="#"> <i class="fas fa-arrow-right"></i> arrivals </a>
           <a href="#"> <i class="fas fa-arrow-right"></i> reviews </a>
           <a href="#"> <i class="fas fa-arrow-right"></i> blogs </a>
         </div>
@@ -849,6 +551,7 @@
     </section>
 
     <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+    <script src="js/index.js"></script>
     <script src="js/script.js"></script>
   </body>
 </html>
