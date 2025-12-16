@@ -79,19 +79,19 @@ function showNextNotification() {
   const { message, type } = notificationQueue.shift();
   
   const notification = document.createElement('div');
-  const bgColor = type === 'error' ? '#e74c3c' : '#27ae60';
-  
   // Tính toán vị trí theo số lượng notification đang hiển thị
   const visibleNotifications = document.querySelectorAll('.notification-item').length;
   const topPosition = 20 + (visibleNotifications * 90);
-  
-  notification.className = 'notification-item';
-  notification.style.cssText = `
-    position: fixed; top: ${topPosition}px; right: 20px; background: ${bgColor}; color: white; 
-    padding: 1rem 2rem; border-radius: 0.5rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,.1); 
-    z-index: 10000; animation: slideIn 0.3s ease; min-width: 300px;
-  `;
-  notification.textContent = message;
+
+  notification.className = 'notification-item ' + (type === 'error' ? 'error' : 'success');
+  notification.style.cssText = `position: fixed; top: ${topPosition}px; right: 20px; z-index: 10000; animation: slideIn 0.3s ease;`;
+
+  if (type === 'error') {
+    notification.innerHTML = `<div class="notification-text">${message}</div>`;
+  } else {
+    // success/borrow style: white background with check icon
+    notification.innerHTML = `<div class="notification-icon">✔</div><div class="notification-text">${message}</div>`;
+  }
   document.body.appendChild(notification);
   
   setTimeout(() => {
@@ -161,15 +161,18 @@ function addToCart(bookId, bookName, price, qty = 1) {
 
 // Add/Remove favorites
 function addToFavorites(bookId, bookName) {
-  const index = favorites.findIndex(item => item.id === bookId);
-  if (index === -1) {
-    favorites.push({ id: bookId, name: bookName });
-    showNotification(`❤️ Thêm "${bookName}" vào yêu thích`);
+  // favorites stored as array of ids
+  const id = Number(bookId);
+  const idx = favorites.indexOf(id);
+  const book = booksDatabase.find(b => b.id === id) || { name: bookName || 'Sách' };
+  if (idx === -1) {
+    favorites.push(id);
+    showNotification(`❤️ Thêm "${book.name}" vào yêu thích`);
   } else {
-    favorites.splice(index, 1);
-    showNotification(`${bookName} đã bị xóa khỏi yêu thích`);
+    favorites.splice(idx, 1);
+    showNotification(`${book.name} đã bị xóa khỏi yêu thích`);
   }
-  saveData();
+  try { localStorage.setItem('favorites', JSON.stringify(favorites)); } catch(e) {}
 }
 
 // Display cart
@@ -416,21 +419,54 @@ function renderFeaturedBooks() {
   const wrapper = document.querySelector('#featuredBooksWrapper');
   if (!wrapper) return;
   
-  wrapper.innerHTML = booksDatabase.map(book => `
+  wrapper.innerHTML = booksDatabase.map(book => {
+    const isFav = favorites && Array.isArray(favorites) && favorites.includes(book.id);
+    const btnClass = isFav ? 'favor-btn liked' : 'favor-btn';
+    const iconClass = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+    return `
     <div class="swiper-slide box">
-      <div class="icons">
-        <a href="#" class="fas fa-heart" onclick="addToFavorites(${book.id}, '${book.name}'); return false;"></a>
-        <a href="book-details.html?id=${book.id}" class="fas fa-eye"></a>
-      </div>
       <div class="image"><img src="${book.image}" alt="${book.name}"></div>
       <div class="content">
         <h3>${book.name}</h3>
         <p style="font-size:0.9rem; color:#666; margin:0.5rem 0;">Tác giả: ${book.author}</p>
         <p style="font-size:0.85rem; color:#27ae60; margin:0.3rem 0;">⭐ ${book.rating}/5 (${book.reviews} đánh giá)</p>
-        <button onclick="addToCart(${book.id}, '${book.name}', ${book.price})" class="btn" style="width:100%; margin-top:0.5rem;">Yêu Cầu Mượn</button>
+        <a href="book-details.html?id=${book.id}" class="btn" style="width:100%; margin-top:0.5rem;">Xem chi tiết</a>
+        <button title="Yêu thích" class="${btnClass}" onclick="handleHeartClick(this, ${book.id}, '${book.name}'); return false;" aria-label="Yêu thích" aria-pressed="${isFav? 'true':'false'}" style="margin-top:0.5rem;">
+          <i class="${iconClass}"></i>
+        </button>
       </div>
     </div>
-  `).join('');
+    `;
+  }).join('');
+
+  // attach helper on window to be callable from inline onclick
+  window.handleHeartClick = function(btn, id, name){
+    if (!btn) return;
+    // animate
+    btn.classList.add('animating');
+    setTimeout(() => btn.classList.remove('animating'), 600);
+    // toggle favorite data
+    addToFavorites(id, name);
+    // update class immediately for optimistic UI: add/remove liked class
+    const isNowFav = favorites && Array.isArray(favorites) && favorites.includes(Number(id));
+    if (isNowFav) {
+      btn.classList.add('liked');
+      btn.setAttribute('aria-pressed', 'true');
+      const icon = btn.querySelector('i'); if (icon) { icon.className = 'fa-solid fa-heart'; }
+      // show transient check effect
+      const ef = document.createElement('span'); ef.className = 'state-effect add show'; ef.textContent = '✔';
+      btn.appendChild(ef);
+      setTimeout(()=> { ef.classList.remove('show'); try{ ef.remove(); }catch(e){} }, 700);
+    } else {
+      btn.classList.remove('liked');
+      btn.setAttribute('aria-pressed', 'false');
+      const icon = btn.querySelector('i'); if (icon) { icon.className = 'fa-regular fa-heart'; }
+      // show transient minus effect
+      const ef2 = document.createElement('span'); ef2.className = 'state-effect remove show'; ef2.textContent = '−';
+      btn.appendChild(ef2);
+      setTimeout(()=> { ef2.classList.remove('show'); try{ ef2.remove(); }catch(e){} }, 700);
+    }
+  };
 }
 
 // Initialize Swiper - Reusable config

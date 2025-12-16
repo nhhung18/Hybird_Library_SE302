@@ -5,24 +5,22 @@ const booksDatabase = [
   { id: 3, name: 'Tư duy làm giàu', author: 'KITA BOOKS', image: 'image/book/tuduylamgiau.jpg', qty: 2, rating: 4.4, reviews: 67},
   { id: 4, name: 'Đắc Nhân Tâm', author: 'Dale Carnegie', image: 'image/book/dacnhantam.jpg', qty: 0, rating: 4.8, reviews: 500}
 ];
-// favorites persisted in localStorage
-let favorites = new Set();
-try{
-  const saved = JSON.parse(localStorage.getItem('favorites') || '[]');
-  if (Array.isArray(saved)) favorites = new Set(saved);
-}catch(e){/* ignore parse errors */}
+// favorites persisted in localStorage (array of ids)
+let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+if (!Array.isArray(favorites)) favorites = [];
 
 function addToFavorites(id) {
   const book = booksDatabase.find(b => b.id === id);
   if (!book) return;
-  if (favorites.has(id)) {
-    favorites.delete(id);
-    Swal.fire({toast: true, position: 'top-end', icon: 'info', title: `Đã bỏ yêu thích: ${book.name}`, showConfirmButton: false, timer: 1200});
-  } else {
-    favorites.add(id);
+  const idx = favorites.indexOf(id);
+  if (idx === -1) {
+    favorites.push(id);
     Swal.fire({toast: true, position: 'top-end', icon: 'success', title: `Đã thêm vào yêu thích: ${book.name}`, showConfirmButton: false, timer: 1200});
+  } else {
+    favorites.splice(idx, 1);
+    Swal.fire({toast: true, position: 'top-end', icon: 'info', title: `Đã bỏ yêu thích: ${book.name}`, showConfirmButton: false, timer: 1200});
   }
-  try{ localStorage.setItem('favorites', JSON.stringify(Array.from(favorites))); }catch(e){}
+  try{ localStorage.setItem('favorites', JSON.stringify(favorites)); }catch(e){}
   renderFeaturedBooks();
 }
 
@@ -66,7 +64,11 @@ function renderFeaturedBooks() {
   const wrapper = document.getElementById('featuredBooksWrapper');
   if (!wrapper) return;
   // simplified card: image, title, rating, borrow button
-  wrapper.innerHTML = booksDatabase.map(book => `
+  wrapper.innerHTML = booksDatabase.map(book => {
+    const isFav = favorites && Array.isArray(favorites) && favorites.includes(book.id);
+    const btnClass = isFav ? 'favor-btn liked' : 'favor-btn';
+    const iconClass = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+    return `
     <div class="swiper-slide box product-card">
       <div class="image">
         <a href="book-details.html?id=${book.id}">
@@ -77,12 +79,33 @@ function renderFeaturedBooks() {
         <h3 class="title">${book.name}</h3>
         <div class="rating">⭐ ${book.rating} (${book.reviews})</div>
         <a href="book-details.html?id=${book.id}" class="btn borrow-btn">Xem chi tiết</a>
-        <button class="favor-btn" onclick="addToFavorites(${book.id})">
-          <i class="${favorites.has(book.id) ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+        <button title="Yêu thích" class="${btnClass}" onclick="handleHeartClick(this, ${book.id}); return false;" aria-label="Yêu thích" aria-pressed="${isFav? 'true':'false'}" style="margin-top:0.5rem;">
+          <i class="${iconClass}"></i>
         </button>
       </div>
     </div>
-  `).join('');
+    `;
+  }).join('');
+
+  window.handleHeartClick = function(btn, id){
+    if (!btn) return;
+    btn.classList.add('animating');
+    setTimeout(() => btn.classList.remove('animating'), 600);
+    addToFavorites(id);
+    const isNowFav = favorites && Array.isArray(favorites) && favorites.includes(id);
+    const icon = btn.querySelector('i');
+    if (isNowFav) {
+      btn.classList.add('liked'); if (icon) icon.className = 'fa-solid fa-heart';
+      const ef = document.createElement('span'); ef.className = 'state-effect add show'; ef.textContent = '✔';
+      btn.appendChild(ef);
+      setTimeout(()=> { ef.classList.remove('show'); try{ ef.remove(); }catch(e){} }, 700);
+    } else {
+      btn.classList.remove('liked'); if (icon) icon.className = 'fa-regular fa-heart';
+      const ef2 = document.createElement('span'); ef2.className = 'state-effect remove show'; ef2.textContent = '−';
+      btn.appendChild(ef2);
+      setTimeout(()=> { ef2.classList.remove('show'); try{ ef2.remove(); }catch(e){} }, 700);
+    }
+  };
   
   // Reinitialize Swiper after rendering
   setTimeout(() => {

@@ -378,8 +378,10 @@ section{
     background: linear-gradient(15deg, #eee 30%, #fff 30.1%);
 }
 
-.featured .featured-slider .box:hover .image{
-    transform: translateY(6rem);
+.featured .featured-slider .box .image{
+    padding:1rem;
+    background: linear-gradient(15deg, #eee 30%, #fff 30.1%);
+    transform: none;
 }
 
 .featured .featured-slider .box .image img{
@@ -387,27 +389,7 @@ section{
 }
 
 .featured .featured-slider .box .icons{
-    border-bottom: var(--border-hover);
-    position: absolute;
-    top:0; left:0; right: 0;
-    background: #fff;
-    z-index: 1;
-    transform: translateY(-105%);
-}
-
-.featured .featured-slider .box:hover .icons{
-    transform: translateY(0%);
-}
-
-.featured .featured-slider .box .icons a{
-    color:var(--black);
-    font-size: 2.2rem;
-    padding:1.3rem 1.5rem;
-}
-
-.featured .featured-slider .box .icons a:hover{
-    background:var(--green);
-    color:#fff;
+    display: none !important;
 }
 
 .featured .featured-slider .box .content{
@@ -418,6 +400,141 @@ section{
 .featured .featured-slider .box .content h3{
     font-size: 2rem;
     color:var(--black);
+}
+
+/* Favor button styling and press animation */
+.favor-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:3.6rem;
+    height:3.6rem;
+    border-radius:50%;
+    background:transparent;
+    border: .1rem solid rgba(0,0,0,0.06);
+    box-shadow: none;
+    cursor: pointer;
+    transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+    margin-left: .6rem;
+}
+.favor-btn{ position: relative; }
+.favor-btn i{
+    pointer-events: none;
+    font-size:1.4rem;
+    color: #e74c3c;
+    transition: transform .18s ease, color .12s ease;
+}
+.favor-btn:active{
+    transform: scale(.92);
+}
+.favor-btn.liked{
+    background: rgba(231,76,60,0.12);
+    box-shadow: 0 6px 18px rgba(231,76,60,0.06);
+}
+.favor-btn.liked i{
+    transform: scale(1.08);
+    color: #e74c3c;
+}
+
+/* small pulse animation when toggled */
+@keyframes heartPulse{
+  0%{ transform: scale(1); }
+  30%{ transform: scale(1.18); }
+  60%{ transform: scale(0.96); }
+ 100%{ transform: scale(1); }
+}
+/* apply pulse to heart icon on click */
+.favor-btn.animating i{
+    animation: heartPulse .45s ease;
+}
+
+/* transient state effect inside favor button (check/minus) */
+.favor-btn .state-effect{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:2.6rem;
+    height:2.6rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-size:1.2rem;
+    font-weight:700;
+    color:#fff;
+    pointer-events:none;
+    opacity:0;
+    transform: translate(-50%, -50%) scale(0.65);
+    transition: opacity .22s ease, transform .22s ease;
+    box-shadow:0 6px 14px rgba(0,0,0,0.12);
+    z-index:1;
+}
+.favor-btn .state-effect.add{ background:#2ecc71; }
+.favor-btn .state-effect.remove{ background:#e74c3c; }
+.favor-btn .state-effect.show{
+    opacity:0.95;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Notification (borrow / success) - larger and more prominent */
+.notification-item{
+    font-size: 1.2rem !important;
+    padding: 0.7rem 1.2rem !important;
+    min-width: 210px !important;
+    border-radius: 0.8rem !important;
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.18) !important;
+}
+
+@media (max-width: 600px){
+    .notification-item{
+        font-size: 1.6rem !important;
+        min-width: 260px !important;
+        right: 12px !important;
+        left: 12px !important;
+    }
+}
+
+/* Success vs error styles */
+.notification-item.success{
+    background: #fff !important;
+    color: #222 !important;
+    padding: 0.9rem 1.4rem !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    border-left: .6rem solid var(--green);
+}
+.notification-item.error{
+    background: #e74c3c !important;
+    color: #fff !important;
+    padding: 0.9rem 1.4rem !important;
+    border-left: none;
+}
+
+.notification-icon{
+    width:3.2rem;
+    height:3.2rem;
+    border-radius:50%;
+    background: var(--green);
+    color: #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.6rem;
+    flex: 0 0 auto;
+    box-shadow: 0 .4rem 1rem rgba(0,0,0,0.08);
+    transform: scale(1);
+    transition: transform .28s ease;
+}
+
+.notification-item.success .notification-icon{
+    animation: heartPulse .45s ease;
+}
+
+.notification-text{
+    display:inline-block;
+    font-size: 1.2rem;
+    line-height: 1.2;
 }
 
 .featured .featured-slider .box .content .price{
