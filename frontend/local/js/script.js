@@ -1,20 +1,20 @@
-// Books Database
+// Books Database (không dùng giá tiền, chỉ mượn)
 const booksDatabase = [
-  { id: 1, name: "Đắc Nhân Tâm", author: "Dale Carnegie", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 12, image: "image/book/dacnhantam.jpg", description: "Cuốn sách nổi tiếng nhất về nghệ thuật giao tiếp và thu phục lòng người.", rating: 4.5, reviews: 120 },
-  { id: 2, name: "Nhà Giả Kim", author: "Paulo Coelho", category: "Văn học", price: 12.99, originalPrice: 18.99, qty: 8, image: "image/book/lanhdaokhongoan.jpg", description: "Tiểu thuyết về hành trình tìm kiếm ước mơ của một chàng trai trẻ.", rating: 4.8, reviews: 95 },
-  { id: 3, name: "Clean Code", author: "Robert C. Martin", category: "Công nghệ", price: 24.99, originalPrice: 32.99, qty: 5, image: "image/book/nghilondethanhcong.jpg", description: "Hướng dẫn viết code sạch và chuyên nghiệp cho lập trình viên.", rating: 4.9, reviews: 180 },
-  { id: 4, name: "Sapiens", author: "Yuval Noah Harari", category: "Lịch sử", price: 18.99, originalPrice: 26.99, qty: 7, image: "image/book/biquyettruongtho.png", description: "Khám phá lịch sử nhân loại từ quá khứ đến hiện tại.", rating: 4.6, reviews: 150 },
-  { id: 5, name: "Tư Duy Làm Giàu", author: "Napoleon Hill", category: "Kỹ năng sống", price: 13.99, originalPrice: 19.99, qty: 10, image: "image/book/vuotquadongbao-bia.jpg", description: "Bí mật của những người thành công trong kiếm tiền.", rating: 4.5, reviews: 110 },
-  { id: 6, name: "Cội Nguồn Của Hạnh Phúc", author: "Thích Nhất Hạnh", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 8, image: "image/book/CộiNguồnCủaHạnhPhúc.png", description: "Tìm hiểu những điều cơ bản tạo nên hạnh phúc thực sự trong cuộc sống.", rating: 4.7, reviews: 105 },
-  { id: 7, name: "Mặc Kệ Họ", author: "Mark Manson", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 9, image: "image/book/MặcKệHọ.png", description: "Cách sống tự do và có ý nghĩa bằng cách không quan tâm đến ý kiến người khác.", rating: 4.6, reviews: 98 },
-  { id: 8, name: "Người Lạ Với Chính Ta", author: "Marc Levy", category: "Văn học", price: 15.99, originalPrice: 20.99, qty: 6, image: "image/book/NgườiLạVớiChínhTa.png", description: "Một câu chuyện tình yêu động người qua các trang sách.", rating: 4.5, reviews: 87 },
-  { id: 9, name: "Nhẹ Nhàng Mà Sống", author: "BTS Sơn", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 7, image: "image/book/NhẹNhàngMàSống.png", description: "Hướng dẫn sống nhẹ nhàng, tỏa sáng và hạnh phúc mỗi ngày.", rating: 4.4, reviews: 76 },
-  { id: 10, name: "Nơi Vết Thương Anh Sáng Rọi Vào", author: "Minh Thu", category: "Văn học", price: 15.99, originalPrice: 20.99, qty: 5, image: "image/book/NơiVếtThươngAnhSángRọiVào.png", description: "Câu chuyện về sự chữa lành và tìm thấy ánh sáng trong bóng tối.", rating: 4.3, reviews: 64 },
-  { id: 11, name: "Con Đường Chính Trực", author: "M. Scott Peck", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 8, image: "image/book/ConĐườngChínhTrực.png", description: "Hành trình tâm linh đưa bạn trên con đường sự trưởng thành.", rating: 4.5, reviews: 92 },
-  { id: 12, name: "Đường Vào Thiền", author: "Thích Nhất Hạnh", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 6, image: "image/book/ĐườngVàoThiền.png", description: "Những hướng dẫn thiền định giản dị mà sâu sắc cho người mới bắt đầu.", rating: 4.6, reviews: 81 },
-  { id: 13, name: "Phá Vỡ Khuôn Mẫu", author: "Steve Jobs", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 7, image: "image/book/PháVỡKhuônMẫu.png", description: "Các câu chuyện truyền cảm hứng về sự sáng tạo và theo đuổi đam mê.", rating: 4.7, reviews: 103 },
-  { id: 14, name: "Khai Mở Cảm Xúc", author: "Daniel Goleman", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 9, image: "image/book/KhaiMởCảmXúc.png", description: "Khám phá trí thông minh cảm xúc và cách áp dụng nó trong cuộc sống.", rating: 4.8, reviews: 115 },
-  { id: 15, name: "Hạnh Phúc Tuổi Trẻ", author: "Osho", category: "Kỹ năng sống", price: 15.99, originalPrice: 20.99, qty: 8, image: "image/book/HạnhPhúcTuổiTrẻ.png", description: "Những lời khôn ngoan về cách sống hạnh phúc và tự do trong tuổi trẻ.", rating: 4.5, reviews: 89 }
+  { id: 1, name: "Đắc Nhân Tâm", author: "Dale Carnegie", category: "Kỹ năng sống", qty: 12, image: "image/book/dacnhantam.jpg", description: "Cuốn sách nổi tiếng nhất về nghệ thuật giao tiếp và thu phục lòng người.", rating: 4.5, reviews: 120 },
+  { id: 2, name: "Lãnh Đạo Khôn Ngoan", author: "Paulo Coelho", category: "Văn học", qty: 8, image: "image/book/lanhdaokhongoan.jpg", description: "Tiểu thuyết về hành trình tìm kiếm ước mơ của một chàng trai trẻ.", rating: 4.8, reviews: 95 },
+  { id: 3, name: "Nghĩ Lớn Để Thành Công", author: "Robert C. Martin", category: "Công nghệ", qty: 5, image: "image/book/nghilondethanhcong.jpg", description: "Hướng dẫn viết code sạch và chuyên nghiệp cho lập trình viên.", rating: 4.9, reviews: 180 },
+  { id: 4, name: "Bí Quyết Trường Thọ", author: "Yuval Noah Harari", category: "Lịch sử", qty: 7, image: "image/book/biquyettruongtho.png", description: "Khám phá lịch sử nhân loại từ quá khứ đến hiện tại.", rating: 4.6, reviews: 150 },
+  { id: 5, name: "Vượt Qua Giông Bão", author: "Napoleon Hill", category: "Kỹ năng sống", qty: 10, image: "image/book/vuotquadongbao-bia.jpg", description: "Bí mật của những người thành công trong kiếm tiền.", rating: 4.5, reviews: 110 },
+  { id: 6, name: "Cội Nguồn Của Hạnh Phúc", author: "Thích Nhất Hạnh", category: "Kỹ năng sống", qty: 8, image: "image/book/CộiNguồnCủaHạnhPhúc.png", description: "Tìm hiểu những điều cơ bản tạo nên hạnh phúc thực sự trong cuộc sống.", rating: 4.7, reviews: 105 },
+  { id: 7, name: "Mặc Kệ Họ", author: "Mark Manson", category: "Kỹ năng sống", qty: 9, image: "image/book/MặcKệHọ.png", description: "Cách sống tự do và có ý nghĩa bằng cách không quan tâm đến ý kiến người khác.", rating: 4.6, reviews: 98 },
+  { id: 8, name: "Người Lạ Với Chính Ta", author: "Marc Levy", category: "Văn học", qty: 6, image: "image/book/NgườiLạVớiChínhTa.png", description: "Một câu chuyện tình yêu động người qua các trang sách.", rating: 4.5, reviews: 87 },
+  { id: 9, name: "Nhẹ Nhàng Mà Sống", author: "BTS Sơn", category: "Kỹ năng sống", qty: 7, image: "image/book/NhẹNhàngMàSống.png", description: "Hướng dẫn sống nhẹ nhàng, tỏa sáng và hạnh phúc mỗi ngày.", rating: 4.4, reviews: 76 },
+  { id: 10, name: "Nơi Vết Thương Anh Sáng Rọi Vào", author: "Minh Thu", category: "Văn học", qty: 5, image: "image/book/NơiVếtThươngAnhSángRọiVào.png", description: "Câu chuyện về sự chữa lành và tìm thấy ánh sáng trong bóng tối.", rating: 4.3, reviews: 64 },
+  { id: 11, name: "Con Đường Chính Trực", author: "M. Scott Peck", category: "Kỹ năng sống", qty: 8, image: "image/book/ConĐườngChínhTrực.png", description: "Hành trình tâm linh đưa bạn trên con đường sự trưởng thành.", rating: 4.5, reviews: 92 },
+  { id: 12, name: "Đường Vào Thiền", author: "Thích Nhất Hạnh", category: "Kỹ năng sống", qty: 6, image: "image/book/ĐườngVàoThiền.png", description: "Những hướng dẫn thiền định giản dị mà sâu sắc cho người mới bắt đầu.", rating: 4.6, reviews: 81 },
+  { id: 13, name: "Phá Vỡ Khuôn Mẫu", author: "Steve Jobs", category: "Kỹ năng sống", qty: 7, image: "image/book/PháVỡKhuônMẫu.png", description: "Các câu chuyện truyền cảm hứng về sự sáng tạo và theo đuổi đam mê.", rating: 4.7, reviews: 103 },
+  { id: 14, name: "Khai Mở Cảm Xúc", author: "Daniel Goleman", category: "Kỹ năng sống", qty: 9, image: "image/book/KhaiMởCảmXúc.png", description: "Khám phá trí thông minh cảm xúc và cách áp dụng nó trong cuộc sống.", rating: 4.8, reviews: 115 },
+  { id: 15, name: "Hạnh Phúc Tuổi Trẻ", author: "Osho", category: "Kỹ năng sống", qty: 8, image: "image/book/HạnhPhúcTuổiTrẻ.png", description: "Những lời khôn ngoan về cách sống hạnh phúc và tự do trong tuổi trẻ.", rating: 4.5, reviews: 89 }
 ];
 
 // Membership Tier Configuration - Mọi người có thể mượn
@@ -83,14 +83,17 @@ function showNextNotification() {
   const visibleNotifications = document.querySelectorAll('.notification-item').length;
   const topPosition = 20 + (visibleNotifications * 90);
 
-  notification.className = 'notification-item ' + (type === 'error' ? 'error' : 'success');
+  const stateClass = type === 'error' ? 'error' : (type === 'remove' ? 'remove' : 'success');
+  notification.className = 'notification-item ' + stateClass;
   notification.style.cssText = `position: fixed; top: ${topPosition}px; right: 20px; z-index: 10000; animation: slideIn 0.3s ease;`;
 
   if (type === 'error') {
     notification.innerHTML = `<div class="notification-text">${message}</div>`;
+  } else if (type === 'remove') {
+    notification.innerHTML = `<div class="notification-icon remove-anim">−</div><div class="notification-text">${message}</div>`;
   } else {
-    // success/borrow style: white background with check icon
-    notification.innerHTML = `<div class="notification-icon">✔</div><div class="notification-text">${message}</div>`;
+    // success/borrow style: white background with animated check icon
+    notification.innerHTML = `<div class="notification-icon check-anim">✔</div><div class="notification-text">${message}</div>`;
   }
   document.body.appendChild(notification);
   
@@ -129,34 +132,36 @@ function updateCartBadge() {
   if (myAccountLink) myAccountLink.style.display = currentUser ? 'inline-block' : 'none';
 }
 
-// Add to cart (Borrow request)
-function addToCart(bookId, bookName, price, qty = 1) {
-  if (!currentUser) {
-    showNotification('❌ Vui lòng đăng nhập trước!', 'error');
-    getLoginBtn()?.click();
-    return;
+// Bind click for add-to-cart buttons (delegated initializer)
+function bindAddToCartButtons() {
+  document.querySelectorAll('.btn.add-to-cart').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const id = Number(btn.dataset.id);
+      const name = btn.dataset.name;
+      const price = Number(btn.dataset.price) || 0;
+      addToCart(id, name, price, 1);
+      return false;
+    };
+  });
+}
+
+// Add to cart (lightweight, no login required)
+function addToCart(bookId, bookName, price = 0, qty = 1) {
+  const id = Number(bookId);
+  const book = booksDatabase.find(b => b.id === id) || null;
+  const name = bookName || (book && book.name) || `Sách ${id}`;
+  const image = book && book.image ? book.image : '';
+  const idx = cart.findIndex(item => item.id === id);
+  if (idx >= 0) {
+    cart[idx].qty += qty;
+    if (!cart[idx].image && image) cart[idx].image = image;
+  } else {
+    cart.push({ id, name,  qty, image });
   }
-  
-  // Kiểm tra nếu người dùng chưa đăng ký thẻ mượn
-  if (!currentUser.membershipTier || currentUser.status === 'guest') {
-    showNotification('❌ Vui lòng đăng ký thẻ mượn để mượn sách!', 'error');
-    openLibraryCardModal();
-    return;
-  }
-  
-  if (cart.find(item => item.id === bookId && item.status === 'pending')) {
-    showNotification('⚠️ Sách này đã có trong yêu cầu mượn!', 'error');
-    return;
-  }
-  
-  const tier = tierConfig['bronze'];
-  const borrowDate = new Date().toISOString().split('T')[0];
-  const dueDate = new Date(Date.now() + tier.dueDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  
-  cart.push({ id: bookId, name: bookName, price, qty, borrowDate, dueDate, status: 'pending', extendsUsed: 0 });
   saveData();
   updateCartBadge();
-  showNotification(`✓ Thêm "${bookName}" vào yêu cầu mượn (Hạn: ${tier.dueDays} ngày)`);
+  showNotification(`Đã thêm "${name}" vào giỏ`);
 }
 
 // Add/Remove favorites
@@ -167,12 +172,71 @@ function addToFavorites(bookId, bookName) {
   const book = booksDatabase.find(b => b.id === id) || { name: bookName || 'Sách' };
   if (idx === -1) {
     favorites.push(id);
-    showNotification(`❤️ Thêm "${book.name}" vào yêu thích`);
+    showNotification(`Đã thêm "${book.name}" vào yêu thích`);
   } else {
     favorites.splice(idx, 1);
-    showNotification(`${book.name} đã bị xóa khỏi yêu thích`);
+    showNotification(`Đã bỏ "${book.name}" khỏi yêu thích`, 'remove');
   }
   try { localStorage.setItem('favorites', JSON.stringify(favorites)); } catch(e) {}
+}
+
+// Show wishlist modal
+function showWishlist(){
+  // Check if SweetAlert2 is loaded
+  if (typeof Swal === 'undefined') {
+    console.error('SweetAlert2 is not loaded');
+    alert('Danh sách yêu thích của bạn:\n' + (favorites && favorites.length > 0 
+      ? favorites.map(id => {
+          const book = booksDatabase.find(b => b.id === id);
+          return book ? book.name : '';
+        }).filter(Boolean).join('\n')
+      : 'Danh sách trống'));
+    return;
+  }
+  
+  if (!favorites || favorites.length === 0){
+    Swal.fire({
+      title: 'Danh sách yêu thích trống',
+      text: 'Bạn chưa có sách nào trong danh sách yêu thích.',
+      icon: 'info'
+    });
+    return;
+  }
+  const items = favorites
+    .map(id => booksDatabase.find(b => b.id === id))
+    .filter(Boolean)
+    .map(b => `
+      <div class="swal-wishlist-item">
+        <img src="${b.image}" alt="${b.name}" class="swal-wishlist-thumb" />
+        <div class="swal-wishlist-title">
+          <span>${b.name}</span>
+        </div>
+        <div class="swal-wishlist-actions">
+          <a href="book-details.html?id=${b.id}" class="swal-btn view">Xem</a>
+          <button class="swal-btn remove" onclick="removeFavorite(${b.id}); return false;">Xóa</button>
+        </div>
+      </div>
+    `).join('');
+  Swal.fire({
+    title: 'Yêu thích của bạn',
+    html: `<div style="text-align:left; max-height:360px; overflow:auto;">${items}</div>`,
+    width: 640,
+    showConfirmButton: true,
+    confirmButtonText: 'Đóng'
+  });
+}
+
+// Remove a book from favorites (used in wishlist modal)
+function removeFavorite(id){
+  addToFavorites(id);
+  // If still has items, re-render list; otherwise close
+  setTimeout(() => {
+    if (favorites.length > 0) {
+      showWishlist();
+    } else {
+      Swal.close();
+    }
+  }, 10);
 }
 
 // Display cart
@@ -186,27 +250,18 @@ function displayCart() {
     cartItems.innerHTML = '<p style="text-align:center; padding:2rem;">Không có yêu cầu mượn nào</p>';
     cartFooter.style.display = 'none';
   } else {
-    const statusColors = { pending: '#f39c12', approved: '#3498db', returned: '#27ae60' };
-    const statusTexts = { pending: 'Chờ duyệt', approved: 'Đang mượn', returned: 'Đã trả' };
+    // const statusColors = { pending: '#f39c12', approved: '#3498db', returned: '#27ae60' };
+    // const statusTexts = { pending: 'Chờ duyệt', approved: 'Đang mượn', returned: 'Đã trả' };
     
     cartItems.innerHTML = cart.map((item, idx) => {
-      const daysLeft = Math.ceil((new Date(item.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
-      const isOverdue = daysLeft < 0;
-      const status = statusTexts[item.status] || 'Chờ duyệt';
-      const color = statusColors[item.status] || '#f39c12';
       
       return `
         <div style="padding:1rem; border-bottom:1px solid #eee;">
           <div style="display:flex; justify-content:space-between; align-items:start;">
             <div style="flex:1;">
-              <p style="font-weight:bold; margin:0;">${item.name}</p>
-              <p style="color:#666; font-size:0.9rem; margin:0.3rem 0;">Mượn: ${item.borrowDate} | Hạn: ${item.dueDate}</p>
-              <p style="color:${isOverdue ? 'red' : 'green'}; font-size:0.9rem; margin:0.3rem 0;">
-                ${isOverdue ? '⚠️ QUÁ HẠN' : daysLeft <= 3 ? '🔔 SẮP HẾT HẠN' : `${daysLeft} ngày còn lại`}
-              </p>
-              <span style="display:inline-block; background:${color}; color:white; padding:0.3rem 0.8rem; border-radius:0.3rem; font-size:0.8rem; margin-top:0.5rem;">
-                ${status}
-              </span>
+              <img src="${item.image}" style="width:100px; height:100px; object-fit:cover; border-radius:0.3rem; margin-right:1rem;">
+             
+      
             </div>
             <button onclick="removeFromCart(${idx})" style="background:red; color:white; border:none; padding:0.5rem 1rem; border-radius:0.3rem; cursor:pointer; margin-left:1rem;">Xóa</button>
           </div>
@@ -428,9 +483,20 @@ function renderFeaturedBooks() {
       <div class="image"><img src="${book.image}" alt="${book.name}"></div>
       <div class="content">
         <h3>${book.name}</h3>
-        <p style="font-size:0.9rem; color:#666; margin:0.5rem 0;">Tác giả: ${book.author}</p>
-        <p style="font-size:0.85rem; color:#27ae60; margin:0.3rem 0;">⭐ ${book.rating}/5 (${book.reviews} đánh giá)</p>
-        <a href="book-details.html?id=${book.id}" class="btn" style="width:100%; margin-top:0.5rem;">Xem chi tiết</a>
+        <p style="font-size:1rem; font-weight:600; color:#27ae60; margin:0.3rem 0;">⭐ ${book.rating}/5 (${book.reviews} đánh giá)</p>
+        <div class="btn-row">
+          <a href="book-details.html?id=${book.id}" class="btn">Xem chi tiết</a>
+          <button
+            class="btn add-to-cart"
+            style="background:#3498db;"
+            title="Thêm vào giỏ"
+            aria-label="Thêm vào giỏ"
+            data-id="${book.id}"
+            data-name="${book.name}"
+            data-price="${book.price || 0}">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </button>
+        </div>
         <button title="Yêu thích" class="${btnClass}" onclick="handleHeartClick(this, ${book.id}, '${book.name}'); return false;" aria-label="Yêu thích" aria-pressed="${isFav? 'true':'false'}" style="margin-top:0.5rem;">
           <i class="${iconClass}"></i>
         </button>
@@ -438,13 +504,11 @@ function renderFeaturedBooks() {
     </div>
     `;
   }).join('');
+  bindAddToCartButtons();
 
   // attach helper on window to be callable from inline onclick
   window.handleHeartClick = function(btn, id, name){
     if (!btn) return;
-    // animate
-    btn.classList.add('animating');
-    setTimeout(() => btn.classList.remove('animating'), 600);
     // toggle favorite data
     addToFavorites(id, name);
     // update class immediately for optimistic UI: add/remove liked class
@@ -453,18 +517,10 @@ function renderFeaturedBooks() {
       btn.classList.add('liked');
       btn.setAttribute('aria-pressed', 'true');
       const icon = btn.querySelector('i'); if (icon) { icon.className = 'fa-solid fa-heart'; }
-      // show transient check effect
-      const ef = document.createElement('span'); ef.className = 'state-effect add show'; ef.textContent = '✔';
-      btn.appendChild(ef);
-      setTimeout(()=> { ef.classList.remove('show'); try{ ef.remove(); }catch(e){} }, 700);
     } else {
       btn.classList.remove('liked');
       btn.setAttribute('aria-pressed', 'false');
       const icon = btn.querySelector('i'); if (icon) { icon.className = 'fa-regular fa-heart'; }
-      // show transient minus effect
-      const ef2 = document.createElement('span'); ef2.className = 'state-effect remove show'; ef2.textContent = '−';
-      btn.appendChild(ef2);
-      setTimeout(()=> { ef2.classList.remove('show'); try{ ef2.remove(); }catch(e){} }, 700);
     }
   };
 }
@@ -487,9 +543,17 @@ createSwiper(swiperConfigs);
 
 // Render featured books after DOM ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderFeaturedBooks);
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFeaturedBooks();
+    bindAddToCartButtons();
+    const wb = document.getElementById('wishlist-btn');
+    if (wb) wb.addEventListener('click', function(e){ e.preventDefault(); showWishlist(); });
+  });
 } else {
   renderFeaturedBooks();
+  bindAddToCartButtons();
+  const wb = document.getElementById('wishlist-btn');
+  if (wb) wb.addEventListener('click', function(e){ e.preventDefault(); showWishlist(); });
 }
 
 // ===== Library Card Registration Functions =====

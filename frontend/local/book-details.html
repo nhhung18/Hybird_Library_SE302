@@ -51,10 +51,8 @@
             </div>
             <p style="color:#666; font-size:0.95rem; margin:0.5rem 0;" id="bookAuthor">Tác giả: Dale Carnegie</p>
             <p style="color:#666; font-size:0.95rem; margin:0.5rem 0;" id="bookCategory">Thể loại: Kỹ năng sống</p>
-            
-            <div class="price" id="bookPrice">$15.99 <span>$20.99</span></div>
-            
-            <div style="background:#f0f0f0; padding:1rem; border-radius:0.5rem; margin:1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                        
+            <div style="background:#f0f00f; padding:1rem; border-radius:0.5rem; margin:1rem 0; display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <p style="margin:0; color:#666; font-size:0.9rem;">Số lượng sách còn:</p>
                     <h3 style="margin:0.5rem 0 0 0; color:#27ae60;" id="bookQty">12</h3>
@@ -135,17 +133,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function displayBookDetails() {
   if (!currentBook) return;
   
-  // Update title and basic info
+  // Update title và thông tin cơ bản
   document.getElementById('bookTitle').textContent = currentBook.name;
   document.getElementById('bookAuthor').textContent = `Tác giả: ${currentBook.author}`;
   document.getElementById('bookCategory').textContent = `Thể loại: ${currentBook.category}`;
   document.getElementById('bookDescription').textContent = currentBook.description;
   
-  // Update price
-  const priceDiv = document.getElementById('bookPrice');
-  priceDiv.innerHTML = `$${currentBook.price} <span>$${currentBook.originalPrice}</span>`;
-  
-  // Update quantity
+  // Update số lượng
   const qtyElement = document.getElementById('bookQty');
   qtyElement.textContent = currentBook.qty;
   const qtyInput = document.getElementById('qtyInput');
@@ -209,7 +203,7 @@ function addToCartFromDetails(event) {
     return;
   }
   
-  addToCart(currentBook.id, currentBook.name, currentBook.price, qty);
+  addToCart(currentBook.id, currentBook.name, 0, qty);
   showNotification(`✓ Đã thêm ${qty} quyển "${currentBook.name}" vào giỏ`, 'success');
 }
 

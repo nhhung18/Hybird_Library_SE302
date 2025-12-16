@@ -369,6 +369,18 @@ section{
     text-align: center;
 }
 
+/* Favor button pinned to top-right of featured card */
+.featured .featured-slider .box .favor-btn{
+    position:absolute;
+    top:1rem;
+    right:1rem;
+    margin:0;
+    background:#fff;
+    border: .1rem solid rgba(0,0,0,0.08);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+    z-index:2;
+}
+
 .featured .featured-slider .box:hover{
     border:var(--border-hover);
 }
@@ -436,45 +448,7 @@ section{
     color: #e74c3c;
 }
 
-/* small pulse animation when toggled */
-@keyframes heartPulse{
-  0%{ transform: scale(1); }
-  30%{ transform: scale(1.18); }
-  60%{ transform: scale(0.96); }
- 100%{ transform: scale(1); }
-}
-/* apply pulse to heart icon on click */
-.favor-btn.animating i{
-    animation: heartPulse .45s ease;
-}
-
-/* transient state effect inside favor button (check/minus) */
-.favor-btn .state-effect{
-    position:absolute;
-    top:50%;
-    left:50%;
-    width:2.6rem;
-    height:2.6rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    font-size:1.2rem;
-    font-weight:700;
-    color:#fff;
-    pointer-events:none;
-    opacity:0;
-    transform: translate(-50%, -50%) scale(0.65);
-    transition: opacity .22s ease, transform .22s ease;
-    box-shadow:0 6px 14px rgba(0,0,0,0.12);
-    z-index:1;
-}
-.favor-btn .state-effect.add{ background:#2ecc71; }
-.favor-btn .state-effect.remove{ background:#e74c3c; }
-.favor-btn .state-effect.show{
-    opacity:0.95;
-    transform: translate(-50%, -50%) scale(1);
-}
+/* remove transient pulse/overlay for favor button */
 
 /* Notification (borrow / success) - larger and more prominent */
 .notification-item{
@@ -511,6 +485,16 @@ section{
     border-left: none;
 }
 
+.notification-item.remove{
+    background: #fff !important;
+    color: #222 !important;
+    padding: 0.9rem 1.4rem !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    border-left: .6rem solid #e74c3c;
+}
+
 .notification-icon{
     width:3.2rem;
     height:3.2rem;
@@ -528,13 +512,100 @@ section{
 }
 
 .notification-item.success .notification-icon{
-    animation: heartPulse .45s ease;
+    animation: checkPop .55s ease;
+}
+.notification-item.remove .notification-icon{
+    background: #e74c3c;
+    animation: checkPop .55s ease;
+}
+
+@keyframes checkPop{
+  0%{ transform: scale(.5) rotate(-12deg); box-shadow: 0 .2rem .6rem rgba(0,0,0,0.08); }
+  40%{ transform: scale(1.2) rotate(8deg); box-shadow: 0 .6rem 1.2rem rgba(0,0,0,0.12); }
+  100%{ transform: scale(1) rotate(0); box-shadow: 0 .4rem 1rem rgba(0,0,0,0.08); }
 }
 
 .notification-text{
     display:inline-block;
     font-size: 1.2rem;
     line-height: 1.2;
+}
+
+/* Wishlist modal layout */
+.swal-wishlist-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:.8rem 0;
+    border-bottom:1px solid #eee;
+}
+.swal-wishlist-item:last-child{ border-bottom:none; }
+.swal-wishlist-thumb{
+    width:3.4rem;
+    height:4.8rem;
+    object-fit:cover;
+    border-radius:.35rem;
+    border:1px solid #eee;
+    box-shadow:0 4px 10px rgba(0,0,0,0.06);
+}
+.swal-wishlist-title{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    font-weight:600;
+    color:#222;
+}
+.swal-wishlist-title i{
+    color:#27ae60;
+}
+.swal-wishlist-actions{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-left:auto;
+}
+.swal-btn{
+    padding:.45rem .9rem;
+    border-radius:.5rem;
+    border:none;
+    cursor:pointer;
+    font-size:.95rem;
+    text-decoration:none;
+    transition:all .2s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+}
+.swal-btn.view{
+    background:#27ae60;
+    color:#fff;
+}
+.swal-btn.view:hover{ background:#219653; }
+.swal-btn.remove{
+    background:#e74c3c;
+    color:#fff;
+}
+.swal-btn.remove:hover{ background:#d63c2c; }
+
+/* Buttons row inside featured cards */
+.btn-row{
+    display:flex;
+    gap:.6rem;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-top:.5rem;
+}
+
+/* Hover style for add-to-cart button */
+.btn.add-to-cart{
+    transition: transform .15s ease, box-shadow .2s ease, background .15s ease;
+}
+.btn.add-to-cart:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    background: #2d89c6 !important;
 }
 
 .featured .featured-slider .box .content .price{
@@ -917,6 +988,7 @@ section{
 .cart-items {
     flex: 1;
     overflow-y: auto;
+    font-size: 16px;
 }
 
 .cart-footer {

@@ -21,7 +21,6 @@ function renderBooks() {
         <h3>${book.name}</h3>
         <p style="font-size:0.9rem; color:#666; margin:0.5rem 0;">Tác giả: ${book.author}</p>
         <p style="font-size:0.85rem; color:#27ae60; margin:0.3rem 0;">⭐ ${book.rating}/5</p>
-        <div class="price" style="display:none;">$${book.price}</div>
         <a href="book-details.html?id=${book.id}" class="btn">xem chi tiết</a>
       </div>
     </div>

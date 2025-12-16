@@ -10,6 +10,25 @@ document.addEventListener('DOMContentLoaded', function() {
     loadProfile();
     loadBorrowingList();
     loadFavorites();
+    
+    // Kiểm tra nếu có parameter section=membership trong URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const section = urlParams.get('section');
+    if (section === 'membership') {
+        // Tự động chuyển đến section membership
+        const membershipMenuItem = document.querySelector('.menu-item[onclick*="membership"]');
+        if (membershipMenuItem) {
+            setTimeout(() => {
+                membershipMenuItem.click();
+            }, 100);
+        }
+    } else {
+        // Kiểm tra nếu section membership đang active
+        const membershipSection = document.getElementById('membership');
+        if (membershipSection && membershipSection.classList.contains('active')) {
+            loadMembershipTier();
+        }
+    }
 });
 
 function loadProfile() {
@@ -23,12 +42,17 @@ function loadProfile() {
     };
     
     const tierEmojis = { bronze: '🥉', silver: '🥈', gold: '🥇' };
-    const tierNames = { bronze: 'Đồng', silver: 'Bạc', gold: 'Vàng' };
-    const tier = currentUser.membershipTier || 'bronze';
+    const tierNames = { bronze: 'Tiêu Chuẩn', silver: 'Bạc', gold: 'Vàng' };
+    const hasTier = currentUser.membershipTier && currentUser.status !== 'guest';
+    const tier = currentUser.membershipTier;
     
     const borrowHistory = JSON.parse(localStorage.getItem('cart')) || [];
     const totalBorrowed = borrowHistory.length;
     const currentlyBorrowing = borrowHistory.filter(b => b.status !== 'returned').length;
+    
+    const tierDisplay = hasTier && tier 
+        ? `<value style="color: ${tier === 'gold' ? '#ffd700' : tier === 'silver' ? '#c0c0c0' : '#a67c52'};">${tierEmojis[tier]} Hạng ${tierNames[tier]}</value>`
+        : `<value style="color: #e74c3c;">❌ Chưa đăng ký</value>`;
     
     document.getElementById('profileCard').innerHTML = `
         <div class="profile-info">
@@ -46,7 +70,7 @@ function loadProfile() {
             </div>
             <div class="info-item">
                 <label>Hạng Thẻ</label>
-                <value style="color: ${tier === 'gold' ? '#ffd700' : tier === 'silver' ? '#c0c0c0' : '#a67c52'};">${tierEmojis[tier]} Hạng ${tierNames[tier]}</value>
+                ${tierDisplay}
             </div>
             <div class="info-item">
                 <label>Tổng Sách Đã Mượn</label>
@@ -190,58 +214,139 @@ function switchSection(sectionId, element) {
     if (sectionId === 'membership') loadMembershipTier();
 }
 
+// Helper function for notifications
+function showNotification(message, type = 'success') {
+    // Simple notification using alert for now, can be enhanced later
+    if (type === 'error') {
+        alert('❌ ' + message);
+    } else {
+        alert('✓ ' + message);
+    }
+}
+
 function loadMembershipTier() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const tier = currentUser.membershipTier || 'bronze';
+    if (!currentUser) return;
+    
+    const hasTier = currentUser.membershipTier && currentUser.status !== 'guest';
+    const tier = currentUser.membershipTier || null;
     
     const tierEmojis = { bronze: '🥉', silver: '🥈', gold: '🥇' };
-    const tierNames = { bronze: 'Đồng', silver: 'Bạc', gold: 'Vàng' };
+    const tierNames = { bronze: 'Tiêu Chuẩn', silver: 'Bạc', gold: 'Vàng' };
+    const tierPrices = { bronze: '500,000₫/năm', silver: '1,000,000₫/năm', gold: '2,000,000₫/năm' };
     
-    document.getElementById('currentTierName').innerHTML = `${tierEmojis[tier]} Hạng ${tierNames[tier]}`;
+    const currentTierNameEl = document.getElementById('currentTierName');
+    const currentMembershipInfo = document.getElementById('currentMembershipInfo');
+    const currentMembershipText = document.getElementById('currentMembershipText');
+    const tierBronzeBtn = document.getElementById('tierBronzeBtn');
+    const cancelTierBtn = document.getElementById('cancelTierBtn');
     
-    // Get tier config from script.js (need to access from parent window)
-    const tierConfig = {
-        bronze: {
-            name: 'Đồng',
-            maxBooks: 2,
-            dueDays: 14,
-            maxExtends: 0,
-            benefits: 'Mượn tối đa 2 sách, hạn 14 ngày'
-        },
-        silver: {
-            name: 'Bạc',
-            maxBooks: 5,
-            dueDays: 30,
-            maxExtends: 2,
-            benefits: 'Mượn tối đa 5 sách, hạn 30 ngày, gia hạn 2 lần/tháng'
-        },
-        gold: {
-            name: 'Vàng',
-            maxBooks: 10,
-            dueDays: 60,
-            maxExtends: 999,
-            benefits: 'Mượn tối đa 10 sách, hạn 60 ngày, gia hạn không giới hạn'
+    if (hasTier && tier) {
+        // User đã có membership tier
+        currentTierNameEl.innerHTML = `${tierEmojis[tier]} Hạng ${tierNames[tier]}`;
+        currentTierNameEl.style.color = 'var(--green)';
+        
+        currentMembershipText.textContent = `${tierEmojis[tier]} Hạng ${tierNames[tier]} - ${tierPrices[tier]}`;
+        currentMembershipInfo.style.display = 'block';
+        
+        // Hiển thị nút hủy gói
+        cancelTierBtn.style.display = 'block';
+        
+        // Cập nhật nút đăng ký
+        tierBronzeBtn.textContent = '✓ Đã Đăng Ký';
+        tierBronzeBtn.disabled = true;
+        tierBronzeBtn.style.background = '#95a5a6';
+        tierBronzeBtn.style.cursor = 'not-allowed';
+    } else {
+        // User chưa có membership tier
+        currentTierNameEl.innerHTML = '❌ Chưa Đăng Ký';
+        currentTierNameEl.style.color = '#e74c3c';
+        
+        currentMembershipInfo.style.display = 'none';
+        cancelTierBtn.style.display = 'none';
+        
+        // Hiển thị nút đăng ký
+        tierBronzeBtn.textContent = 'Đăng Ký';
+        tierBronzeBtn.disabled = false;
+        tierBronzeBtn.style.background = '#27ae60';
+        tierBronzeBtn.style.cursor = 'pointer';
+    }
+}
+
+// Hàm đăng ký membership tier
+function registerTier(tier) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        showNotification('Vui lòng đăng nhập trước!', 'error');
+        return;
+    }
+    
+    // Kiểm tra nếu đã có tier
+    if (currentUser.membershipTier && currentUser.status !== 'guest') {
+        if (!confirm('Bạn đã có thẻ mượn. Bạn có muốn đăng ký lại không?')) {
+            return;
         }
-    };
+    }
     
-    document.getElementById('currentTierBenefit').innerHTML = tierConfig[tier].benefits;
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const tierNames = { bronze: 'Tiêu Chuẩn', silver: 'Bạc', gold: 'Vàng' };
     
-    // Highlight current tier card
-    ['bronze', 'silver', 'gold'].forEach(t => {
-        const card = document.getElementById(`tier${t.charAt(0).toUpperCase() + t.slice(1)}Card`);
-        const btn = document.getElementById(`tier${t.charAt(0).toUpperCase() + t.slice(1)}Btn`);
-        if (t === tier) {
-            card.style.borderWidth = '3px';
-            card.style.background = '#e8f5e9';
-            btn.textContent = '✓ Đang Dùng';
-            btn.disabled = true;
-        } else {
-            card.style.borderWidth = '2px';
-            card.style.background = 'white';
-            btn.textContent = 'Chọn';
-            btn.disabled = false;
-        }
-    });
+    // Cập nhật người dùng
+    currentUser.membershipTier = tier;
+    currentUser.status = 'user';
+    currentUser.registrationDate = new Date().toISOString().split('T')[0];
+    
+    // Cập nhật trong danh sách users
+    const userIdx = users.findIndex(u => u.email === currentUser.email);
+    if (userIdx !== -1) {
+        users[userIdx].membershipTier = tier;
+        users[userIdx].status = 'user';
+        users[userIdx].registrationDate = currentUser.registrationDate;
+    }
+    
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    showNotification(`Đăng ký thẻ mượn thành công! Bạn là hạng ${tierNames[tier]}`);
+    
+    // Reload để cập nhật UI
+    loadMembershipTier();
+    loadProfile(); // Cập nhật profile để hiển thị tier mới
+}
+
+// Hàm hủy membership tier
+function cancelTier() {
+    if (!confirm('Bạn có chắc chắn muốn hủy gói thẻ mượn? Bạn sẽ không thể mượn sách sau khi hủy.')) {
+        return;
+    }
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        showNotification('Vui lòng đăng nhập trước!', 'error');
+        return;
+    }
+    
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    // Cập nhật người dùng - chuyển về guest
+    currentUser.membershipTier = null;
+    currentUser.status = 'guest';
+    
+    // Cập nhật trong danh sách users
+    const userIdx = users.findIndex(u => u.email === currentUser.email);
+    if (userIdx !== -1) {
+        users[userIdx].membershipTier = null;
+        users[userIdx].status = 'guest';
+    }
+    
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    showNotification('Đã hủy gói thẻ mượn thành công!');
+    
+    // Reload để cập nhật UI
+    loadMembershipTier();
+    loadProfile(); // Cập nhật profile
 }
 
 function changeTier(newTier) {
@@ -259,10 +364,11 @@ function changeTier(newTier) {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     localStorage.setItem('users', JSON.stringify(users));
     
-    const tierNames = { bronze: 'Đồng', silver: 'Bạc', gold: 'Vàng' };
-    alert(`✓ Nâng cấp thành công! Bạn đã chọn hạng ${tierNames[newTier]}`);
+    const tierNames = { bronze: 'Tiêu Chuẩn', silver: 'Bạc', gold: 'Vàng' };
+    showNotification(`Nâng cấp thành công! Bạn đã chọn hạng ${tierNames[newTier]}`);
     
     loadMembershipTier();
+    loadProfile();
 }
 
 function logout() {

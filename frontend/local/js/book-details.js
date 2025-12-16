@@ -31,10 +31,6 @@ function displayBookDetails() {
   document.getElementById('bookCategory').textContent = `Thể loại: ${currentBook.category}`;
   document.getElementById('bookDescription').textContent = currentBook.description;
   
-  // Update price
-  const priceDiv = document.getElementById('bookPrice');
-  priceDiv.innerHTML = `$${currentBook.price} <span>$${currentBook.originalPrice}</span>`;
-  
   // Update quantity
   const qtyElement = document.getElementById('bookQty');
   qtyElement.textContent = currentBook.qty;
@@ -99,7 +95,7 @@ function addToCartFromDetails(event) {
     return;
   }
   
-  addToCart(currentBook.id, currentBook.name, currentBook.price, qty);
+  addToCart(currentBook.id, currentBook.name, 0, qty);
   showNotification(`✓ Đã thêm ${qty} quyển "${currentBook.name}" vào giỏ`, 'success');
 }
 
