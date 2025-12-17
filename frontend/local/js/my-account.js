@@ -47,8 +47,9 @@ function loadProfile() {
     const tier = currentUser.membershipTier;
     
     const borrowHistory = JSON.parse(localStorage.getItem('cart')) || [];
-    const totalBorrowed = borrowHistory.length;
-    const currentlyBorrowing = borrowHistory.filter(b => b.status !== 'returned').length;
+    const userBorrowHistory = borrowHistory.filter(b => b.userEmail === currentUser.email);
+    const totalBorrowed = userBorrowHistory.length;
+    const currentlyBorrowing = userBorrowHistory.filter(b => b.status !== 'returned').length;
     
     const tierDisplay = hasTier && tier 
         ? `<value style="color: ${tier === 'gold' ? '#ffd700' : tier === 'silver' ? '#c0c0c0' : '#a67c52'};">${tierEmojis[tier]} Hạng ${tierNames[tier]}</value>`
@@ -89,16 +90,33 @@ function loadProfile() {
 }
 
 function loadBorrowingList() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const borrowing = cart.filter(item => item.status !== 'returned');
+    const preOrders = JSON.parse(localStorage.getItem('preOrders')) || [];
+    
+    // Filter by current user
+    const userBorrowing = cart.filter(item => 
+        item.status !== 'returned' && 
+        item.userEmail === currentUser.email
+    );
+    const userPreOrders = preOrders.filter(o => 
+        o.userEmail === currentUser.email && 
+        o.status === 'pending'
+    );
+    
     const tbody = document.getElementById('borrowingBody');
     const empty = document.getElementById('borrowingEmpty');
     
-    if (borrowing.length === 0) {
+    if (userBorrowing.length === 0 && userPreOrders.length === 0) {
         tbody.innerHTML = '';
         empty.style.display = 'block';
     } else {
-        tbody.innerHTML = borrowing.map((item, idx) => {
+        let html = '';
+        
+        // Render borrowing list
+        html += userBorrowing.map((item, idx) => {
             const today = new Date();
             const dueDate = new Date(item.dueDate);
             const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
@@ -108,20 +126,41 @@ function loadBorrowingList() {
                                isOverdue ? 'status-overdue' : 'status-approved';
             const statusText = isOverdue ? '⚠️ QUÁ HẠN' :
                               daysLeft <= 3 ? '🔔 SẮP HẾT HẠN' :
-                              item.status === 'pending' ? 'Chờ duyệt' : 'Đang mượn';
+                              item.status === 'pending' ? '⏳ Chờ duyệt' : '✓ Đang mượn';
             
             return `
                 <tr>
                     <td>${item.name}</td>
-                    <td>${item.borrowDate}</td>
-                    <td>${item.dueDate}</td>
+                    <td>${item.borrowDate || '--'}</td>
+                    <td>${item.dueDate || '--'}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>
-                        <button onclick="extendBorrow(${idx})" style="background:#3498db; color:white; border:none; padding:0.5rem 1rem; border-radius:0.3rem; cursor:pointer; margin-right:0.5rem;">Gia Hạn</button>
+                        ${item.status === 'approved' ? 
+                            `<button onclick="extendBorrow(${idx})" style="background:#3498db; color:white; border:none; padding:0.5rem 1rem; border-radius:0.3rem; cursor:pointer; margin-right:0.5rem;">Gia Hạn</button>` :
+                            `<button style="background:#95a5a6; color:white; border:none; padding:0.5rem 1rem; border-radius:0.3rem; cursor:not-allowed;" disabled>Chờ duyệt</button>`
+                        }
                     </td>
                 </tr>
             `;
         }).join('');
+        
+        // Render pre-orders
+        html += userPreOrders.map((order, idx) => {
+            const orderDate = new Date(order.date).toLocaleDateString('vi-VN');
+            return `
+                <tr style="background:#fff9e6;">
+                    <td>${order.bookName} <span style="color:#e67e22; font-weight:bold; font-size:0.85rem;">(Đặt trước)</span></td>
+                    <td>${orderDate}</td>
+                    <td>--</td>
+                    <td><span class="status-badge" style="background:#e67e22; color:white;">📦 Đặt trước</span></td>
+                    <td>
+                        <button onclick="cancelPreOrderFromAccount(${order.bookId})" style="background:#e74c3c; color:white; border:none; padding:0.5rem 1rem; border-radius:0.3rem; cursor:pointer;">Hủy</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        
+        tbody.innerHTML = html;
         empty.style.display = 'none';
     }
 }
@@ -146,27 +185,43 @@ function loadFavorites() {
 }
 
 function extendBorrow(idx) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const borrowing = cart.filter(item => item.status !== 'returned');
-    const item = borrowing[idx];
+    const userBorrowing = cart.filter(item => 
+        item.status !== 'returned' && 
+        item.userEmail === currentUser.email
+    );
+    const item = userBorrowing[idx];
     
     if (!item) return;
+    
+    // Check if can extend
+    if (item.status !== 'approved') {
+        showNotification('Chỉ có thể gia hạn sách đã được duyệt!', 'error');
+        return;
+    }
     
     const oldDueDate = new Date(item.dueDate);
     const newDueDate = new Date(oldDueDate);
     newDueDate.setDate(newDueDate.getDate() + 14); // Gia hạn 14 ngày
     
-    item.dueDate = newDueDate.toISOString().split('T')[0];
+    const newDueDateStr = newDueDate.toISOString().split('T')[0];
     
     // Update in cart
-    const cartIdx = cart.findIndex(c => c.id === item.id && c.borrowDate === item.borrowDate);
-    if (cartIdx !== -1) {
-        cart[cartIdx].dueDate = item.dueDate;
-    }
+    const cartIdx = cart.findIndex(c => 
+        c.id === item.id && 
+        c.borrowDate === item.borrowDate && 
+        c.userEmail === currentUser.email
+    );
     
-    localStorage.setItem('cart', JSON.stringify(cart));
-    loadBorrowingList();
-    showNotification('✓ Gia hạn thành công! Hạn trả mới: ' + item.dueDate);
+    if (cartIdx !== -1) {
+        cart[cartIdx].dueDate = newDueDateStr;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadBorrowingList();
+        showNotification('Gia hạn thành công! Hạn trả mới: ' + newDueDateStr);
+    }
 }
 
 function changePassword(event) {
@@ -376,4 +431,21 @@ function logout() {
         localStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     }
+}
+
+// Cancel pre-order from account page
+function cancelPreOrderFromAccount(bookId) {
+    if (!confirm('Bạn có chắc muốn hủy đặt trước sách này?')) {
+        return;
+    }
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
+    let preOrders = JSON.parse(localStorage.getItem('preOrders')) || [];
+    preOrders = preOrders.filter(o => !(o.bookId === bookId && o.userEmail === currentUser.email));
+    localStorage.setItem('preOrders', JSON.stringify(preOrders));
+    
+    showNotification('Đã hủy đặt trước sách thành công!');
+    loadBorrowingList(); // Refresh list
 }

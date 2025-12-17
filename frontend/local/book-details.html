@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết sách - HAB Library</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="image/icon_text.png">
+    <title>Chi tiết sách - HAB Lib</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/book-details.css">
 </head>
 <body>
 
@@ -19,62 +21,63 @@
         </form>
         <div class="icons">
             <div id="search-btn" class="fas fa-search"></div>
-            <a href="#" class="fas fa-heart"></a>
-            <div id="login-btn" class="fas fa-user"></div>
+            <a href="#" id="wishlist-btn" class="fas fa-heart" title="Yêu thích"></a>
+            <a href="#" id="cart-btn" class="fas fa-shopping-cart" title="Giỏ hàng">
+                <span id="cart-count" class="cart-badge">0</span>
+            </a>
+            <div id="login-btn" class="fas fa-user" title="Tài khoản"></div>
         </div>
     </div>
     <div class="header-2">
         <nav class="navbar">
             <a href="index.html">Trang chủ</a>
-            <a href="index.html#featured">Sách</a>
+            <a href="books.html">Sách</a>
             <a href="index.html#reviews">Đánh giá</a>
-            <a href="#blogs">Về chúng tôi</a>
+            <a href="index.html#blogs">Về chúng tôi</a>
         </nav>
     </div>
 </header>
 <nav class="bottom-navbar">
     <a href="index.html" class="fas fa-home"></a>
-    <a href="index.html#featured" class="fas fa-list"></a>
+    <a href="books.html" class="fas fa-list"></a>
 </nav>
 
 <section class="book-details">
     <div class="row">
         <div class="image-col">
-            <img src="image/book/dacnhantam.jpg" alt="Đắc Nhân Tâm" id="MainImg">
+            <img src="" alt="Book Image" id="MainImg">
         </div>
 
         <div class="content-col">
-            <h2 class="book-title" id="bookTitle">Đắc Nhân Tâm</h2>
+            <h2 class="book-title" id="bookTitle">Đang tải...</h2>
             <div class="rating-display">
                 <span id="ratingStars"></span>
-                <span id="reviewCount">(120 đánh giá)</span>
-            </div>
-            <p style="color:#666; font-size:0.95rem; margin:0.5rem 0;" id="bookAuthor">Tác giả: Dale Carnegie</p>
-            <p style="color:#666; font-size:0.95rem; margin:0.5rem 0;" id="bookCategory">Thể loại: Kỹ năng sống</p>
-                        
-            <div style="background:#f0f00f; padding:1rem; border-radius:0.5rem; margin:1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <span id="reviewCount"></span>
+            </div>      
+            <div style="background:#f0f9f7; padding:1.5rem; border-radius:0.5rem; margin:1rem 0; display:flex; justify-content:space-between; align-items:center;">
                 <div>
-                    <p style="margin:0; color:#666; font-size:0.9rem;">Số lượng sách còn:</p>
-                    <h3 style="margin:0.5rem 0 0 0; color:#27ae60;" id="bookQty">12</h3>
+                    <p style="margin:0; color:#666; font-size:1.4rem; font-weight:500;">Số lượng sách còn:</p>
+                    <h3 style="margin:0.5rem 0 0 0; color:#27ae60; font-size:3rem; font-weight:bold;" id="bookQty">--</h3>
                 </div>
                 <div style="text-align:right;">
-                    <i class="fas fa-box-open" style="font-size:3rem; color:#27ae60; opacity:0.3;"></i>
+                    <i class="fas fa-box-open" style="font-size:4rem; color:#27ae60; opacity:0.25;"></i>
                 </div>
             </div>
             
             <p class="description" id="bookDescription">
-                Đây là cuốn sách nổi tiếng nhất về nghệ thuật giao tiếp và thu phục lòng người.
+                Đang tải thông tin sách...
             </p>
 
             <div class="actions">
                 <input type="number" value="1" min="1" max="10" class="qty-input" id="qtyInput">
                 <a href="#" class="btn" onclick="addToCartFromDetails(event)">Yêu Cầu Mượn</a>
+                <a href="#" class="btn" id="cancelPreOrderBtn" onclick="handleCancelPreOrder(event)" style="display:none; background:#e74c3c;">Hủy Đặt Trước</a>
             </div>
 
             <div class="meta-info">
-                <p>Tác giả: <span id="metaAuthor">Dale Carnegie</span></p>
-                <p>Thể loại: <span id="metaCategory">Kỹ năng sống</span></p>
-                <p>Tình trạng: <span style="color:var(--green)" id="metaStatus">Còn hàng</span></p>
+                <p>Tác giả: <span id="metaAuthor">--</span></p>
+                <p>Thể loại: <span id="metaCategory">--</span></p>
+                <p>Tình trạng: <span style="color:var(--green)" id="metaStatus">--</span></p>
             </div>
         </div>
     </div>
@@ -101,161 +104,10 @@
 </section>
 
 <section class="footer">
-    <div class="credit"> created by <span>HungNguyen</span> | all rights reserved! </div>
+    <div class="credit"> created by <span>Nhóm 3</span> | all rights reserved! </div>
 </section>
 
 <script src="js/script.js"></script>
-<script>
-let currentBook = null;
+<script src="js/book-details.js"></script>
 
-// Load book details from URL parameter on page load
-document.addEventListener('DOMContentLoaded', function() {
-  const params = new URLSearchParams(window.location.search);
-  const bookId = parseInt(params.get('id'));
-  
-  if (!bookId) {
-    showNotification('⚠️ ID sách không hợp lệ', 'warning');
-    return;
-  }
-  
-  // Find book in database
-  currentBook = booksDatabase.find(b => b.id === bookId);
-  
-  if (!currentBook) {
-    showNotification('❌ Sách không tìm thấy', 'error');
-    return;
-  }
-  
-  // Populate book details
-  displayBookDetails();
-});
-
-function displayBookDetails() {
-  if (!currentBook) return;
-  
-  // Update title và thông tin cơ bản
-  document.getElementById('bookTitle').textContent = currentBook.name;
-  document.getElementById('bookAuthor').textContent = `Tác giả: ${currentBook.author}`;
-  document.getElementById('bookCategory').textContent = `Thể loại: ${currentBook.category}`;
-  document.getElementById('bookDescription').textContent = currentBook.description;
-  
-  // Update số lượng
-  const qtyElement = document.getElementById('bookQty');
-  qtyElement.textContent = currentBook.qty;
-  const qtyInput = document.getElementById('qtyInput');
-  qtyInput.max = Math.min(currentBook.qty, 10);
-  
-  // Update status
-  const status = currentBook.qty > 0 ? 'Còn hàng' : 'Hết hàng';
-  document.getElementById('metaStatus').textContent = status;
-  document.getElementById('metaStatus').style.color = currentBook.qty > 0 ? 'var(--green)' : 'var(--red)';
-  
-  // Update meta info
-  document.getElementById('metaAuthor').textContent = currentBook.author;
-  document.getElementById('metaCategory').textContent = currentBook.category;
-  
-  // Update image
-  document.getElementById('MainImg').src = currentBook.image;
-  document.getElementById('MainImg').alt = currentBook.name;
-  
-  // Update rating display
-  const ratingStars = document.getElementById('ratingStars');
-  let stars = '';
-  for (let i = 0; i < 5; i++) {
-    stars += `<i class="fas fa-star" style="color:${i < currentBook.rating ? 'var(--orange)' : '#ccc'};"></i>`;
-  }
-  ratingStars.innerHTML = stars + ' ';
-  
-  // Update review count
-  const relevantReviews = (JSON.parse(localStorage.getItem('reviews')) || []).filter(r => r.bookId === currentBook.id);
-  document.getElementById('reviewCount').textContent = `(${relevantReviews.length} đánh giá)`;
-  
-  // Disable borrow button if out of stock
-  const borrowBtn = document.querySelector('.actions .btn');
-  if (currentBook.qty <= 0) {
-    borrowBtn.style.opacity = '0.5';
-    borrowBtn.style.cursor = 'not-allowed';
-    borrowBtn.onclick = (e) => {
-      e.preventDefault();
-      showNotification('❌ Sách đã hết', 'error');
-    };
-  }
-}
-
-// Book details page specific functions
-function addToCartFromDetails(event) {
-  event.preventDefault();
-  
-  if (!currentBook) {
-    showNotification('⚠️ Lỗi: Không tìm thấy sách', 'warning');
-    return;
-  }
-  
-  if (currentBook.qty <= 0) {
-    showNotification('❌ Sách đã hết', 'error');
-    return;
-  }
-  
-  const qty = parseInt(document.getElementById('qtyInput').value) || 1;
-  
-  if (qty > currentBook.qty) {
-    showNotification(`⚠️ Chỉ còn ${currentBook.qty} quyển`, 'warning');
-    return;
-  }
-  
-  addToCart(currentBook.id, currentBook.name, 0, qty);
-  showNotification(`✓ Đã thêm ${qty} quyển "${currentBook.name}" vào giỏ`, 'success');
-}
-
-function submitReview(event) {
-  event.preventDefault();
-  
-  if (!currentBook) {
-    showNotification('⚠️ Lỗi: Không tìm thấy sách', 'warning');
-    return;
-  }
-  
-  const rating = document.querySelector('input[name="rate"]:checked');
-  const text = document.getElementById('reviewText').value;
-  const msg = document.getElementById('reviewMsg');
-  
-  if (!rating) {
-    msg.textContent = '⚠️ Vui lòng chọn số sao';
-    msg.style.color = 'orange';
-    return;
-  }
-  
-  if (!text.trim()) {
-    msg.textContent = '⚠️ Vui lòng viết đánh giá';
-    msg.style.color = 'orange';
-    return;
-  }
-  
-  let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  
-  if (!currentUser) {
-    msg.textContent = '⚠️ Vui lòng đăng nhập để đánh giá';
-    msg.style.color = 'orange';
-    return;
-  }
-  
-  reviews.push({
-    bookId: currentBook.id,
-    rating: parseInt(rating.value),
-    text: text,
-    date: new Date().toLocaleDateString('vi-VN'),
-    user: currentUser.name
-  });
-  
-  localStorage.setItem('reviews', JSON.stringify(reviews));
-  msg.textContent = '✓ Cảm ơn đánh giá của bạn!';
-  msg.style.color = 'green';
-  
-  document.querySelectorAll('input[name="rate"]').forEach(el => el.checked = false);
-  document.getElementById('reviewText').value = '';
-  
-  setTimeout(() => msg.textContent = '', 3000);
-}
-</script>
 </html>

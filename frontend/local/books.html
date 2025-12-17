@@ -3,69 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Sách - Thư viện HAB</title>
+    <link rel="icon" href="image/icon_text.png">
+    <title>Sách - HAB Lib</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-
-    <style>
-        /* CSS riêng cho trang danh sách sách để hiển thị dạng lưới */
-        .products .box-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
-            gap: 1.5rem;
-        }
-
-        .products .box-container .box {
-            border: var(--border);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            background: #fff;
-        }
-        
-        .products .box-container .box:hover {
-            border: var(--border-hover);
-        }
-
-        .products .box-container .box .image {
-            padding: 1rem;
-            background: linear-gradient(15deg, #eee 30%, #fff 30.1%);
-            height: 25rem;
-            overflow: hidden;
-        }
-
-        .products .box-container .box .image img {
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .products .box-container .box:hover .image img {
-            transform: scale(1.1);
-        }
-
-        .products .box-container .box .content {
-            padding: 1.5rem;
-        }
-
-        .products .box-container .box h3 {
-            font-size: 2rem;
-            color: var(--black);
-        }
-
-        .products .box-container .box .price {
-            font-size: 2.2rem;
-            color: var(--black);
-            padding-top: 1rem;
-        }
-
-        .products .box-container .box .price span {
-            font-size: 1.5rem;
-            color: var(--light-color);
-            text-decoration: line-through;
-            margin-left: 0.5rem;
-        }
-    </style>
+    <link rel="stylesheet" href="css/book.css">
 </head>
 <body>
 
@@ -89,9 +32,8 @@
     <div class="header-2">
         <nav class="navbar">
             <a href="index.html">trang chủ</a>
-            <a href="books.html" style="color:var(--green);">sách</a>
+            <a href="books.html">sách</a>
             <a href="index.html#reviews">đánh giá</a>
-            <a href="#blogs">Về chúng tôi</a>
         </nav>
     </div>
 </header>
@@ -102,7 +44,7 @@
 
 <section class="products" id="products">
 
-    <h1 class="heading"> <span>Kho Sách Của Chúng Tôi</span> </h1>
+    <h1 class="heading"> <span>Tất Cả Sách </span> </h1>
 
     <div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; margin-top: 2rem;">
         <!-- Sidebar Lọc -->
@@ -172,26 +114,38 @@ let filteredBooks = [...booksDatabase];
 
 function renderBooks() {
   const container = getElement('#booksContainer');
-  container.innerHTML = filteredBooks.map(book => `
+  container.innerHTML = filteredBooks.map(book => {
+    const isFav = favorites && Array.isArray(favorites) && favorites.includes(book.id);
+    const btnClass = isFav ? 'favor-btn liked' : 'favor-btn';
+    const iconClass = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+    return `
     <div class="box">
-      <div class="icons">
-        <a href="#" class="fas fa-search"></a>
-        <a href="#" class="fas fa-heart" onclick="addToFavorites(${book.id}, '${book.name}'); return false;"></a>
-        <a href="book-details.html?id=${book.id}" class="fas fa-eye"></a>
-      </div>
-      <div class="stock-badge" style="position:absolute; top:1rem; right:1rem; background:${book.qty > 0 ? '#27ae60' : '#e74c3c'}; color:white; padding:0.5rem 1rem; border-radius:0.3rem; font-size:0.85rem; z-index:10; font-weight:bold;">
-        Còn: ${book.qty}
-      </div>
       <div class="image"><img src="${book.image}" alt="${book.name}"></div>
       <div class="content">
         <h3>${book.name}</h3>
-        <p style="font-size:0.9rem; color:#666; margin:0.5rem 0;">Tác giả: ${book.author}</p>
-        <p style="font-size:0.85rem; color:#27ae60;">⭐ ${book.rating}/5</p>
-        <a href="book-details.html?id=${book.id}" class="btn">xem chi tiết</a>
+        <p style="font-size:1rem; font-weight:600; color:#27ae60; margin:0.3rem 0;">⭐ ${book.rating}/5 (${book.reviews} đánh giá)</p>
+        <div class="btn-row">
+          <a href="book-details.html?id=${book.id}" class="btn">Xem chi tiết</a>
+          <button
+            class="btn add-to-cart"
+            style="background:#3498db;"
+            title="Thêm vào giỏ"
+            aria-label="Thêm vào giỏ"
+            data-id="${book.id}"
+            data-name="${book.name}"
+            data-price="0">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </button>
+        </div>
+        <button title="Yêu thích" class="${btnClass}" onclick="handleHeartClick(this, ${book.id}, '${book.name}'); return false;" aria-label="Yêu thích" aria-pressed="${isFav? 'true':'false'}" style="margin-top:0.5rem;">
+          <i class="${iconClass}"></i>
+        </button>
       </div>
     </div>
-  `).join('');
+    `;
+  }).join('');
   getElement('#bookCount').textContent = filteredBooks.length;
+  bindAddToCartButtons();
 }
 
 function loadCategories() {
@@ -236,6 +190,37 @@ function resetFilters() {
   getElement('#sortSelect').value = 'name-asc';
   filteredBooks = [...booksDatabase];
   renderBooks();
+}
+
+// Heart click handler
+window.handleHeartClick = function(btn, id, name){
+  if (!btn) return;
+  addToFavorites(id, name);
+  const isNowFav = favorites && Array.isArray(favorites) && favorites.includes(Number(id));
+  if (isNowFav) {
+    btn.classList.add('liked');
+    btn.setAttribute('aria-pressed', 'true');
+    const icon = btn.querySelector('i'); 
+    if (icon) { icon.className = 'fa-solid fa-heart'; }
+  } else {
+    btn.classList.remove('liked');
+    btn.setAttribute('aria-pressed', 'false');
+    const icon = btn.querySelector('i'); 
+    if (icon) { icon.className = 'fa-regular fa-heart'; }
+  }
+};
+
+// Bind add to cart buttons
+function bindAddToCartButtons() {
+  document.querySelectorAll('.btn.add-to-cart').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const id = Number(btn.dataset.id);
+      const name = btn.dataset.name;
+      addToCart(id, name, 0, 1);
+      return false;
+    };
+  });
 }
 
 // Initialize

@@ -1178,6 +1178,8 @@ section{
     display: flex;
     gap: 1.5rem;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .book-details .qty-input {
@@ -1187,6 +1189,17 @@ section{
     font-size: 1.8rem;
     border-radius: .5rem;
     text-align: center;
+}
+
+/* Cancel pre-order button styling */
+#cancelPreOrderBtn {
+    transition: all .2s ease;
+}
+
+#cancelPreOrderBtn:hover {
+    background: #c0392b !important;
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.2);
 }
 
 /* Thông tin phụ */

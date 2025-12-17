@@ -1,7 +1,7 @@
 // Books Database (không dùng giá tiền, chỉ mượn)
 const booksDatabase = [
   { id: 1, name: "Đắc Nhân Tâm", author: "Dale Carnegie", category: "Kỹ năng sống", qty: 12, image: "image/book/dacnhantam.jpg", description: "Cuốn sách nổi tiếng nhất về nghệ thuật giao tiếp và thu phục lòng người.", rating: 4.5, reviews: 120 },
-  { id: 2, name: "Lãnh Đạo Khôn Ngoan", author: "Paulo Coelho", category: "Văn học", qty: 8, image: "image/book/lanhdaokhongoan.jpg", description: "Tiểu thuyết về hành trình tìm kiếm ước mơ của một chàng trai trẻ.", rating: 4.8, reviews: 95 },
+  { id: 2, name: "Lãnh Đạo Khôn Ngoan", author: "Paulo Coelho", category: "Văn học", qty: 0, image: "image/book/lanhdaokhongoan.jpg", description: "Tiểu thuyết về hành trình tìm kiếm ước mơ của một chàng trai trẻ.", rating: 4.8, reviews: 95 },
   { id: 3, name: "Nghĩ Lớn Để Thành Công", author: "Robert C. Martin", category: "Công nghệ", qty: 5, image: "image/book/nghilondethanhcong.jpg", description: "Hướng dẫn viết code sạch và chuyên nghiệp cho lập trình viên.", rating: 4.9, reviews: 180 },
   { id: 4, name: "Bí Quyết Trường Thọ", author: "Yuval Noah Harari", category: "Lịch sử", qty: 7, image: "image/book/biquyettruongtho.png", description: "Khám phá lịch sử nhân loại từ quá khứ đến hiện tại.", rating: 4.6, reviews: 150 },
   { id: 5, name: "Vượt Qua Giông Bão", author: "Napoleon Hill", category: "Kỹ năng sống", qty: 10, image: "image/book/vuotquadongbao-bia.jpg", description: "Bí mật của những người thành công trong kiếm tiền.", rating: 4.5, reviews: 110 },
