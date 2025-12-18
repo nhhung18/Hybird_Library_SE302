@@ -358,125 +358,36 @@
         </div>
 
         <div id="payment" class="section-content">
-          <!-- Tab buttons cho payment -->
-          <div class="payment-tabs">
-            <button class="payment-tab-btn active" onclick="switchPaymentTab('transactions', this)">
-              <i class="fas fa-list"></i> Giao dịch
-            </button>
-            <button class="payment-tab-btn" onclick="switchPaymentTab('fees', this)">
-              <i class="fas fa-cog"></i> Cấu hình phí
-            </button>
-            <button class="payment-tab-btn" onclick="switchPaymentTab('report', this)">
-              <i class="fas fa-chart-bar"></i> Báo cáo
-            </button>
-          </div>
-
-          <!-- TAB 1: Giao dịch -->
-          <div id="transactions-tab" class="payment-tab-content active">
-            <div class="table-container">
-              <div class="table-header">
-                <h3><i class="fa-solid fa-money-bill-1-wave"></i> Quản lý Thanh toán</h3>
-                <div class="table-controls">
-                  <button class="btn-add" onclick="openModal('paymentModal')">
-                    <i class="fas fa-plus"></i> Thêm hóa đơn
-                  </button>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table id="paymentTable">
-                  <thead>
-                    <tr>
-                      <th>Mã hóa đơn</th>
-                      <th>Độc giả</th>
-                      <th>Ngày lập</th>
-                      <th>Loại phí</th>
-                      <th>Chi tiết</th>
-                      <th>Số tiền</th>
-                      <th>Trạng thái</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colspan="8" class="no-data">Chưa có dữ liệu</td>
-                    </tr>
-                  </tbody>
-                </table>
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-solid fa-money-bill-1-wave"></i> Quản lý Thanh toán</h3>
+              <div class="table-controls">
+                <input type="text" id="paymentSearch" placeholder="🔍 Tìm kiếm theo tên độc giả, loại phí..." onkeyup="searchPayments()">
+                <button class="btn-add" onclick="openModal('paymentModal')">
+                  <i class="fas fa-plus"></i> Thêm hóa đơn
+                </button>
               </div>
             </div>
-          </div>
-
-          <!-- TAB 2: Cấu hình phí -->
-          <div id="fees-tab" class="payment-tab-content" style="display: none;">
-            <div class="table-container">
-              <div class="table-header">
-                <h3><i class="fas fa-cog"></i> Cấu hình các loại phí</h3>
-                <div class="table-controls">
-                  <button class="btn-add" onclick="openModal('feeConfigModal')">
-                    <i class="fas fa-plus"></i> Thêm loại phí
-                  </button>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table id="feeConfigTable">
-                  <thead>
-                    <tr>
-                      <th>Loại phí</th>
-                      <th>Mức phí</th>
-                      <th>Đơn vị</th>
-                      <th>Mô tả</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colspan="5" class="no-data">Chưa có dữ liệu</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- TAB 3: Báo cáo doanh thu -->
-          <div id="report-tab" class="payment-tab-content" style="display: none;">
-            <div class="report-container">
-              <div class="report-header">
-                <h3><i class="fas fa-chart-bar"></i> Báo cáo doanh thu</h3>
-                <div class="report-controls">
-                  <input type="date" id="reportFromDate" value="2024-12-01">
-                  <input type="date" id="reportToDate" value="2024-12-31">
-                  <button class="btn-add" onclick="generateReport()">
-                    <i class="fas fa-refresh"></i> Cập nhật
-                  </button>
-                </div>
-              </div>
-
-              <div class="report-grid">
-                <div class="report-card total">
-                  <h4>Tổng doanh thu</h4>
-                  <p id="total-revenue" class="report-value">0 ₫</p>
-                </div>
-                <div class="report-card paid">
-                  <h4>Đã thanh toán</h4>
-                  <p id="total-paid" class="report-value">0 ₫</p>
-                </div>
-                <div class="report-card unpaid">
-                  <h4>Chưa thanh toán</h4>
-                  <p id="total-unpaid" class="report-value">0 ₫</p>
-                </div>
-                <div class="report-card transactions">
-                  <h4>Số giao dịch</h4>
-                  <p id="total-transactions" class="report-value">0</p>
-                </div>
-              </div>
-
-              <div class="report-chart">
-                <h4>Chi tiết theo loại phí</h4>
-                <div id="fee-breakdown" class="fee-breakdown">
-                  <!-- Được điền bởi JavaScript -->
-                </div>
-              </div>
+            <div class="table-responsive">
+              <table id="paymentTable">
+                <thead>
+                  <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Độc giả</th>
+                    <th>Ngày lập</th>
+                    <th>Loại phí</th>
+                    <th>Chi tiết</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="8" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -870,39 +781,79 @@
       </div>
     </div>
 
-    <div class="modal" id="feeConfigModal">
+    <!-- Confirm Payment Modal -->
+    <div class="modal" id="confirmPaymentModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>Cấu hình loại phí</h3>
-          <span class="close-btn" onclick="closeModal('feeConfigModal')">&times;</span>
+          <h3>Xác Nhận Thanh Toán</h3>
+          <span class="close-btn" onclick="closeModal('confirmPaymentModal')">&times;</span>
         </div>
-        <form onsubmit="handleFormSubmit(event, 'feeConfig')">
-          <div class="form-group">
-            <label>Loại phí<span style="color: red">*</span></label>
-            <input type="text" id="feeType" required />
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn xác nhận thanh toán cho hóa đơn này?</p>
+          <div class="payment-details">
+            <p><strong>Mã hóa đơn:</strong> <span id="confirmPaymentId"></span></p>
+            <p><strong>Độc giả:</strong> <span id="confirmReaderName"></span></p>
+            <p><strong>Số tiền:</strong> <span id="confirmAmount"></span></p>
           </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="executeConfirmPayment()">Xác nhận</button>
+          <button class="btn-cancel" onclick="closeModal('confirmPaymentModal')">Hủy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancel Payment Modal -->
+    <div class="modal" id="cancelPaymentModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Hủy Giao Dịch</h3>
+          <span class="close-btn" onclick="closeModal('cancelPaymentModal')">&times;</span>
+        </div>
+        <form onsubmit="executeCancelPayment(event)">
           <div class="form-group">
-            <label>Mức phí<span style="color: red">*</span></label>
-            <input type="number" id="feeRate" required />
+            <label>Lý do hủy<span style="color: red">*</span></label>
+            <textarea id="cancelReason" placeholder="Nhập lý do hủy giao dịch..." required style="min-height: 80px;"></textarea>
           </div>
-          <div class="form-group">
-            <label>Đơn vị<span style="color: red">*</span></label>
-            <select id="feeUnit" required>
-              <option value="đồng">đồng</option>
-              <option value="đồng/ngày">đồng/ngày</option>
-              <option value="đồng/trang">đồng/trang</option>
-              <option value="đồng/giờ">đồng/giờ</option>
-              <option value="%">%</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Mô tả<span style="color: red">*</span></label>
-            <input type="text" id="feeDescription" required />
+          <div class="payment-details">
+            <p><strong>Mã hóa đơn:</strong> <span id="cancelPaymentId"></span></p>
+            <p><strong>Độc giả:</strong> <span id="cancelReaderName"></span></p>
+            <p><strong>Số tiền:</strong> <span id="cancelAmount"></span></p>
           </div>
           <div class="form-actions">
-            <button type="submit" class="btn-save">Lưu lại</button>
+            <button type="submit" class="btn-save">Hủy giao dịch</button>
+            <button type="button" class="btn-cancel" onclick="closeModal('cancelPaymentModal')">Đóng</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Export Invoice Modal -->
+    <div class="modal" id="exportInvoiceModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Xuất Hóa Đơn</h3>
+          <span class="close-btn" onclick="closeModal('exportInvoiceModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div class="invoice-preview">
+            <div class="invoice-header">
+              <h2>BIÊN LAI THANH TOÁN</h2>
+              <p>Thư viện HAB</p>
+            </div>
+            <div class="invoice-details" id="invoiceDetails">
+              <!-- Được điền bởi JavaScript -->
+            </div>
+            <div class="invoice-footer">
+              <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="printInvoice()">In hóa đơn</button>
+          <button class="btn-cancel" onclick="downloadInvoiceAsPDF()">Tải PDF</button>
+          <button class="btn-cancel" onclick="closeModal('exportInvoiceModal')">Đóng</button>
+        </div>
       </div>
     </div>
 

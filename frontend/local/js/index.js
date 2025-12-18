@@ -1,161 +1,286 @@
-// // Mock featured books dataset (with display fields)
-// const booksDatabase = [
-//   { id: 1, name: 'Nghĩ lớn để thành công', author: 'Donald Trump', image: 'image/book/nghilondethanhcong.jpg', qty: 10, rating: 5.0, reviews: 615},
-//   { id: 2, name: 'Lãnh đạo khôn ngoan', author: 'KITA BOOKS', image: 'image/book/lanhdaokhongoan.jpg', qty: 5, rating: 3.6, reviews: 120},
-//   { id: 3, name: 'Tư duy làm giàu', author: 'KITA BOOKS', image: 'image/book/tuduylamgiau.jpg', qty: 2, rating: 4.4, reviews: 67},
-//   { id: 4, name: 'Đắc Nhân Tâm', author: 'Dale Carnegie', image: 'image/book/dacnhantam.jpg', qty: 0, rating: 4.8, reviews: 500}
-// ];
-// // favorites persisted in localStorage (array of ids)
-// let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-// if (!Array.isArray(favorites)) favorites = [];
-// // simple cart store
-// let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-// if (!Array.isArray(cart)) cart = [];
+// ==========================================
+// QL GIỎ SÁCH - BOOK CART MANAGEMENT
+// ==========================================
 
-// function addToFavorites(id) {
-//   const book = booksDatabase.find(b => b.id === id);
-//   if (!book) return;
-//   const idx = favorites.indexOf(id);
-//   if (idx === -1) {
-//     favorites.push(id);
-//     Swal.fire({toast: true, position: 'top-end', icon: 'success', title: `Đã thêm vào yêu thích: ${book.name}`, showConfirmButton: false, timer: 1200});
-//   } else {
-//     favorites.splice(idx, 1);
-//     Swal.fire({toast: true, position: 'top-end', icon: 'info', title: `Đã bỏ yêu thích: ${book.name}`, showConfirmButton: false, timer: 1200});
-//   }
-//   try{ localStorage.setItem('favorites', JSON.stringify(favorites)); }catch(e){}
-//   renderFeaturedBooks();
-// }
+// Load cart from localStorage
+let cart = [];
 
-// function removeFavorite(id){
-//   favorites.delete(id);
-//   try{ localStorage.setItem('favorites', JSON.stringify(Array.from(favorites))); }catch(e){}
-//   renderFeaturedBooks();
-// }
+function loadCart() {
+  try {
+    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (!Array.isArray(cart)) cart = [];
+  } catch (e) {
+    cart = [];
+  }
+}
 
-// function showWishlist(){
-//   if (!favorites || favorites.size === 0){
-//     Swal.fire('Danh sách yêu thích trống');
-//     return;
-//   }
-//   const items = booksDatabase.filter(b => favorites.has(b.id)).map(b => `
-//     <div class="swal-wishlist-item">
-//       <img src="${b.image}" alt="${b.name}" class="swal-wishlist-thumb" />
-//       <div class="swal-wishlist-main">
-//         <div class="swal-wishlist-title">${b.name}</div>
-//       </div>
-//       <div class="swal-wishlist-actions">
-//         <a href="book-details.html?id=${b.id}" class="swal-btn view">Xem</a>
-//         <button class="swal-btn remove" onclick="removeFavorite(${b.id}); Swal.close(); return false;">Xóa</button>
-//       </div>
-//     </div>
-//   `).join('');
-//   Swal.fire({
-//     title: 'Yêu thích của bạn',
-//     html: `<div style="text-align:left; max-height:300px; overflow:auto;">${items}</div>`,
-//     width: 600
-//   });
-// }
+function saveCart() {
+  try {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  } catch (e) {
+    console.error('Error saving cart:', e);
+  }
+}
 
-// function addToCart(id, name, price = 0, qty = 1) {
-//   const book = booksDatabase.find(b => b.id === id);
-//   const itemName = name || (book && book.name) || `Sách ${id}`;
-//   const idx = cart.findIndex(c => c.id === id);
-//   if (idx >= 0) {
-//     cart[idx].qty += qty;
-//   } else {
-//     cart.push({ id, name: itemName, qty, price });
-//   }
-//   try { localStorage.setItem('cart', JSON.stringify(cart)); } catch(e) {}
-//   // toast feedback using SweetAlert2 if available, else alert fallback
-//   if (window.Swal && Swal.fire) {
-//     Swal.fire({
-//       toast: true,
-//       position: 'top-end',
-//       icon: 'success',
-//       title: `Đã thêm "${itemName}" vào giỏ`,
-//       showConfirmButton: false,
-//       timer: 1400
-//     });
-//   } else {
-//     alert(`Đã thêm "${itemName}" vào giỏ`);
-//   }
-// }
+function updateCartBadge() {
+  const badge = document.getElementById('cart-count');
+  if (badge) {
+    const totalBooks = cart.reduce((sum, item) => sum + item.qty, 0);
+    badge.innerText = totalBooks;
+    badge.style.display = totalBooks > 0 ? 'inline-block' : 'none';
+  }
+}
 
-// // Render featured books on page load
-// function renderFeaturedBooks() {
-//   const wrapper = document.getElementById('featuredBooksWrapper');
-//   if (!wrapper) return;
-//   // simplified card: image, title, rating, borrow button
-//   wrapper.innerHTML = booksDatabase.map(book => {
-//     const isFav = favorites && Array.isArray(favorites) && favorites.includes(book.id);
-//     const btnClass = isFav ? 'favor-btn liked' : 'favor-btn';
-//     const iconClass = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-//     return `
-//     <div class="swiper-slide box product-card">
-//       <div class="image">
-//         <a href="book-details.html?id=${book.id}">
-//           <img src="${book.image}" alt="${book.name}">
-//         </a>
-//       </div>
-//       <div class="content">
-//         <h3 class="title">${book.name}</h3>
-//         <div class="rating" style="font-size:1.05rem; font-weight:600;">⭐ ${book.rating} (${book.reviews})</div>
-//         <div class="btn-row">
-//           <a href="book-details.html?id=${book.id}" class="btn borrow-btn">Xem chi tiết</a>
-//           <button
-//             class="btn add-to-cart"
-//             title="Thêm vào giỏ"
-//             aria-label="Thêm vào giỏ"
-//             data-id="${book.id}"
-//             data-name="${book.name}"
-//             data-price="0">
-//             <i class="fa-solid fa-cart-shopping"></i>
-//           </button>
-//         </div>
-//         <button title="Yêu thích" class="${btnClass}" onclick="handleHeartClick(this, ${book.id}); return false;" aria-label="Yêu thích" aria-pressed="${isFav? 'true':'false'}" style="margin-top:0.5rem;">
-//           <i class="${iconClass}"></i>
-//         </button>
-//       </div>
-//     </div>
-//     `;
-//   }).join('');
-
-//   window.handleHeartClick = function(btn, id){
-//     if (!btn) return;
-//     addToFavorites(id);
-//     const isNowFav = favorites && Array.isArray(favorites) && favorites.includes(id);
-//     const icon = btn.querySelector('i');
-//     if (isNowFav) {
-//       btn.classList.add('liked'); if (icon) icon.className = 'fa-solid fa-heart';
-//     } else {
-//       btn.classList.remove('liked'); if (icon) icon.className = 'fa-regular fa-heart';
-//     }
-//   };
+// ==========================================
+// 1. XEM SÁCH TRONG GIỎ (View Cart)
+// ==========================================
+function renderCart() {
+  const cartItemsDiv = document.getElementById('cartItems');
+  const cartFooter = document.getElementById('cartFooter');
   
-//   // Reinitialize Swiper after rendering
-//   setTimeout(() => {
-//     try{
-//       if (window.featuredSwiper && typeof window.featuredSwiper.update === 'function') window.featuredSwiper.update();
-//     }catch(e){/* ignore */}
-//   }, 100);
-// }
+  if (!cartItemsDiv) return;
+  
+  if (cart.length === 0) {
+    cartItemsDiv.innerHTML = '<p style="text-align:center; padding:2rem; color: #999;">📚 Giỏ sách trống</p>';
+    if (cartFooter) cartFooter.style.display = 'none';
+    updateCartBadge();
+    return;
+  }
+  
+  const html = `
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Tên Sách</th>
+          <th>Số Lượng</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${cart.map((item, idx) => `
+          <tr class="cart-item-row">
+            <td class="book-name">${item.name}</td>
+            <td class="quantity-cell">
+              <div class="quantity-control">
+                <button class="qty-btn" onclick="updateQuantity(${idx}, -1)" title="Giảm">−</button>
+                <input type="number" value="${item.qty}" min="1" max="10" onchange="setQuantity(${idx}, this.value)" class="qty-input" />
+                <button class="qty-btn" onclick="updateQuantity(${idx}, 1)" title="Tăng">+</button>
+              </div>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-remove" onclick="removeFromCart(${idx})" title="Xóa">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+  
+  cartItemsDiv.innerHTML = html;
+  if (cartFooter) cartFooter.style.display = 'block';
+  updateCartBadge();
+}
 
-// // helper: format price number to VND style
-// function formatPrice(n){
-//   if (!n && n !== 0) return '';
-//   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
-// }
+// ==========================================
+// 2. CẬP NHẬT SỐ LƯỢNG (Update Quantity)
+// ==========================================
+function updateQuantity(idx, delta) {
+  if (idx < 0 || idx >= cart.length) return;
+  const newQty = cart[idx].qty + delta;
+  if (newQty >= 1 && newQty <= 10) {
+    cart[idx].qty = newQty;
+    saveCart();
+    renderCart();
+  }
+}
 
-// // Initialize featured books on DOMContentLoaded
-// if (document.readyState === 'loading') {
-//   document.addEventListener('DOMContentLoaded', function(){
-//     renderFeaturedBooks();
-//     const wb = document.getElementById('wishlist-btn');
-//     if (wb) wb.addEventListener('click', showWishlist);
-//   });
-// } else {
-//   renderFeaturedBooks();
-//   const wb = document.getElementById('wishlist-btn');
-//   if (wb) wb.addEventListener('click', showWishlist);
-// }
+function setQuantity(idx, value) {
+  if (idx < 0 || idx >= cart.length) return;
+  const qty = parseInt(value, 10);
+  if (qty >= 1 && qty <= 10) {
+    cart[idx].qty = qty;
+    saveCart();
+    renderCart();
+  }
+}
+
+// ==========================================
+// 3. XÓA SÁCH TRONG GIỎ (Remove from Cart)
+// ==========================================
+function removeFromCart(idx) {
+  if (idx < 0 || idx >= cart.length) return;
+  
+  const bookName = cart[idx].name;
+  
+  Swal.fire({
+    title: 'Xóa sách?',
+    text: `Bạn có chắc muốn xóa "${bookName}" khỏi giỏ?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#27ae60',
+    cancelButtonColor: '#999',
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      cart.splice(idx, 1);
+      saveCart();
+      renderCart();
+      Swal.fire({
+        icon: 'success',
+        title: 'Đã xóa!',
+        text: `"${bookName}" đã được xóa khỏi giỏ`,
+        timer: 1500
+      });
+    }
+  });
+}
+
+// ==========================================
+// 4. YÊU CẦU MƯỢN SÁCH (Submit Borrow Request)
+// ==========================================
+function submitBorrowRequest() {
+  if (cart.length === 0) {
+    Swal.fire('Lỗi', 'Giỏ sách trống!', 'error');
+    return;
+  }
+  
+  // Get current user
+  let currentUser = null;
+  try {
+    const userStr = localStorage.getItem('currentUser');
+    currentUser = userStr ? JSON.parse(userStr) : null;
+  } catch (e) {}
+  
+  if (!currentUser || !currentUser.id) {
+    Swal.fire({
+      title: 'Chưa đăng nhập',
+      text: 'Vui lòng đăng nhập để yêu cầu mượn sách',
+      icon: 'warning',
+      confirmButtonColor: '#27ae60'
+    });
+    return;
+  }
+  
+  // Prepare borrow data
+  const totalBooks = cart.reduce((sum, item) => sum + item.qty, 0);
+  const borrowData = {
+    readerId: currentUser.id,
+    readerName: currentUser.fullName || 'Unknown',
+    items: [...cart],
+    totalBooks: totalBooks,
+    requestDate: new Date().toISOString().split('T')[0],
+    status: 'Chờ duyệt',
+    notes: ''
+  };
+  
+  // Save to preOrders or borrowRequests
+  let preOrders = [];
+  try {
+    const stored = localStorage.getItem('preOrders');
+    preOrders = stored ? JSON.parse(stored) : [];
+  } catch (e) {}
+  
+  if (!Array.isArray(preOrders)) preOrders = [];
+  
+  const newOrder = {
+    id: 'BO' + Date.now(),
+    ...borrowData
+  };
+  
+  preOrders.push(newOrder);
+  try {
+    localStorage.setItem('preOrders', JSON.stringify(preOrders));
+  } catch (e) {}
+  
+  // Clear cart and close modal
+  cart = [];
+  saveCart();
+  renderCart();
+  closeCart();
+  
+  Swal.fire({
+    icon: 'success',
+    title: 'Gửi Thành Công!',
+    html: `<p>Yêu cầu mượn đã được gửi đến thư viện</p>
+           <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+             📋 <strong>Mã yêu cầu:</strong> ${newOrder.id}<br/>
+             📚 <strong>Số sách:</strong> ${totalBooks}<br/>
+             ⏳ <strong>Trạng thái:</strong> Chờ duyệt
+           </p>
+           <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+             Thủ thư sẽ xem xét và phê duyệt trong vòng 24 giờ
+           </p>`,
+    confirmButtonColor: '#27ae60'
+  });
+}
+
+// ==========================================
+// CART MODAL FUNCTIONS
+// ==========================================
+function openCart() {
+  const modal = document.getElementById('cartModal');
+  if (modal) {
+    modal.classList.add('active');
+    renderCart();
+  }
+}
+
+function closeCart() {
+  const modal = document.getElementById('cartModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+// ==========================================
+// ADD TO CART (from other pages)
+// ==========================================
+function addToCart(id, name, qty = 1) {
+  const idx = cart.findIndex(item => item.id === id);
+  if (idx >= 0) {
+    cart[idx].qty += qty;
+  } else {
+    cart.push({ id, name, qty });
+  }
+  saveCart();
+  updateCartBadge();
+  
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: `✓ Thêm vào giỏ: ${name}`,
+    showConfirmButton: false,
+    timer: 1200
+  });
+}
+
+// ==========================================
+// INITIALIZE ON PAGE LOAD
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+  loadCart();
+  updateCartBadge();
+  
+  // Bind cart button
+  const cartBtn = document.getElementById('cart-btn');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      openCart();
+    });
+  }
+  
+  // Bind close on modal overlay click
+  const cartModal = document.getElementById('cartModal');
+  if (cartModal) {
+    cartModal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeCart();
+      }
+    });
+  }
+});

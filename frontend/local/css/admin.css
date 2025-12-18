@@ -252,8 +252,16 @@ body {
 }
 
 /* Make the control visually stand out on the header */
-.table-controls { padding: .6rem; border-radius: .6rem; background: rgba(39,174,96,0.06); }
-.table-controls .btn-add { margin-left: .6rem; }
+.table-controls { 
+  padding: .6rem; 
+  border-radius: .6rem; 
+  background: rgba(39,174,96,0.06);
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.table-controls .btn-add { margin-left: 0; flex-shrink: 0; }
 
 .btn-add {
     background: var(--green);
@@ -264,6 +272,168 @@ body {
     cursor: pointer;
 }
 .btn-add:hover { background: var(--dark-green); }
+
+/* Payment Search Input */
+#paymentSearch {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.4rem;
+  border: 2px solid #ddd;
+  border-radius: 0.5rem;
+  flex: 1;
+  max-width: 400px;
+  transition: all 0.3s ease;
+}
+
+#paymentSearch:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 8px rgba(39, 174, 96, 0.2);
+  outline: none;
+}
+
+/* Payment Action Buttons */
+.btn-confirm, .btn-cancel-payment, .btn-export {
+  padding: 0.6rem 1.2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 0.3rem;
+  font-weight: 500;
+}
+
+.btn-confirm {
+  background: var(--green);
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: var(--dark-green);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.btn-cancel-payment {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-cancel-payment:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.btn-export {
+  background: #3498db;
+  color: white;
+}
+
+.btn-export:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-cancel {
+  background: #95a5a6;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+}
+
+.btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+/* Invoice Modal Styling */
+.invoice-preview {
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 0.8rem;
+  padding: 2rem;
+  margin: 1rem 0;
+  font-family: Arial, sans-serif;
+}
+
+.invoice-header {
+  text-align: center;
+  border-bottom: 3px solid var(--green);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.invoice-header h2 {
+  margin: 0;
+  color: var(--green);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.invoice-header p {
+  margin: 0.5rem 0 0 0;
+  color: #666;
+}
+
+.invoice-details {
+  margin: 2rem 0;
+}
+
+.invoice-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 1.3rem;
+}
+
+.invoice-row span:first-child {
+  color: #666;
+  font-weight: 500;
+}
+
+.invoice-row span:last-child {
+  font-weight: bold;
+  color: #333;
+}
+
+.invoice-footer {
+  text-align: center;
+  padding: 2rem 0;
+  border-top: 2px solid #f1f1f1;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+/* Modal Enhancements */
+.modal-body {
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.modal-body p {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.payment-details {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid var(--green);
+  margin-top: 1rem;
+}
+
+.payment-details p {
+  margin: 0.8rem 0;
+  font-size: 1.3rem;
+}
 
 .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 /* allow tables to shrink below 600px and wrap content instead of forcing page overflow */

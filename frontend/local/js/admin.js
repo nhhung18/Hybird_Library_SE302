@@ -665,6 +665,22 @@ function renderEmployeeTable(data = employeesData) {
     data.forEach(item => {
       const statusClass = item.status === 'Đã thanh toán' ? 'status-paid' : 'status-unpaid';
       const typeColor = getTypeColor(item.type);
+      const isUnpaid = item.status === 'Chưa thanh toán';
+      
+      let actionButtons = '';
+      if (isUnpaid) {
+        actionButtons = `
+          <button class="btn-confirm" onclick="openConfirmPaymentModal('${item.id}', '${escapeHtml(item.readerName)}', '${item.amount}')">✓ Xác nhận</button>
+          <button class="btn-cancel-payment" onclick="openCancelPaymentModal('${item.id}', '${escapeHtml(item.readerName)}', '${item.amount}')">✕ Hủy</button>
+          <button class="btn-export" onclick="openExportInvoiceModal('${item.id}')">📄 Xuất</button>
+        `;
+      } else {
+        actionButtons = `
+          <button class="btn-export" onclick="openExportInvoiceModal('${item.id}')">📄 Xuất</button>
+          <button class="btn-delete" data-id="${item.id}" data-type="payment">Xóa</button>
+        `;
+      }
+      
       tbody.innerHTML += `
         <tr>
           <td><strong>${item.id}</strong></td>
@@ -674,7 +690,7 @@ function renderEmployeeTable(data = employeesData) {
           <td>${escapeHtml(item.description)}</td>
           <td><strong>${item.amount.toLocaleString('vi-VN')} ₫</strong></td>
           <td><span class="status-badge ${statusClass}">${item.status}</span></td>
-          <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="payment">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="payment">Xóa</button></td>
+          <td class="action-icons">${actionButtons}</td>
         </tr>`;
     });
     attachEditDeleteEvents('payment');
@@ -930,25 +946,6 @@ function renderEmployeeTable(data = employeesData) {
       return;
     }
 
-    if (type === 'feeConfig') {
-      const feeType = document.getElementById('feeType').value.trim();
-      const rate = document.getElementById('feeRate').value;
-      const unit = document.getElementById('feeUnit').value.trim();
-      const description = document.getElementById('feeDescription').value.trim();
-      
-      feeConfigData.push({
-        id: 'FC' + Date.now(),
-        type: feeType,
-        rate: parseFloat(rate),
-        unit: unit,
-        description: description
-      });
-      try{ closeModal('feeConfigModal'); }catch(e){}
-      renderFeeConfigTable();
-      Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Thêm loại phí thành công', timer: 1500 });
-      return;
-    }
-
     if (type === 'shift') {
       const empId = document.getElementById('shiftEmpId').value.trim();
       const date = document.getElementById('shiftDate').value;
@@ -1057,8 +1054,6 @@ function deleteItem(type, id) {
     shiftData = shiftData.filter((x) => x.id !== id);
   if (type === "card")
     readerCardData = readerCardData.filter((x) => x.id !== id);
-  if (type === "feeConfig")
-    feeConfigData = feeConfigData.filter((x) => x.id !== id);
   if (type === "attendance")
     attendanceData = attendanceData.filter((x) => x.id !== id);
 
@@ -1090,112 +1085,17 @@ function closeModal(modalId) {
   document.getElementById(modalId).classList.remove("active");
 }
 
-// --- PAYMENT MODULE FUNCTIONS ---
-function switchPaymentTab(tabName, btn) {
-  // Hide all tabs
-  document.querySelectorAll('.payment-tab-content').forEach(tab => {
-    tab.style.display = 'none';
-  });
-  
-  // Remove active class from buttons
-  document.querySelectorAll('.payment-tab-btn').forEach(b => {
-    b.classList.remove('active');
-  });
-  
-  // Show selected tab
-  const tabElement = document.getElementById(tabName + '-tab');
-  if (tabElement) {
-    tabElement.style.display = 'block';
-    btn.classList.add('active');
-    
-    // Load data cho tab
-    if (tabName === 'fees') {
-      renderFeeConfigTable(feeConfigData);
-    } else if (tabName === 'report') {
-      generateReport();
-    }
-  }
-}
+// --- PAYMENT MANAGEMENT NEW FUNCTIONS ---
 
-function renderFeeConfigTable(data = feeConfigData) {
-  const tbody = document.querySelector('#feeConfigTable tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-  
-  if (!Array.isArray(data) || data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="no-data">Chưa có dữ liệu</td></tr>`;
-    return;
-  }
-  
-  data.forEach(item => {
-    tbody.innerHTML += `
-      <tr>
-        <td><strong>${escapeHtml(item.type)}</strong></td>
-        <td>${item.rate.toLocaleString('vi-VN')}</td>
-        <td>${item.unit}</td>
-        <td>${escapeHtml(item.description)}</td>
-        <td class="action-icons">
-          <button class="btn-edit" data-id="${item.id}" data-type="feeConfig">Sửa</button>
-          <button class="btn-delete" data-id="${item.id}" data-type="feeConfig">Xóa</button>
-        </td>
-      </tr>`;
-  });
-  attachEditDeleteEvents('feeConfig');
-}
-
-function generateReport() {
-  const fromDate = document.getElementById('reportFromDate').value;
-  const toDate = document.getElementById('reportToDate').value;
-  
-  // Filter data theo ngày
-  const filteredData = paymentData.filter(item => {
-    return item.date >= fromDate && item.date <= toDate;
-  });
-  
-  // Tính toán các chỉ số
-  const totalPaid = filteredData
-    .filter(item => item.status === 'Đã thanh toán')
-    .reduce((sum, item) => sum + item.amount, 0);
-  
-  const totalUnpaid = filteredData
-    .filter(item => item.status === 'Chưa thanh toán')
-    .reduce((sum, item) => sum + item.amount, 0);
-  
-  const totalRevenue = totalPaid + totalUnpaid;
-  
-  // Hiển thị kết quả
-  document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString('vi-VN') + ' ₫';
-  document.getElementById('total-paid').textContent = totalPaid.toLocaleString('vi-VN') + ' ₫';
-  document.getElementById('total-unpaid').textContent = totalUnpaid.toLocaleString('vi-VN') + ' ₫';
-  document.getElementById('total-transactions').textContent = filteredData.length;
-  
-  // Chi tiết theo loại phí
-  const feeBreakdown = {};
-  filteredData.forEach(item => {
-    if (!feeBreakdown[item.type]) {
-      feeBreakdown[item.type] = { amount: 0, count: 0 };
-    }
-    feeBreakdown[item.type].amount += item.amount;
-    feeBreakdown[item.type].count += 1;
-  });
-  
-  // Render breakdown
-  const breakdownHtml = Object.entries(feeBreakdown).map(([type, data]) => `
-    <div class="breakdown-item">
-      <div class="breakdown-header">
-        <span class="breakdown-type">${escapeHtml(type)}</span>
-        <span class="breakdown-count">${data.count} giao dịch</span>
-      </div>
-      <div class="breakdown-bar">
-        <div class="breakdown-fill" style="width: ${(data.amount / totalRevenue * 100) || 0}%"></div>
-      </div>
-      <div class="breakdown-footer">
-        <span>${data.amount.toLocaleString('vi-VN')} ₫</span>
-      </div>
-    </div>
-  `).join('');
-  
-  document.getElementById('fee-breakdown').innerHTML = breakdownHtml || '<p class="no-data">Không có dữ liệu</p>';
+// 1. Search Payment
+function searchPayments() {
+  const searchTerm = document.getElementById('paymentSearch').value.toLowerCase();
+  const filteredData = paymentData.filter(item => 
+    item.readerName.toLowerCase().includes(searchTerm) || 
+    item.type.toLowerCase().includes(searchTerm) ||
+    item.id.toLowerCase().includes(searchTerm)
+  );
+  renderPaymentTable(filteredData);
 }
 
 // helper to escape html when inserting into title attribute
@@ -1209,6 +1109,169 @@ function escapeHtml(str) {
       "'": "&#39;",
     }[s];
   });
+}
+
+// --- PAYMENT MANAGEMENT NEW FUNCTIONS ---
+
+// 1. Search Payment
+function searchPayments() {
+  const searchTerm = document.getElementById('paymentSearch').value.toLowerCase();
+  const filteredData = paymentData.filter(item => 
+    item.readerName.toLowerCase().includes(searchTerm) || 
+    item.type.toLowerCase().includes(searchTerm) ||
+    item.id.toLowerCase().includes(searchTerm)
+  );
+  renderPaymentTable(filteredData);
+}
+
+// 2. Confirm Payment - Open Modal
+function openConfirmPaymentModal(paymentId, readerName, amount) {
+  document.getElementById('confirmPaymentId').innerText = paymentId;
+  document.getElementById('confirmReaderName').innerText = readerName;
+  document.getElementById('confirmAmount').innerText = amount.toLocaleString('vi-VN') + ' ₫';
+  document.getElementById('confirmPaymentModal').dataset.paymentId = paymentId;
+  openModal('confirmPaymentModal');
+}
+
+// Execute Confirm Payment
+function executeConfirmPayment() {
+  const paymentId = document.getElementById('confirmPaymentModal').dataset.paymentId;
+  const paymentIndex = paymentData.findIndex(p => p.id === paymentId);
+  if (paymentIndex !== -1) {
+    paymentData[paymentIndex].status = 'Đã thanh toán';
+    closeModal('confirmPaymentModal');
+    renderPaymentTable();
+    Swal.fire({
+      icon: 'success',
+      title: 'Thành công!',
+      text: 'Xác nhận thanh toán thành công',
+      timer: 1500
+    });
+  }
+}
+
+// 3. Cancel Payment - Open Modal
+function openCancelPaymentModal(paymentId, readerName, amount) {
+  document.getElementById('cancelPaymentId').innerText = paymentId;
+  document.getElementById('cancelReaderName').innerText = readerName;
+  document.getElementById('cancelAmount').innerText = amount.toLocaleString('vi-VN') + ' ₫';
+  document.getElementById('cancelReason').value = '';
+  document.getElementById('cancelPaymentModal').dataset.paymentId = paymentId;
+  openModal('cancelPaymentModal');
+}
+
+// Execute Cancel Payment
+function executeCancelPayment(event) {
+  event.preventDefault();
+  const paymentId = document.getElementById('cancelPaymentModal').dataset.paymentId;
+  const reason = document.getElementById('cancelReason').value.trim();
+  
+  const paymentIndex = paymentData.findIndex(p => p.id === paymentId);
+  if (paymentIndex !== -1 && reason) {
+    paymentData.splice(paymentIndex, 1);
+    closeModal('cancelPaymentModal');
+    renderPaymentTable();
+    Swal.fire({
+      icon: 'success',
+      title: 'Thành công!',
+      text: 'Hủy giao dịch thành công\nLý do: ' + reason,
+      timer: 1500
+    });
+  } else {
+    alert('Vui lòng nhập lý do hủy');
+  }
+}
+
+// 4. Export Invoice - Open Modal
+function openExportInvoiceModal(paymentId) {
+  const payment = paymentData.find(p => p.id === paymentId);
+  if (payment) {
+    const invoiceHTML = `
+      <div class="invoice-row">
+        <span>Mã hóa đơn:</span>
+        <span><strong>${payment.id}</strong></span>
+      </div>
+      <div class="invoice-row">
+        <span>Độc giả:</span>
+        <span>${escapeHtml(payment.readerName)}</span>
+      </div>
+      <div class="invoice-row">
+        <span>Ngày lập:</span>
+        <span>${payment.date}</span>
+      </div>
+      <div class="invoice-row">
+        <span>Loại phí:</span>
+        <span>${escapeHtml(payment.type)}</span>
+      </div>
+      <div class="invoice-row">
+        <span>Chi tiết:</span>
+        <span>${escapeHtml(payment.description)}</span>
+      </div>
+      <div class="invoice-row">
+        <span>Phương thức:</span>
+        <span>${escapeHtml(payment.method)}</span>
+      </div>
+      <div class="invoice-row" style="border-top: 2px solid #27ae60; padding-top: 10px; margin-top: 10px;">
+        <span><strong>Tổng tiền:</strong></span>
+        <span><strong>${payment.amount.toLocaleString('vi-VN')} ₫</strong></span>
+      </div>
+      <div class="invoice-row">
+        <span>Trạng thái:</span>
+        <span><strong style="color: ${payment.status === 'Đã thanh toán' ? '#27ae60' : '#e74c3c'}">${payment.status}</strong></span>
+      </div>
+    `;
+    document.getElementById('invoiceDetails').innerHTML = invoiceHTML;
+    document.getElementById('exportInvoiceModal').dataset.paymentId = paymentId;
+    openModal('exportInvoiceModal');
+  }
+}
+
+// Print Invoice
+function printInvoice() {
+  const printContent = document.querySelector('.invoice-preview').innerHTML;
+  const printWindow = window.open('', '', 'width=800,height=600');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>In Biên Lai</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          .invoice-header { text-align: center; margin-bottom: 20px; }
+          .invoice-header h2 { margin: 0; color: #27ae60; }
+          .invoice-details { margin: 20px 0; }
+          .invoice-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+          .invoice-footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>${printContent}</body>
+    </html>
+  `);
+  printWindow.document.close();
+  setTimeout(() => printWindow.print(), 250);
+}
+
+// Download Invoice as PDF
+function downloadInvoiceAsPDF() {
+  const payment = paymentData.find(p => p.id === document.getElementById('exportInvoiceModal').dataset.paymentId);
+  if (payment) {
+    let csvContent = "Mã hóa đơn,Độc giả,Ngày lập,Loại phí,Chi tiết,Số tiền,Trạng thái\n";
+    csvContent += `${payment.id},${payment.readerName},${payment.date},${payment.type},${payment.description},${payment.amount},${payment.status}`;
+    
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csvContent));
+    element.setAttribute('download', `invoice_${payment.id}.csv`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Thành công!',
+      text: 'Hóa đơn đã được tải xuống',
+      timer: 1500
+    });
+  }
 }
 
 window.onclick = function (event) {
