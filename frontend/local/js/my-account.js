@@ -66,6 +66,10 @@ function loadProfile() {
                 <value>${currentUser.email}</value>
             </div>
             <div class="info-item">
+                <label>Địa Chỉ</label>
+                <value>${currentUser.address || 'Chưa cập nhật'}</value>
+            </div>
+            <div class="info-item">
                 <label>Loại Tài Khoản</label>
                 <value>${rankMap[currentUser.role] || 'Khách hàng'}</value>
             </div>
@@ -84,6 +88,9 @@ function loadProfile() {
             <div class="info-item">
                 <label>Ngày Tham Gia</label>
                 <value>${new Date().toLocaleDateString('vi-VN')}</value>
+            </div>
+            <div class="info-item" style="grid-column: 1 / -1; margin-top: 1rem;">
+                <button onclick="openEditProfileModal()" style="background: #27ae60; color: white; border: none; padding: 0.8rem 2rem; border-radius: 0.4rem; cursor: pointer; font-size: 1rem; font-weight: bold;">✏️ Cập Nhật Thông Tin Cá Nhân</button>
             </div>
         </div>
     `;
@@ -433,6 +440,94 @@ function logout() {
     }
 }
 
+// Mở modal cập nhật thông tin cá nhân
+function openEditProfileModal() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
+    document.getElementById('editName').value = currentUser.name || '';
+    document.getElementById('editEmail').value = currentUser.email || '';
+    document.getElementById('editAddress').value = currentUser.address || '';
+    
+    document.getElementById('editProfileModal').style.display = 'block';
+}
+
+// Đóng modal cập nhật thông tin cá nhân
+function closeEditProfileModal() {
+    document.getElementById('editProfileModal').style.display = 'none';
+}
+
+// Cập nhật thông tin cá nhân
+function updateProfile(event) {
+    event.preventDefault();
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
+    const newName = document.getElementById('editName').value.trim();
+    const newEmail = document.getElementById('editEmail').value.trim();
+    const newAddress = document.getElementById('editAddress').value.trim();
+    
+    if (!newName || !newEmail) {
+        showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
+        return;
+    }
+    
+    // Kiểm tra email đã được sử dụng bởi người khác
+    if (newEmail !== currentUser.email) {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        if (users.some(u => u.email === newEmail)) {
+            showNotification('Email này đã được sử dụng!', 'error');
+            return;
+        }
+    }
+    
+    // Cập nhật currentUser
+    const oldEmail = currentUser.email;
+    currentUser.name = newName;
+    currentUser.email = newEmail;
+    currentUser.address = newAddress;
+    
+    // Cập nhật trong users array
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const userIdx = users.findIndex(u => u.email === oldEmail);
+    if (userIdx !== -1) {
+        users[userIdx].name = newName;
+        users[userIdx].email = newEmail;
+        users[userIdx].address = newAddress;
+    }
+    
+    // Cập nhật lại email trong cart, preOrders nếu email thay đổi
+    if (oldEmail !== newEmail) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let preOrders = JSON.parse(localStorage.getItem('preOrders')) || [];
+        
+        cart = cart.map(item => {
+            if (item.userEmail === oldEmail) {
+                item.userEmail = newEmail;
+            }
+            return item;
+        });
+        
+        preOrders = preOrders.map(order => {
+            if (order.userEmail === oldEmail) {
+                order.userEmail = newEmail;
+            }
+            return order;
+        });
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        localStorage.setItem('preOrders', JSON.stringify(preOrders));
+    }
+    
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    closeEditProfileModal();
+    loadProfile();
+    showNotification('Cập nhật thông tin cá nhân thành công!');
+}
+
 // Cancel pre-order from account page
 function cancelPreOrderFromAccount(bookId) {
     if (!confirm('Bạn có chắc muốn hủy đặt trước sách này?')) {
@@ -449,3 +544,11 @@ function cancelPreOrderFromAccount(bookId) {
     showNotification('Đã hủy đặt trước sách thành công!');
     loadBorrowingList(); // Refresh list
 }
+
+// Đóng modal khi click ngoài modal
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('editProfileModal');
+    if (modal && event.target === modal) {
+        closeEditProfileModal();
+    }
+});

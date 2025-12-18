@@ -192,6 +192,38 @@
     <div class="credit"> created by <span>HungNguyen</span> | all rights reserved! </div>
 </section>
 
+<!-- Modal Cập nhật Thông tin Cá nhân -->
+<div id="editProfileModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4);">
+    <div style="background-color: #fefefe; margin: 10% auto; padding: 2rem; border: 1px solid #888; border-radius: 0.5rem; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0; color: #333;">Cập Nhật Thông Tin Cá Nhân</h3>
+            <span onclick="closeEditProfileModal()" style="font-size: 2rem; font-weight: bold; color: #aaa; cursor: pointer;">&times;</span>
+        </div>
+        
+        <form onsubmit="updateProfile(event)">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Tên<span style="color: red;">*</span></label>
+                <input type="text" id="editName" required style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 0.3rem; box-sizing: border-box; font-size: 1rem;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Email<span style="color: red;">*</span></label>
+                <input type="email" id="editEmail" required style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 0.3rem; box-sizing: border-box; font-size: 1rem;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Địa Chỉ</label>
+                <input type="text" id="editAddress" placeholder="123 Đường ABC, TP.HCM" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 0.3rem; box-sizing: border-box; font-size: 1rem;">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" onclick="closeEditProfileModal()" style="padding: 0.8rem 1.5rem; background: #95a5a6; color: white; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold;">Hủy</button>
+                <button type="submit" style="padding: 0.8rem 1.5rem; background: #27ae60; color: white; border: none; border-radius: 0.3rem; cursor: pointer; font-weight: bold;">Cập Nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="js/my-account.js"></script>
 </body>
 </html>

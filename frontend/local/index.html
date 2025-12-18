@@ -15,6 +15,7 @@
 
     <!-- custom css file link  -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chatbot.css">
 
 </head>
 <body>
@@ -616,6 +617,54 @@
 <!-- loader  -->
 
 
+<!-- Chatbot Widget -->
+<div id="chatbotWidget" class="chatbot-widget">
+    <!-- Chatbot Button -->
+    <button id="chatbotToggle" class="chatbot-toggle" title="Mở trò chuyện">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- Chatbot Container -->
+    <div id="chatbotContainer" class="chatbot-container" style="display: none;">
+        <div class="chatbot-header">
+            <h3>💬 Trợ Giúp - Chat</h3>
+            <button id="chatbotClose" class="chatbot-close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="chat-message bot-message">
+                <p>Xin chào! 👋 Tôi là trợ lý ảo của Thư viện HAB. Tôi có thể giúp bạn với:</p>
+                <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem; text-align: left;">
+                    <li>Tìm kiếm sách</li>
+                    <li>Hỏi đáp về dịch vụ</li>
+                    <li>Gửi khiếu nại/góp ý</li>
+                    <li>Hỗ trợ kỹ thuật</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="chatbot-input-area">
+            <div style="display: flex; gap: 0.5rem;">
+                <input 
+                    type="text" 
+                    id="chatbotInput" 
+                    class="chatbot-input" 
+                    placeholder="Nhập tin nhắn..." 
+                    maxlength="200"
+                >
+                <button id="chatbotSend" class="chatbot-send-btn" title="Gửi">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div style="font-size: 0.75rem; color: #999; margin-top: 0.3rem; text-align: center;">
+                Chúng tôi sẽ trả lời trong vài giờ
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
 
 <!-- SweetAlert2 library -->
@@ -623,6 +672,7 @@
 
 <!-- custom js file link  -->
 <script src="js/script.js"></script>
+<script src="js/chatbot.js"></script>
 
 </body>
 </html>
