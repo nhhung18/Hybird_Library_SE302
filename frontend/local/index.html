@@ -39,6 +39,9 @@
             <a href="#" id="cart-btn" class="fas fa-shopping-cart" title="Giỏ hàng">
                 <span id="cart-count" class="cart-badge">0</span>
             </a>
+            <div id="notification-btn" class="fas fa-bell" title="Thông báo" style="cursor: pointer; position: relative;">
+                <span id="notification-badge" class="notification-badge">0</span>
+            </div>
             <div id="login-btn" class="fas fa-user" title="Tài khoản" style="position: relative; cursor: pointer;"></div>
             
             <!-- User Dropdown Menu -->
@@ -263,6 +266,22 @@
                 ℹ️ Các yêu cầu mượn sẽ được thủ thư xem xét và duyệt trong vòng 24 giờ.
             </p>
             <button class="btn borrow-submit" onclick="submitBorrowRequest()">📖 Gửi Yêu Cầu Mượn</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thông báo -->
+<div class="notification-modal" id="notificationModal">
+    <div class="notification-content">
+        <div class="notification-header">
+            <h3><i class="fas fa-bell"></i> Thông Báo</h3>
+            <span class="close-btn" onclick="closeNotifications()">&times;</span>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <p style="text-align:center; padding:2rem; color: #999;">📭 Không có thông báo</p>
+        </div>
+        <div class="notification-footer" id="notificationFooter" style="display:none;">
+            <button class="btn btn-clear-all" onclick="clearAllNotifications()">🗑️ Xóa Tất Cả</button>
         </div>
     </div>
 </div>
@@ -675,6 +694,7 @@
 
 <!-- custom js file link  -->
 <script src="js/script.js"></script>
+<script src="js/index.js"></script>
 <script src="js/chatbot.js"></script>
 
 </body>

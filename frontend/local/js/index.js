@@ -283,4 +283,237 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+  // Initialize notifications
+  loadNotifications();
+  updateNotificationBadge();
+  
+  // Bind notification button
+  const notificationBtn = document.getElementById('notification-btn');
+  if (notificationBtn) {
+    notificationBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      openNotifications();
+    });
+  }
+  
+  // Bind close on notification modal overlay click
+  const notificationModal = document.getElementById('notificationModal');
+  if (notificationModal) {
+    notificationModal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeNotifications();
+      }
+    });
+  }
+
+  // Add mock notifications for demo
+  addMockNotifications();
 });
+
+// ==========================================
+// NOTIFICATION MANAGEMENT
+// ==========================================
+
+let notifications = [];
+
+function loadNotifications() {
+  try {
+    notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    if (!Array.isArray(notifications)) notifications = [];
+  } catch (e) {
+    notifications = [];
+  }
+}
+
+function saveNotifications() {
+  try {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+  } catch (e) {
+    console.error('Error saving notifications:', e);
+  }
+}
+
+function updateNotificationBadge() {
+  const badge = document.getElementById('notification-badge');
+  if (badge) {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    badge.innerText = unreadCount;
+    badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+  }
+}
+
+function addNotification(title, message, type = 'info', icon = '📬') {
+  const notification = {
+    id: 'notif_' + Date.now(),
+    title: title,
+    message: message,
+    type: type,
+    icon: icon,
+    read: false,
+    createdAt: new Date().toLocaleString('vi-VN'),
+    timestamp: Date.now()
+  };
+  
+  notifications.unshift(notification);
+  saveNotifications();
+  updateNotificationBadge();
+  renderNotifications();
+  
+  return notification;
+}
+
+function addMockNotifications() {
+  // Clear old notifications and add fresh ones
+  notifications = [];
+  
+  addNotification(
+    'Yêu cầu mượn được duyệt',
+    'Yêu cầu mượn 3 cuốn sách của bạn đã được duyệt. Vui lòng đến thư viện lấy sách.',
+    'success',
+    '✅'
+  );
+  addNotification(
+    'Thông báo hết hạn sách',
+    'Sách "Lập trình JavaScript" sắp hết hạn vào ngày 25/12/2025. Vui lòng gia hạn hoặc trả sách.',
+    'warning',
+    '⏰'
+  );
+  addNotification(
+    'Thông báo nộp tiền',
+    'Bạn có 1 hóa đơn chưa thanh toán: 150,000đ cho phí cấp thẻ. Vui lòng thanh toán trong 7 ngày.',
+    'warning',
+    '💰'
+  );
+  addNotification(
+    'Hệ thống bảo trì',
+    'Thư viện sẽ bảo trì hệ thống vào ngày 20/12/2025 từ 22:00 đến 06:00 sáng hôm sau.',
+    'info',
+    '🔧'
+  );
+  addNotification(
+    'Sách mới được thêm',
+    'Sách "Clean Code" và "Design Patterns" vừa được thêm vào thư viện. Hãy khám phá ngay!',
+    'info',
+    '📚'
+  );
+  addNotification(
+    'Nhắc nhở đặt lạc hạn sách',
+    'Sách "Python cơ bản" của bạn sẽ hết hạn trong 3 ngày nữa. Hãy gia hạn ngay để tiếp tục sử dụng.',
+    'warning',
+    '⏳'
+  );
+  addNotification(
+    'Thanh toán thành công',
+    'Thanh toán phí cấp thẻ 200,000đ vào lúc 14:30 ngày 18/12/2025 đã được xác nhận.',
+    'success',
+    '✔️'
+  );
+  addNotification(
+    'Sách được trả thành công',
+    'Sách "Giới thiệu về Thuật toán" đã được ghi nhận là trả vào 10:15 sáng nay.',
+    'success',
+    '📖'
+  );
+  addNotification(
+    'Yêu cầu gia hạn được duyệt',
+    'Yêu cầu gia hạn cho sách "Web Development" đã được duyệt. Hạn sử dụng được kéo dài đến 25/01/2026.',
+    'success',
+    '🔄'
+  );
+}
+
+
+function renderNotifications() {
+  const notificationList = document.getElementById('notificationList');
+  const notificationFooter = document.getElementById('notificationFooter');
+  
+  if (!notificationList) return;
+  
+  if (notifications.length === 0) {
+    notificationList.innerHTML = '<p style="text-align:center; padding:2rem; color: #999;">📭 Không có thông báo</p>';
+    if (notificationFooter) notificationFooter.style.display = 'none';
+    return;
+  }
+  
+  const html = `
+    <div class="notification-items">
+      ${notifications.map((notif, idx) => `
+        <div class="notification-item ${notif.read ? 'read' : 'unread'}" onclick="markAsRead('${notif.id}')">
+          <div class="notif-icon">${notif.icon}</div>
+          <div class="notif-content">
+            <h4 class="notif-title">${notif.title}</h4>
+            <p class="notif-message">${notif.message}</p>
+            <small class="notif-time">${notif.createdAt}</small>
+          </div>
+          <button class="btn-notif-delete" onclick="deleteNotification('${notif.id}', event)" title="Xóa">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  
+  notificationList.innerHTML = html;
+  if (notificationFooter) notificationFooter.style.display = 'block';
+}
+
+function markAsRead(notifId) {
+  const notif = notifications.find(n => n.id === notifId);
+  if (notif) {
+    notif.read = true;
+    saveNotifications();
+    updateNotificationBadge();
+    renderNotifications();
+  }
+}
+
+function deleteNotification(notifId, event) {
+  if (event) event.stopPropagation();
+  
+  notifications = notifications.filter(n => n.id !== notifId);
+  saveNotifications();
+  updateNotificationBadge();
+  renderNotifications();
+}
+
+function clearAllNotifications() {
+  Swal.fire({
+    title: 'Xóa tất cả thông báo?',
+    text: 'Hành động này không thể hoàn tác',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e74c3c',
+    cancelButtonColor: '#999',
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      notifications = [];
+      saveNotifications();
+      updateNotificationBadge();
+      renderNotifications();
+      Swal.fire({
+        icon: 'success',
+        title: 'Đã xóa!',
+        text: 'Tất cả thông báo đã được xóa',
+        timer: 1500
+      });
+    }
+  });
+}
+
+function openNotifications() {
+  const modal = document.getElementById('notificationModal');
+  if (modal) {
+    modal.classList.add('active');
+    renderNotifications();
+  }
+}
+
+function closeNotifications() {
+  const modal = document.getElementById('notificationModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
