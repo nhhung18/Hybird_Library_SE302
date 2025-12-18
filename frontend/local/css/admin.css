@@ -454,3 +454,914 @@ button {
 .btn-delete:hover {
     background-color: #d32f2f;
 }
+
+/* --- PAYMENT MODULE STYLES --- */
+
+/* Payment Tabs */
+.payment-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.payment-tab-btn {
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+    background: transparent;
+    color: var(--light-color);
+    cursor: pointer;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.payment-tab-btn:hover {
+    color: var(--green);
+    background: rgba(39, 174, 96, 0.05);
+}
+
+.payment-tab-btn.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+    background: rgba(39, 174, 96, 0.08);
+}
+
+/* Tab Content */
+.payment-tab-content {
+    animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Payment Table Badges */
+.type-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 100px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 120px;
+}
+
+.status-paid {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+    box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);
+}
+
+.status-unpaid {
+    background: linear-gradient(135deg, #e74c3c 0%, #cb4335 100%);
+    color: white;
+    box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3);
+}
+
+/* Report Container */
+.report-container {
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow);
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.report-header h3 {
+    font-size: 2rem;
+    color: var(--black);
+}
+
+.report-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.report-controls input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.report-controls input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+/* Report Grid */
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.report-card {
+    padding: 2rem;
+    border-radius: 1rem;
+    color: white;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    transform: translateY(0);
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.report-card h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    opacity: 0.9;
+}
+
+.report-card .report-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.report-card.total {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.report-card.paid {
+    background: linear-gradient(135deg, #27ae60 0%, #16a085 100%);
+}
+
+.report-card.unpaid {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.report-card.transactions {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+/* Report Chart */
+.report-chart {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid #e0e0e0;
+}
+
+.report-chart h4 {
+    font-size: 1.6rem;
+    color: var(--black);
+    margin-bottom: 1.5rem;
+}
+
+.fee-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.breakdown-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.8rem;
+    border-left: 4px solid var(--green);
+}
+
+.breakdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.breakdown-type {
+    font-weight: 600;
+    color: var(--black);
+    font-size: 1.3rem;
+}
+
+.breakdown-count {
+    font-size: 1.1rem;
+    color: var(--light-color);
+    background: rgba(39, 174, 96, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+}
+
+.breakdown-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.8rem 0;
+}
+
+.breakdown-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green) 0%, var(--dark-green) 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.breakdown-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    color: var(--black);
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .payment-tabs {
+        flex-wrap: wrap;
+    }
+
+    .payment-tab-btn {
+        padding: 0.8rem 1.2rem;
+        font-size: 1.2rem;
+    }
+
+    .report-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .report-controls {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .report-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .report-card {
+        padding: 1.5rem;
+    }
+
+    .report-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .report-card .report-value {
+        font-size: 1.8rem;
+    }
+}
+
+/* ============ BEAUTIFUL EFFECTS & ANIMATIONS ============ */
+
+/* 1. SMOOTH TRANSITIONS & GLOBAL ANIMATIONS */
+*:not(i) {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* 2. TABLE ROW ANIMATIONS - REMOVED */
+
+/* 3. CARD HOVER EFFECTS */
+.card {
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.card:hover::before {
+    left: 100%;
+}
+
+.card:hover {
+    box-shadow: 0 20px 40px rgba(39, 174, 96, 0.15);
+}
+
+.card h3 {
+    animation: slideInUp 0.6s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 4. BUTTON RIPPLE EFFECT */
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+button:active::after {
+    width: 300px;
+    height: 300px;
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+    }
+}
+
+/* 5. INPUT FIELD ANIMATION */
+input, select, textarea {
+    position: relative;
+}
+
+input:focus, select:focus, textarea:focus {
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba(39, 174, 96, 0.2);
+}
+
+input::placeholder {
+    transition: all 0.3s ease;
+}
+
+input:focus::placeholder {
+    opacity: 0.6;
+}
+
+/* 6. TABLE ROW HIGHLIGHT */
+tbody tr {
+    border-left: 3px solid transparent;
+}
+
+tbody tr:hover {
+    border-left-color: var(--green);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+    transform: scale(1.01);
+}
+
+/* 7. BADGE ANIMATION */
+.type-badge, .status-badge {
+    position: relative;
+    display: inline-block;
+    animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 8. MODAL ANIMATION */
+.modal.active {
+    animation: fadeInOverlay 0.3s ease;
+}
+
+.modal.active .modal-content {
+    animation: modalSlideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes fadeInOverlay {
+    from {
+        background: rgba(0, 0, 0, 0);
+    }
+    to {
+        background: rgba(0, 0, 0, 0.6);
+    }
+}
+
+@keyframes modalSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 9. SIDEBAR MENU ANIMATION */
+.sidebar .menu-item {
+    animation: none;
+}
+
+/* 10. REPORT CARD ANIMATION */
+.report-card {
+    animation: none;
+    opacity: 1;
+}
+
+/* 11. PAYMENT TAB ANIMATION */
+.payment-tab-btn {
+    position: relative;
+}
+
+.payment-tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--green);
+    transition: width 0.3s ease;
+}
+
+.payment-tab-btn:hover::after {
+    width: 100%;
+}
+
+.payment-tab-btn.active::after {
+    width: 100%;
+}
+
+/* 12. BREAKDOWN ITEM ANIMATION */
+.breakdown-item {
+    animation: none;
+    transform-origin: left center;
+}
+
+/* 13. LOADING ANIMATION */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading {
+    animation: spin 1s linear infinite;
+}
+
+/* 14. SECTION TRANSITION */
+.section-content {
+    animation: fadeInScale 0.5s ease;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 15. HEADER ANIMATION */
+.page-header {
+    animation: slideDownBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes slideDownBounce {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 16. TABLE CONTAINER ANIMATION */
+.table-container {
+    animation: fadeInUp 0.6s ease 0.2s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 17. ICON ANIMATION */
+i {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sidebar .menu-item:hover i {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.btn-add:hover i {
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* 18. SMOOTH BOX SHADOW */
+.card, .table-container, .report-container {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover, .table-container:hover, .report-container:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* 19. BACKGROUND GRADIENT ANIMATION */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.report-card {
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite, slideUpFade 0.6s ease forwards;
+}
+
+/* 20. SCROLL BAR STYLING */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--green) 0%, var(--dark-green) 100%);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--dark-green) 0%, var(--green) 100%);
+    width: 10px;
+}
+
+/* 21. TEXT ANIMATION */
+@keyframes textShine {
+    0% {
+        background-position: -200%;
+    }
+    100% {
+        background-position: 200%;
+    }
+}
+
+.page-header h2 {
+    background: linear-gradient(90deg, var(--black), var(--green), var(--black));
+    background-size: 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: textShine 3s ease infinite;
+}
+
+/* 22. DANGER ZONE ANIMATION */
+.btn-delete {
+    position: relative;
+}
+
+.btn-delete:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+}
+
+.btn-delete:hover:before {
+    opacity: 1;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* 23. SUCCESS BUTTON GLOW */
+.btn-save {
+    position: relative;
+    box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7);
+}
+
+.btn-save:hover {
+    animation: glowPulse 1.5s infinite;
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(39, 174, 96, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(39, 174, 96, 0);
+    }
+}
+
+/* 24. PAYMENT BADGE PULSE */
+.status-paid {
+    animation: pulse-success 2s infinite;
+}
+
+@keyframes pulse-success {
+    0%, 100% {
+        box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.6);
+    }
+}
+
+.status-unpaid {
+    animation: pulse-warning 2s infinite;
+}
+
+@keyframes pulse-warning {
+    0%, 100% {
+        box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.6);
+    }
+}
+
+/* 25. FORM VALIDATION ANIMATION */
+.form-group input:valid {
+    border-color: var(--green);
+    animation: slideInCheck 0.3s ease;
+}
+
+@keyframes slideInCheck {
+    0% {
+        border-color: #ccc;
+        transform: translateX(-5px);
+    }
+    100% {
+        border-color: var(--green);
+        transform: translateX(0);
+    }
+}
+
+/* ============ PENALTY MODULE STYLES ============ */
+
+/* Violation Badge */
+.violation-badge {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    border-radius: 2rem;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 110px;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Status Badges for Penalty */
+.status-badge {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 120px;
+}
+
+.status-pending {
+    background: #f39c12;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.status-completed {
+    background: #27ae60;
+    color: white;
+}
+
+/* Lock/Unlock Badge */
+.lock-badge, .unlock-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 70px;
+}
+
+.lock-badge {
+    background: #e74c3c;
+    color: white;
+}
+
+.unlock-badge {
+    background: #27ae60;
+    color: white;
+}
+
+.lock-badge i, .unlock-badge i {
+    margin-right: 0.4rem;
+}
+
+/* Action Buttons for Penalty */
+.btn-reduce {
+    background-color: #f39c12;
+    color: white;
+    padding: 0.6rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+}
+
+.btn-reduce:hover {
+    background-color: #e67e22;
+    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+}
+
+.btn-unlock {
+    background-color: #27ae60;
+    color: white;
+    padding: 0.6rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+}
+
+.btn-unlock:hover {
+    background-color: #229954;
+    box-shadow: 0 4px 12px rgba(34, 153, 84, 0.4);
+}
+
+.btn-lock {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.6rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+}
+
+.btn-lock:hover {
+    background-color: #c0392b;
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.4);
+}
+
+/* Pulse Animation for Warning Status */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(243, 156, 18, 0);
+    }
+}
+
+/* Penalty Details Modal */
+.penalty-details {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(39, 174, 96, 0.05);
+    border-left: 4px solid var(--green);
+    border-radius: 0.5rem;
+}
+
+.penalty-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+}
+
+.penalty-detail-label {
+    font-weight: 600;
+    color: var(--black);
+    min-width: 120px;
+}
+
+.penalty-detail-value {
+    color: var(--light-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .violation-badge {
+        font-size: 1.1rem;
+        padding: 0.5rem 0.8rem;
+        min-width: 90px;
+    }
+
+    .btn-reduce, .btn-suspend, .btn-unlock, .btn-lock {
+        font-size: 1rem;
+        padding: 0.5rem 0.8rem;
+        margin-left: 2px;
+    }
+
+    .lock-badge, .unlock-badge {
+        font-size: 1rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .penalty-detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+}

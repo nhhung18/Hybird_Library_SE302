@@ -89,6 +89,16 @@
             
           </a>
 
+          <a
+            href="#"
+            id="menu-penalty"
+            class="menu-item"
+            onclick="switchTab('penalty', this)"
+          >
+            <i class="fa-solid fa-gavel"></i>
+            <span class="menu-text">QL Phiếu Phạt</span>
+          </a>
+
           <div class="menu-group-label">Nhân sự</div>
           <a
             href="#"
@@ -268,12 +278,13 @@
                     <th>Ngày mượn</th>
                     <th>Ngày hết hạn</th>
                     <th>Trạng thái</th>
+                    <th>Phê duyệt</th>
                     <th>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td colspan="8" class="no-data">Chưa có dữ liệu</td>
+                    <td colspan="9" class="no-data">Chưa có dữ liệu</td>
                   </tr>
                 </tbody>
               </table>
@@ -347,34 +358,125 @@
         </div>
 
         <div id="payment" class="section-content">
-          <div class="table-container">
-            <div class="table-header">
-              <h3><i class="fa-solid fa-money-bill-1-wave"></i> Quản lý Thanh toán</h3>
-              <div class="table-controls">
-                <button class="btn-add" onclick="openModal('paymentModal')">
-                  <i class="fas fa-plus"></i> Thêm hóa đơn
-                </button>
+          <!-- Tab buttons cho payment -->
+          <div class="payment-tabs">
+            <button class="payment-tab-btn active" onclick="switchPaymentTab('transactions', this)">
+              <i class="fas fa-list"></i> Giao dịch
+            </button>
+            <button class="payment-tab-btn" onclick="switchPaymentTab('fees', this)">
+              <i class="fas fa-cog"></i> Cấu hình phí
+            </button>
+            <button class="payment-tab-btn" onclick="switchPaymentTab('report', this)">
+              <i class="fas fa-chart-bar"></i> Báo cáo
+            </button>
+          </div>
+
+          <!-- TAB 1: Giao dịch -->
+          <div id="transactions-tab" class="payment-tab-content active">
+            <div class="table-container">
+              <div class="table-header">
+                <h3><i class="fa-solid fa-money-bill-1-wave"></i> Quản lý Thanh toán</h3>
+                <div class="table-controls">
+                  <button class="btn-add" onclick="openModal('paymentModal')">
+                    <i class="fas fa-plus"></i> Thêm hóa đơn
+                  </button>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table id="paymentTable">
+                  <thead>
+                    <tr>
+                      <th>Mã hóa đơn</th>
+                      <th>Độc giả</th>
+                      <th>Ngày lập</th>
+                      <th>Loại phí</th>
+                      <th>Chi tiết</th>
+                      <th>Số tiền</th>
+                      <th>Trạng thái</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colspan="8" class="no-data">Chưa có dữ liệu</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div class="table-responsive">
-              <table id="paymentTable">
-                <thead>
-                  <tr>
-                    <th>Mã hóa đơn</th>
-                    <th>Độc giả</th>
-                    <th>Ngày lập</th>
-                    <th>Số tiền</th>
-                    <th>Lý do</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colspan="7" class="no-data">Chưa có dữ liệu</td>
-                  </tr>
-                </tbody>
-              </table>
+          </div>
+
+          <!-- TAB 2: Cấu hình phí -->
+          <div id="fees-tab" class="payment-tab-content" style="display: none;">
+            <div class="table-container">
+              <div class="table-header">
+                <h3><i class="fas fa-cog"></i> Cấu hình các loại phí</h3>
+                <div class="table-controls">
+                  <button class="btn-add" onclick="openModal('feeConfigModal')">
+                    <i class="fas fa-plus"></i> Thêm loại phí
+                  </button>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table id="feeConfigTable">
+                  <thead>
+                    <tr>
+                      <th>Loại phí</th>
+                      <th>Mức phí</th>
+                      <th>Đơn vị</th>
+                      <th>Mô tả</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colspan="5" class="no-data">Chưa có dữ liệu</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Báo cáo doanh thu -->
+          <div id="report-tab" class="payment-tab-content" style="display: none;">
+            <div class="report-container">
+              <div class="report-header">
+                <h3><i class="fas fa-chart-bar"></i> Báo cáo doanh thu</h3>
+                <div class="report-controls">
+                  <input type="date" id="reportFromDate" value="2024-12-01">
+                  <input type="date" id="reportToDate" value="2024-12-31">
+                  <button class="btn-add" onclick="generateReport()">
+                    <i class="fas fa-refresh"></i> Cập nhật
+                  </button>
+                </div>
+              </div>
+
+              <div class="report-grid">
+                <div class="report-card total">
+                  <h4>Tổng doanh thu</h4>
+                  <p id="total-revenue" class="report-value">0 ₫</p>
+                </div>
+                <div class="report-card paid">
+                  <h4>Đã thanh toán</h4>
+                  <p id="total-paid" class="report-value">0 ₫</p>
+                </div>
+                <div class="report-card unpaid">
+                  <h4>Chưa thanh toán</h4>
+                  <p id="total-unpaid" class="report-value">0 ₫</p>
+                </div>
+                <div class="report-card transactions">
+                  <h4>Số giao dịch</h4>
+                  <p id="total-transactions" class="report-value">0</p>
+                </div>
+              </div>
+
+              <div class="report-chart">
+                <h4>Chi tiết theo loại phí</h4>
+                <div id="fee-breakdown" class="fee-breakdown">
+                  <!-- Được điền bởi JavaScript -->
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -438,6 +540,40 @@
                 <tbody>
                   <tr>
                     <td colspan="7" class="no-data">Chưa có dữ liệu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="penalty" class="section-content">
+          <div class="table-container">
+            <div class="table-header">
+              <h3><i class="fa-solid fa-gavel"></i> Quản lý Phiếu Phạt</h3>
+              <div class="table-controls">
+                <button class="btn-add" onclick="openModal('penaltyModal')">
+                  <i class="fas fa-plus"></i> Thêm Phiếu Phạt
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="penaltyTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Độc giả</th>
+                    <th>Loại Vi phạm</th>
+                    <th>Mô tả</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Tài khoản</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="8" class="no-data">Chưa có dữ liệu</td>
                   </tr>
                 </tbody>
               </table>
@@ -697,12 +833,71 @@
             <input type="date" id="paymentDate" required />
           </div>
           <div class="form-group">
+            <label>Loại phí<span style="color: red">*</span></label>
+            <select id="paymentType" required>
+              <option value="">-- Chọn loại phí --</option>
+              <option value="Phạt quá hạn">Phạt quá hạn</option>
+              <option value="Mất sách">Mất sách</option>
+              <option value="Hỏng sách">Hỏng sách</option>
+              <option value="Cấp thẻ">Cấp thẻ</option>
+              <option value="Gia hạn thẻ">Gia hạn thẻ</option>
+              <option value="Photocopy">Photocopy</option>
+              <option value="Phòng học nhóm">Phòng học nhóm</option>
+              <option value="Phí dịch vụ">Phí dịch vụ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Chi tiết<span style="color: red">*</span></label>
+            <input type="text" id="paymentDescription" placeholder="Ví dụ: Sách trễ 5 ngày" required />
+          </div>
+          <div class="form-group">
             <label>Số tiền<span style="color: red">*</span></label>
             <input type="number" id="paymentAmount" required />
           </div>
           <div class="form-group">
-            <label>Lý do<span style="color: red">*</span></label>
-            <input type="text" id="paymentReason" required />
+            <label>Phương thức thanh toán<span style="color: red">*</span></label>
+            <select id="paymentMethod" required>
+              <option value="">-- Chọn phương thức --</option>
+              <option value="Tiền mặt">Tiền mặt</option>
+              <option value="Chuyển khoản">Chuyển khoản</option>
+              <option value="Ví điện tử">Ví điện tử</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="feeConfigModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Cấu hình loại phí</h3>
+          <span class="close-btn" onclick="closeModal('feeConfigModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'feeConfig')">
+          <div class="form-group">
+            <label>Loại phí<span style="color: red">*</span></label>
+            <input type="text" id="feeType" required />
+          </div>
+          <div class="form-group">
+            <label>Mức phí<span style="color: red">*</span></label>
+            <input type="number" id="feeRate" required />
+          </div>
+          <div class="form-group">
+            <label>Đơn vị<span style="color: red">*</span></label>
+            <select id="feeUnit" required>
+              <option value="đồng">đồng</option>
+              <option value="đồng/ngày">đồng/ngày</option>
+              <option value="đồng/trang">đồng/trang</option>
+              <option value="đồng/giờ">đồng/giờ</option>
+              <option value="%">%</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mô tả<span style="color: red">*</span></label>
+            <input type="text" id="feeDescription" required />
           </div>
           <div class="form-actions">
             <button type="submit" class="btn-save">Lưu lại</button>
@@ -771,6 +966,87 @@
       </div>
     </div>
 
+    <!-- Penalty Modal - Add Penalty -->
+    <div class="modal" id="penaltyModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Thêm Phiếu Phạt</h3>
+          <span class="close-btn" onclick="closeModal('penaltyModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'penalty')">
+          <div class="form-group">
+            <label>Loại Phiếu<span style="color: red">*</span></label>
+            <select id="penaltyType" required onchange="updatePenaltyFields()">
+              <option value="">-- Chọn loại --</option>
+              <option value="auto">Phiếu Phạt Tự động (Quá hạn)</option>
+              <option value="manual">Phiếu Phạt Thủ công</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Chọn Độc giả<span style="color: red">*</span></label>
+            <select id="penaltyReaderId" required>
+              <option value="">-- Chọn độc giả --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Loại Vi phạm<span style="color: red">*</span></label>
+            <select id="penaltyViolationType" required>
+              <option value="">-- Chọn loại --</option>
+              <option value="Quá hạn">Quá hạn</option>
+              <option value="Mất sách">Mất sách</option>
+              <option value="Làm hỏng">Làm hỏng</option>
+              <option value="Vi phạm nội quy">Vi phạm nội quy</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mô tả<span style="color: red">*</span></label>
+            <input type="text" id="penaltyDescription" placeholder="Mô tả chi tiết vi phạm" required />
+          </div>
+          <div class="form-group">
+            <label id="penaltyAmountLabel">Số tiền<span style="color: red">*</span></label>
+            <input type="number" id="penaltyAmount" placeholder="VNĐ" min="0" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Lưu lại</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Penalty Modal - Reduce Penalty -->
+    <div class="modal" id="reducePenaltyModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Giảm/Miễn Mức Phạt</h3>
+          <span class="close-btn" onclick="closeModal('reducePenaltyModal')">&times;</span>
+        </div>
+        <form onsubmit="handleFormSubmit(event, 'reducePenalty')">
+          <div class="form-group">
+            <label>Phiếu Phạt<span style="color: red">*</span></label>
+            <input type="text" id="reducePenaltyId" disabled />
+          </div>
+          <div class="form-group">
+            <label>Số tiền hiện tại</label>
+            <input type="text" id="reducePenaltyCurrentAmount" disabled />
+          </div>
+          <div class="form-group">
+            <label>Số tiền mới<span style="color: red">*</span></label>
+            <input type="number" id="reducePenaltyNewAmount" min="0" required />
+          </div>
+          <div class="form-group">
+            <label>Lý do giảm phạt<span style="color: red">*</span></label>
+            <input type="text" id="reducePenaltyReason" placeholder="Lý do giảm phạt" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Xác nhận</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/admin.js"></script>
   </body>
 </html>

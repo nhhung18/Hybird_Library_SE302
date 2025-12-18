@@ -90,6 +90,15 @@ let employeesData = [
       borrowDate: '2024-10-01',
       dueDate: '2024-10-15',
       status: 'Đang mượn'
+    },
+    {
+      id: 'B002',
+      readerId: 'RDR002',
+      readerName: 'Võ Thị Mai',
+      bookTitle: 'Lập trình Python',
+      borrowDate: '2024-12-01',
+      dueDate: '2024-12-15',
+      status: 'Chờ duyệt'
     }
   ];
 
@@ -102,7 +111,21 @@ let employeesData = [
   ];
 
   let paymentData = [
-    { id: 'P001', readerId: 'RDR002', readerName: 'Võ Thị Mai', date: '2024-06-01', amount: 50000, reason: 'Phạt quá hạn', status: 'Đã thanh toán' }
+    { id: 'P001', readerId: 'RDR002', readerName: 'Võ Thị Mai', date: '2024-12-01', amount: 50000, type: 'Phạt quá hạn', description: 'Sách trễ 5 ngày', method: 'Tiền mặt', status: 'Đã thanh toán', days_overdue: 5 },
+    { id: 'P002', readerId: 'RDR001', readerName: 'Phạm Minh Đức', date: '2024-12-02', amount: 200000, type: 'Mất sách', description: 'Mất sách "Lập trình C++"', method: 'Chuyển khoản', status: 'Đã thanh toán' },
+    { id: 'P003', readerId: 'RDR003', readerName: 'Hoàng Văn Nam', date: '2024-12-03', amount: 150000, type: 'Phí cấp thẻ', description: 'Cấp thẻ thư viện mới', method: 'Tiền mặt', status: 'Đã thanh toán' },
+    { id: 'P004', readerId: 'RDR004', readerName: 'Trương Thị Hoa', date: '2024-12-05', amount: 0, type: 'Phí photocopy', description: 'In 50 trang', method: 'Chưa thanh toán', status: 'Chưa thanh toán' },
+    { id: 'P005', readerId: 'RDR005', readerName: 'Đinh Quang Huy', date: '2024-12-08', amount: 100000, type: 'Phí dịch vụ', description: 'Phí sử dụng phòng học', method: 'Tiền mặt', status: 'Đã thanh toán' }
+  ];
+
+  let feeConfigData = [
+    { id: 'FC001', type: 'Phạt quá hạn', rate: 10000, unit: 'đồng/ngày', description: 'Phạt cho mỗi ngày trễ hạn' },
+    { id: 'FC002', type: 'Mất sách', rate: 100, unit: '%', description: 'Bằng giá sách + 50% phí xử lý' },
+    { id: 'FC003', type: 'Hỏng sách', rate: 50, unit: '%', description: 'Bằng 50% giá sách' },
+    { id: 'FC004', type: 'Cấp thẻ', rate: 150000, unit: 'đồng', description: 'Phí cấp thẻ mới' },
+    { id: 'FC005', type: 'Gia hạn thẻ', rate: 50000, unit: 'đồng', description: 'Phí gia hạn hàng năm' },
+    { id: 'FC006', type: 'Photocopy', rate: 1000, unit: 'đồng/trang', description: 'Phí in ấn' },
+    { id: 'FC007', type: 'Phòng học nhóm', rate: 50000, unit: 'đồng/giờ', description: 'Phí sử dụng phòng' }
   ];
 
   let shiftData = [
@@ -112,6 +135,22 @@ let employeesData = [
   let attendanceData = [
     { id: 'A001', empId: 'EMP002', empName: 'Trần Thị B', date: '2024-12-01', checkIn: '08:05', checkOut: '12:00', status: 'Có mặt' }
   ];
+
+  let penaltyData = [
+    { id: 'PEN001', readerId: 'RDR002', readerName: 'Võ Thị Mai', violationType: 'Quá hạn', description: 'Sách "Python cơ bản" trễ 10 ngày', amount: 100000, unit: 'đồng', status: 'Chưa thanh toán', createdDate: '2024-12-01', accountLocked: true, notes: '' },
+    { id: 'PEN002', readerId: 'RDR001', readerName: 'Phạm Minh Đức', violationType: 'Mất sách', description: 'Mất sách "Lập trình JavaScript"', amount: 350000, unit: 'đồng', status: 'Đã xử lý', createdDate: '2024-11-25', accountLocked: false, notes: 'Đã thanh toán ngày 2024-12-05' },
+    { id: 'PEN003', readerId: 'RDR003', readerName: 'Hoàng Văn Nam', violationType: 'Làm hỏng', description: 'Sách bị rách 20% trang', amount: 80000, unit: 'đồng', status: 'Chưa thanh toán', createdDate: '2024-12-03', accountLocked: false, notes: '' },
+    { id: 'PEN004', readerId: 'RDR004', readerName: 'Trương Thị Hoa', violationType: 'Vi phạm nội quy', description: 'Mang đồ ăn vào phòng đọc', amount: 50000, unit: 'đồng', status: 'Chưa thanh toán', createdDate: '2024-12-08', accountLocked: false, notes: '' },
+    { id: 'PEN005', readerId: 'RDR005', readerName: 'Đinh Quang Huy', violationType: 'Quá hạn', description: 'Sách trễ 3 ngày', amount: 30000, unit: 'đồng', status: 'Đã xử lý', createdDate: '2024-12-10', accountLocked: false, notes: 'Đã thanh toán' }
+  ];
+
+  let violationCategoryData = [
+    { id: 'VC001', type: 'Quá hạn', description: 'Trả sách sau hạn quy định', unitPrice: 10000, unit: 'đồng/ngày' },
+    { id: 'VC002', type: 'Mất sách', description: 'Mất tài liệu của thư viện', unitPrice: 0, unit: 'Giá sách + 50% phí xử lý' },
+    { id: 'VC003', type: 'Làm hỏng', description: 'Làm rách, vẽ vào hoặc hỏng tài liệu', unitPrice: 0, unit: 'Tùy mức độ (20%-100% giá sách)' },
+    { id: 'VC004', type: 'Vi phạm nội quy', description: 'Làm ồn, mang đồ ăn, sử dụng thẻ người khác', unitPrice: 50000, unit: 'đồng' }
+  ];
+
 // current sort for readers table (none | id | username | fullname | email | role | createAt)
 let currentReaderSort = "none";
 
@@ -177,6 +216,7 @@ function renderAllTables() {
   renderReaderCardTable(readerCardData);
   renderBookTable(booksData);
   renderPaymentTable(paymentData);
+  renderPenaltyTable(penaltyData);
   renderShiftTable(shiftData);
   renderAttendanceTable(attendanceData);
 }
@@ -240,6 +280,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function loadReaders() {
   applyReaderSortAndRender();
+  populateReaderSelect(); // Cập nhật danh sách độc giả cho modal penalty
+}
+
+function populateReaderSelect() {
+  const select = document.getElementById('penaltyReaderId');
+  if (select) {
+    const currentValue = select.value;
+    select.innerHTML = '<option value="">-- Chọn độc giả --</option>';
+    readersData.forEach(reader => {
+      select.innerHTML += `<option value="${reader.id}">${reader.fullName} (${reader.id})</option>`;
+    });
+    if (currentValue) select.value = currentValue;
+  }
+}
+
+function updatePenaltyFields() {
+  const penaltyType = document.getElementById('penaltyType').value;
+  const violationTypeSelect = document.getElementById('penaltyViolationType');
+  const amountLabel = document.getElementById('penaltyAmountLabel');
+  
+  if (penaltyType === 'auto') {
+    violationTypeSelect.value = 'Quá hạn';
+    violationTypeSelect.disabled = true;
+    amountLabel.innerHTML = 'Số tiền (tự tính: Số ngày trễ × Đơn giá)<span style="color: red">*</span>';
+  } else {
+    violationTypeSelect.disabled = false;
+    amountLabel.innerHTML = 'Số tiền<span style="color: red">*</span>';
+  }
 }
 
 function renderReaderTable(data = readersData) {
@@ -482,10 +550,11 @@ function renderEmployeeTable(data = employeesData) {
     if (!tbody) return;
     tbody.innerHTML = '';
     if (!Array.isArray(data) || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" class="no-data">Chưa có dữ liệu</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="no-data">Chưa có dữ liệu</td></tr>`;
       return;
     }
     data.forEach(item => {
+      const approveBtn = item.status === 'Chờ duyệt' ? `<button class="btn-approve" data-id="${item.id}">Xác nhận</button>` : '<span style="color: #999;">-</span>';
       tbody.innerHTML += `
         <tr>
           <td>${item.id}</td>
@@ -495,10 +564,49 @@ function renderEmployeeTable(data = employeesData) {
           <td>${item.borrowDate}</td>
           <td>${item.dueDate}</td>
           <td>${item.status}</td>
+          <td class="approve-icons">${approveBtn}</td>
           <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="borrow">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="borrow">Xóa</button></td>
         </tr>`;
     });
     attachEditDeleteEvents('borrow');
+    attachApproveEvents();
+  }
+
+  function approveBorrow(id) {
+    const index = borrowData.findIndex(x => x.id === id);
+    if (index !== -1 && borrowData[index].status === 'Chờ duyệt') {
+      borrowData[index].status = 'Đang mượn';
+      renderBorrowTable(borrowData);
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công!',
+        text: 'Phê duyệt mượn sách thành công',
+        timer: 1500
+      });
+    }
+  }
+
+  function attachApproveEvents() {
+    document.querySelectorAll('.btn-approve').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const id = this.getAttribute('data-id');
+        Swal.fire({
+          title: 'Xác nhận phê duyệt?',
+          text: 'Bạn muốn phê duyệt yêu cầu mượn sách này?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Có',
+          cancelButtonText: 'Không',
+          confirmButtonColor: '#27ae60',
+          cancelButtonColor: '#999'
+        }).then(result => {
+          if (result.isConfirmed) {
+            approveBorrow(id);
+          }
+        });
+      });
+    });
   }
 
   function renderReaderCardTable(data = readerCardData) {
@@ -551,22 +659,113 @@ function renderEmployeeTable(data = employeesData) {
     if (!tbody) return;
     tbody.innerHTML = '';
     if (!Array.isArray(data) || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="no-data">Chưa có dữ liệu</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="no-data">Chưa có dữ liệu</td></tr>`;
       return;
     }
     data.forEach(item => {
+      const statusClass = item.status === 'Đã thanh toán' ? 'status-paid' : 'status-unpaid';
+      const typeColor = getTypeColor(item.type);
       tbody.innerHTML += `
         <tr>
-          <td>${item.id}</td>
+          <td><strong>${item.id}</strong></td>
           <td>${escapeHtml(item.readerName)}</td>
           <td>${item.date}</td>
-          <td>${item.amount}</td>
-          <td>${escapeHtml(item.reason)}</td>
-          <td>${item.status}</td>
+          <td><span class="type-badge" style="background: ${typeColor};">${escapeHtml(item.type)}</span></td>
+          <td>${escapeHtml(item.description)}</td>
+          <td><strong>${item.amount.toLocaleString('vi-VN')} ₫</strong></td>
+          <td><span class="status-badge ${statusClass}">${item.status}</span></td>
           <td class="action-icons"><button class="btn-edit" data-id="${item.id}" data-type="payment">Sửa</button> <button class="btn-delete" data-id="${item.id}" data-type="payment">Xóa</button></td>
         </tr>`;
     });
     attachEditDeleteEvents('payment');
+  }
+
+  function renderPenaltyTable(data = penaltyData) {
+    const tbody = document.querySelector('#penaltyTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="no-data">Chưa có dữ liệu</td></tr>`;
+      return;
+    }
+    
+    data.forEach(item => {
+      const violationColor = getViolationColor(item.violationType);
+      const statusClass = item.status === 'Đã xử lý' ? 'status-completed' : 'status-pending';
+      const lockStatus = item.accountLocked ? '<span class="lock-badge"><i class="fa-solid fa-lock"></i> Khóa</span>' : '<span class="unlock-badge"><i class="fa-solid fa-unlock"></i> Mở</span>';
+      
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${item.id}</strong></td>
+          <td>${escapeHtml(item.readerName)}</td>
+          <td><span class="violation-badge" style="background: ${violationColor};">${escapeHtml(item.violationType)}</span></td>
+          <td title="${escapeHtml(item.description)}">${escapeHtml(item.description.substring(0, 30))}...</td>
+          <td><strong>${item.amount.toLocaleString('vi-VN')} ${item.unit}</strong></td>
+          <td><span class="status-badge ${statusClass}">${item.status}</span></td>
+          <td>${lockStatus}</td>
+          <td class="action-icons">
+            <button class="btn-edit" data-id="${item.id}" data-type="penalty">Chi tiết</button>
+            ${item.status !== 'Đã xử lý' ? `<button class="btn-reduce" onclick="openReducePenaltyModal('${item.id}')">Giảm</button>` : ''}
+
+            ${item.status !== 'Đã xử lý' && item.accountLocked ? `<button class="btn-unlock" onclick="toggleAccountLock('${item.id}', false)">Mở khóa</button>` : ''}
+            ${item.status === 'Tạm hoãn' && !item.accountLocked ? `<button class="btn-lock" onclick="toggleAccountLock('${item.id}', true)">Khóa</button>` : ''}
+            <button class="btn-delete" data-id="${item.id}" data-type="penalty">Xóa</button>
+          </td>
+        </tr>`;
+    });
+    attachEditDeleteEvents('penalty');
+  }
+
+  function getViolationColor(type) {
+    const colors = {
+      'Quá hạn': '#e74c3c',
+      'Mất sách': '#c0392b',
+      'Làm hỏng': '#e67e22',
+      'Vi phạm nội quy': '#f39c12'
+    };
+    return colors[type] || '#95a5a6';
+  }
+
+  function openReducePenaltyModal(penaltyId) {
+    const penalty = penaltyData.find(p => p.id === penaltyId);
+    if (penalty) {
+      document.getElementById('reducePenaltyId').value = penalty.id;
+      document.getElementById('reducePenaltyCurrentAmount').value = penalty.amount.toLocaleString('vi-VN') + ' ' + penalty.unit;
+      document.getElementById('reducePenaltyNewAmount').value = penalty.amount;
+      openModal('reducePenaltyModal');
+    }
+  }
+
+
+
+  function toggleAccountLock(penaltyId, shouldLock) {
+    const penalty = penaltyData.find(p => p.id === penaltyId);
+    if (penalty) {
+      penalty.accountLocked = shouldLock;
+      const action = shouldLock ? 'khóa' : 'mở khóa';
+      Swal.fire({
+        title: 'Thành công!',
+        text: `Đã ${action} tài khoản ${penalty.readerName}`,
+        icon: 'success',
+        timer: 1500
+      });
+      renderPenaltyTable();
+    }
+  }
+
+  function getTypeColor(type) {
+    const colors = {
+      'Phạt quá hạn': '#e74c3c',
+      'Mất sách': '#e67e22',
+      'Hỏng sách': '#f39c12',
+      'Cấp thẻ': '#3498db',
+      'Gia hạn thẻ': '#2ecc71',
+      'Photocopy': '#9b59b6',
+      'Phòng học nhóm': '#1abc9c',
+      'Phí dịch vụ': '#34495e',
+      'Phí photocopy': '#9b59b6'
+    };
+    return colors[type] || '#95a5a6';
   }
 
   function renderShiftTable(data = shiftData) {
@@ -708,11 +907,45 @@ function renderEmployeeTable(data = employeesData) {
     if (type === 'payment') {
       const readerId = document.getElementById('paymentReaderId').value.trim();
       const date = document.getElementById('paymentDate').value;
+      const paymentType = document.getElementById('paymentType').value.trim();
+      const description = document.getElementById('paymentDescription').value.trim();
       const amount = document.getElementById('paymentAmount').value;
-      const reason = document.getElementById('paymentReason').value.trim();
-      paymentData.push({ id: 'P' + Date.now(), readerId, readerName: (readersData.find(r=>r.id===readerId)||{}).fullName || '', date, amount: parseFloat(amount), reason, status: 'Chưa thanh toán' });
+      const method = document.getElementById('paymentMethod').value.trim();
+      const status = amount > 0 ? 'Đã thanh toán' : 'Chưa thanh toán';
+      
+      paymentData.push({ 
+        id: 'P' + Date.now(), 
+        readerId, 
+        readerName: (readersData.find(r=>r.id===readerId)||{}).fullName || '', 
+        date, 
+        type: paymentType,
+        description: description,
+        amount: parseFloat(amount), 
+        method: method,
+        status: status
+      });
       try{ closeModal('paymentModal'); }catch(e){}
-      renderPaymentTable(); alert('Thêm hóa đơn thành công');
+      renderPaymentTable(); 
+      Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Thêm hóa đơn thành công', timer: 1500 });
+      return;
+    }
+
+    if (type === 'feeConfig') {
+      const feeType = document.getElementById('feeType').value.trim();
+      const rate = document.getElementById('feeRate').value;
+      const unit = document.getElementById('feeUnit').value.trim();
+      const description = document.getElementById('feeDescription').value.trim();
+      
+      feeConfigData.push({
+        id: 'FC' + Date.now(),
+        type: feeType,
+        rate: parseFloat(rate),
+        unit: unit,
+        description: description
+      });
+      try{ closeModal('feeConfigModal'); }catch(e){}
+      renderFeeConfigTable();
+      Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Thêm loại phí thành công', timer: 1500 });
       return;
     }
 
@@ -737,6 +970,71 @@ function renderEmployeeTable(data = employeesData) {
       renderAttendanceTable(); alert('Chấm công thành công');
       return;
     }
+
+    if (type === 'penalty') {
+      const penaltyType = document.getElementById('penaltyType').value;
+      const readerId = document.getElementById('penaltyReaderId').value.trim();
+      const violationType = document.getElementById('penaltyViolationType').value;
+      const description = document.getElementById('penaltyDescription').value.trim();
+      const amount = parseFloat(document.getElementById('penaltyAmount').value) || 0;
+      
+      if (!readerId || !violationType || !description || amount <= 0) {
+        alert('Vui lòng điền đầy đủ thông tin phiếu phạt');
+        return;
+      }
+      
+      const readerName = (readersData.find(r=>r.id===readerId)||{}).fullName || '';
+      const newPenalty = {
+        id: 'PEN' + Date.now(),
+        readerId,
+        readerName,
+        violationType,
+        description,
+        amount,
+        unit: 'đồng',
+        status: 'Chưa thanh toán',
+        createdDate: new Date().toISOString().split('T')[0],
+        accountLocked: violationType === 'Mất sách' || amount > 200000, // Tự động khóa nếu mất sách hoặc phạt >200k
+        notes: ''
+      };
+      
+      penaltyData.push(newPenalty);
+      try{ closeModal('penaltyModal'); }catch(e){}
+      document.getElementById('penaltyType').value = '';
+      document.getElementById('penaltyReaderId').value = '';
+      document.getElementById('penaltyViolationType').value = '';
+      document.getElementById('penaltyDescription').value = '';
+      document.getElementById('penaltyAmount').value = '';
+      renderPenaltyTable();
+      Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Thêm phiếu phạt cho ' + readerName, timer: 1500 });
+      return;
+    }
+
+    if (type === 'reducePenalty') {
+      const penaltyId = document.getElementById('reducePenaltyId').value;
+      const newAmount = parseFloat(document.getElementById('reducePenaltyNewAmount').value) || 0;
+      const reason = document.getElementById('reducePenaltyReason').value.trim();
+      
+      const penaltyIndex = penaltyData.findIndex(p => p.id === penaltyId);
+      if (penaltyIndex !== -1) {
+        const penalty = penaltyData[penaltyIndex];
+        const oldAmount = penalty.amount;
+        penalty.amount = newAmount;
+        penalty.notes = reason;
+        
+        try{ closeModal('reducePenaltyModal'); }catch(e){}
+        renderPenaltyTable();
+        Swal.fire({ 
+          icon: 'success', 
+          title: 'Giảm phạt thành công!', 
+          text: `Từ ${oldAmount.toLocaleString('vi-VN')} đ giảm còn ${newAmount.toLocaleString('vi-VN')} đ`, 
+          timer: 1500 
+        });
+      }
+      return;
+    }
+
+
   }
 
 // --- 5. XỬ LÝ XÓA VÀ CẬP NHẬT ---
@@ -747,6 +1045,22 @@ function deleteItem(type, id) {
   if (type === "reader") readersData = readersData.filter((x) => x.id !== id);
   if (type === "employee")
     employeesData = employeesData.filter((x) => x.id !== id);
+  if (type === "penalty")
+    penaltyData = penaltyData.filter((x) => x.id !== id);
+  if (type === "payment")
+    paymentData = paymentData.filter((x) => x.id !== id);
+  if (type === "borrow")
+    borrowData = borrowData.filter((x) => x.id !== id);
+  if (type === "book")
+    booksData = booksData.filter((x) => x.id !== id);
+  if (type === "shift")
+    shiftData = shiftData.filter((x) => x.id !== id);
+  if (type === "card")
+    readerCardData = readerCardData.filter((x) => x.id !== id);
+  if (type === "feeConfig")
+    feeConfigData = feeConfigData.filter((x) => x.id !== id);
+  if (type === "attendance")
+    attendanceData = attendanceData.filter((x) => x.id !== id);
 
   renderAllTables();
   updateDashboardStats();
@@ -766,11 +1080,122 @@ function switchTab(tabId, element) {
 }
 
 function openModal(modalId) {
+  if (modalId === 'penaltyModal') {
+    populateReaderSelect();
+  }
   document.getElementById(modalId).classList.add("active");
 }
 
 function closeModal(modalId) {
   document.getElementById(modalId).classList.remove("active");
+}
+
+// --- PAYMENT MODULE FUNCTIONS ---
+function switchPaymentTab(tabName, btn) {
+  // Hide all tabs
+  document.querySelectorAll('.payment-tab-content').forEach(tab => {
+    tab.style.display = 'none';
+  });
+  
+  // Remove active class from buttons
+  document.querySelectorAll('.payment-tab-btn').forEach(b => {
+    b.classList.remove('active');
+  });
+  
+  // Show selected tab
+  const tabElement = document.getElementById(tabName + '-tab');
+  if (tabElement) {
+    tabElement.style.display = 'block';
+    btn.classList.add('active');
+    
+    // Load data cho tab
+    if (tabName === 'fees') {
+      renderFeeConfigTable(feeConfigData);
+    } else if (tabName === 'report') {
+      generateReport();
+    }
+  }
+}
+
+function renderFeeConfigTable(data = feeConfigData) {
+  const tbody = document.querySelector('#feeConfigTable tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  
+  if (!Array.isArray(data) || data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="no-data">Chưa có dữ liệu</td></tr>`;
+    return;
+  }
+  
+  data.forEach(item => {
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${escapeHtml(item.type)}</strong></td>
+        <td>${item.rate.toLocaleString('vi-VN')}</td>
+        <td>${item.unit}</td>
+        <td>${escapeHtml(item.description)}</td>
+        <td class="action-icons">
+          <button class="btn-edit" data-id="${item.id}" data-type="feeConfig">Sửa</button>
+          <button class="btn-delete" data-id="${item.id}" data-type="feeConfig">Xóa</button>
+        </td>
+      </tr>`;
+  });
+  attachEditDeleteEvents('feeConfig');
+}
+
+function generateReport() {
+  const fromDate = document.getElementById('reportFromDate').value;
+  const toDate = document.getElementById('reportToDate').value;
+  
+  // Filter data theo ngày
+  const filteredData = paymentData.filter(item => {
+    return item.date >= fromDate && item.date <= toDate;
+  });
+  
+  // Tính toán các chỉ số
+  const totalPaid = filteredData
+    .filter(item => item.status === 'Đã thanh toán')
+    .reduce((sum, item) => sum + item.amount, 0);
+  
+  const totalUnpaid = filteredData
+    .filter(item => item.status === 'Chưa thanh toán')
+    .reduce((sum, item) => sum + item.amount, 0);
+  
+  const totalRevenue = totalPaid + totalUnpaid;
+  
+  // Hiển thị kết quả
+  document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString('vi-VN') + ' ₫';
+  document.getElementById('total-paid').textContent = totalPaid.toLocaleString('vi-VN') + ' ₫';
+  document.getElementById('total-unpaid').textContent = totalUnpaid.toLocaleString('vi-VN') + ' ₫';
+  document.getElementById('total-transactions').textContent = filteredData.length;
+  
+  // Chi tiết theo loại phí
+  const feeBreakdown = {};
+  filteredData.forEach(item => {
+    if (!feeBreakdown[item.type]) {
+      feeBreakdown[item.type] = { amount: 0, count: 0 };
+    }
+    feeBreakdown[item.type].amount += item.amount;
+    feeBreakdown[item.type].count += 1;
+  });
+  
+  // Render breakdown
+  const breakdownHtml = Object.entries(feeBreakdown).map(([type, data]) => `
+    <div class="breakdown-item">
+      <div class="breakdown-header">
+        <span class="breakdown-type">${escapeHtml(type)}</span>
+        <span class="breakdown-count">${data.count} giao dịch</span>
+      </div>
+      <div class="breakdown-bar">
+        <div class="breakdown-fill" style="width: ${(data.amount / totalRevenue * 100) || 0}%"></div>
+      </div>
+      <div class="breakdown-footer">
+        <span>${data.amount.toLocaleString('vi-VN')} ₫</span>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('fee-breakdown').innerHTML = breakdownHtml || '<p class="no-data">Không có dữ liệu</p>';
 }
 
 // helper to escape html when inserting into title attribute
