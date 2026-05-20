@@ -1,0 +1,6 @@
+{
+  "name": "Hybird Library",
+  "description": "A sophisticated digital library platform with advanced book renewal, return workflows, and detailed borrowing management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
