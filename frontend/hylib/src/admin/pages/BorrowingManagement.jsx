@@ -17,7 +17,11 @@ export default function BorrowingManagement() {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedRejectRequest, setSelectedRejectRequest] = useState(null);
 
-  const tabs = ['Yêu cầu mới', 'Đang mượn', 'Đã trả', 'Đã hủy'];
+  const [delivering, setDelivering] = useState([
+    { id: 'REQ-1004', user: 'Lê Văn C', book: 'Clean Code', address: '123 Đường A, Quận B, TP.HCM', status: 'Đang giao' }
+  ]);
+
+  const tabs = ['Yêu cầu mới', 'Đang mượn', 'Đã trả', 'Đã hủy', 'Đang giao sách'];
 
   const getFormattedDate = (daysOffset = 0, formatType = 'short', timeStr = '') => {
     const d = new Date();
@@ -328,6 +332,50 @@ export default function BorrowingManagement() {
     </table>
   );
 
+  const renderDeliveringTable = () => (
+    <table className="w-full text-left border-collapse min-w-[900px]">
+      <thead>
+        <tr className="border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider bg-white">
+          <th className="px-6 py-5">MÃ YÊU CẦU</th>
+          <th className="px-6 py-5">ĐỘC GIẢ</th>
+          <th className="px-6 py-5">SÁCH</th>
+          <th className="px-6 py-5">ĐỊA CHỈ</th>
+          <th className="px-6 py-5 text-center">TRẠNG THÁI</th>
+          <th className="px-6 py-5 text-center">THAO TÁC</th>
+        </tr>
+      </thead>
+      <tbody className="text-[14px] text-gray-700">
+        {delivering.map((row, index) => (
+          <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
+            <td className="px-6 py-6 font-bold text-gray-900">{row.id}</td>
+            <td className="px-6 py-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs shrink-0">
+                  {getAvatarInitials(row.user)}
+                </div>
+                <p className="font-bold text-gray-800">{row.user}</p>
+              </div>
+            </td>
+            <td className="px-6 py-6 text-gray-700 font-medium">{row.book}</td>
+            <td className="px-6 py-6 text-gray-600">{row.address}</td>
+            <td className="px-6 py-6 text-center">
+              <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold border ${row.status === 'Đang giao' ? 'bg-yellow-50 text-yellow-600 border-yellow-100' : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                {row.status}
+              </span>
+            </td>
+            <td className="px-6 py-6 text-center">
+              <button 
+                className="text-[#0056b3] hover:text-blue-800 font-bold text-sm transition-colors hover:underline"
+              >
+                Cập nhật
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
   return (
     <div className="flex h-screen bg-[#f8f9fb]">
       <Sidebar />
@@ -401,6 +449,7 @@ export default function BorrowingManagement() {
                  {activeTab === 'Đang mượn' && renderBorrowingTable()}
                  {activeTab === 'Đã trả' && renderReturnedTable()}
                  {activeTab === 'Đã hủy' && renderCancelledTable()}
+                 {activeTab === 'Đang giao sách' && renderDeliveringTable()}
               </div>
 
               {/* Pagination */}

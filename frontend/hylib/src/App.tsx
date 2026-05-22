@@ -184,14 +184,14 @@ export default function App() {
 
   const handleConfirmBorrow = (paymentMethod: string, amount: string = '30.000 VNĐ') => {
     const currentActiveBorrowed = books.filter(b => b.status !== 'Đã trả sách').length;
-    const limit = currentMembershipPlan === 'Premium' ? 999 : 3;
-
-    if (currentActiveBorrowed >= limit) {
-      setSuccessMessage(`Bạn đã mượn tối đa ${limit} cuốn sách theo gói ${currentMembershipPlan || 'Standard'}. Hãy trả bớt sách hoặc nâng cấp lên Premium để mượn thêm.`);
-      setSuccessConfirmText('Nâng cấp ngay');
-      setIsSuccessOpen(true);
-      return;
-    }
+    // Tạm tắt chức năng check limit để test chuyển trang BankPaymentView
+    // const limit = currentMembershipPlan === 'Premium' ? 999 : 3;
+    // if (currentActiveBorrowed >= limit) {
+    //   setSuccessMessage(`Bạn đã mượn tối đa ${limit} cuốn sách theo gói ${currentMembershipPlan || 'Standard'}. Hãy trả bớt sách hoặc nâng cấp lên Premium để mượn thêm.`);
+    //   setSuccessConfirmText('Nâng cấp ngay');
+    //   setIsSuccessOpen(true);
+    //   return;
+    // }
 
     const successMsg = 'Mượn sách thành công! Vui lòng kiểm tra trạng thái trong mục Sách của tôi.';
     setSuccessConfirmText('Hoàn thành');

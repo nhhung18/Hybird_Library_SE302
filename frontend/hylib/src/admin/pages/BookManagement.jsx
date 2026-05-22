@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import { Search, Plus, Book as BookIcon, ChevronLeft, ChevronRight, Library } from 'lucide-react';
+import { Search, Plus, Book as BookIcon, ChevronLeft, ChevronRight, Library, Edit, Trash2 } from 'lucide-react';
 
 export default function BookManagement() {
   const navigate = useNavigate();
@@ -45,6 +45,12 @@ export default function BookManagement() {
     localStorage.setItem('libraryBooks', JSON.stringify(books));
   }, [books]);
 
+  const handleDeleteBook = (id) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa sách này không?')) {
+      setBooks(books.filter(b => b.id !== id));
+    }
+  };
+
   return (
     <div className="flex h-screen bg-[#f8f9fb]">
       <Sidebar />
@@ -81,6 +87,7 @@ export default function BookManagement() {
                     <th className="px-6 py-5">THỂ LOẠI</th>
                     <th className="px-6 py-5">VỊ TRÍ</th>
                     <th className="px-6 py-5 text-right">TỒN KHO</th>
+                    <th className="px-6 py-5 text-center">THAO TÁC</th>
                   </tr>
                 </thead>
                 <tbody className="text-[14px] text-gray-700">
@@ -131,6 +138,26 @@ export default function BookManagement() {
                       {/* Stock */}
                       <td className="px-6 py-4 text-right font-bold text-gray-900">
                         {book.stock}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center gap-3">
+                          <button 
+                            onClick={() => navigate(`/books/edit/${book.id}`)}
+                            className="text-gray-400 hover:text-[#0056b3] transition-colors p-1.5 rounded-full hover:bg-blue-50"
+                            title="Sửa"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteBook(book.id)}
+                            className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-red-50"
+                            title="Xóa"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
                       </td>
 
                     </tr>

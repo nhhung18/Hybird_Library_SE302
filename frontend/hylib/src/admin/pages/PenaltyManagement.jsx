@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Edit, Trash2 } from 'lucide-react';
 import CreatePenaltyModal from '../components/CreatePenaltyModal';
 
 const getAvatarUrl = (name) => {
@@ -93,6 +93,20 @@ export default function PenaltyManagement() {
     const updated = [newPenalty, ...penalties];
     setPenalties(updated);
     localStorage.setItem('libraryPenalties', JSON.stringify(updated));
+  };
+
+  const handleDeletePenalty = (e, id) => {
+    e.stopPropagation();
+    if (window.confirm('Bạn có chắc chắn muốn xóa phiếu phạt này không?')) {
+      const updated = penalties.filter(p => p.id !== id);
+      setPenalties(updated);
+      localStorage.setItem('libraryPenalties', JSON.stringify(updated));
+    }
+  };
+
+  const handleEditPenalty = (e, id) => {
+    e.stopPropagation();
+    alert('Chức năng sửa phiếu phạt: ' + id);
   };
 
   const filteredPenalties = penalties.filter(p => {
@@ -203,7 +217,7 @@ export default function PenaltyManagement() {
                   <span className="font-bold text-gray-900 text-sm">{penalty.memberName}</span>
                 </div>
 
-                <div className="col-span-4 flex flex-col">
+                <div className="col-span-3 flex flex-col">
                   <span className="font-bold text-gray-900 text-sm">{penalty.violationType}</span>
                   <span className="text-gray-500 text-xs mt-0.5">{penalty.bookTitle}</span>
                 </div>
@@ -219,6 +233,21 @@ export default function PenaltyManagement() {
                     }`}>
                     {penalty.status}
                   </span>
+                </div>
+
+                <div className="col-span-1 flex justify-center items-center gap-1">
+                  <button 
+                    onClick={(e) => handleEditPenalty(e, penalty.id)}
+                    className="text-gray-400 hover:text-[#0056b3] transition-colors p-1.5 rounded-full hover:bg-blue-50"
+                  >
+                    <Edit size={16} />
+                  </button>
+                  <button 
+                    onClick={(e) => handleDeletePenalty(e, penalty.id)}
+                    className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-red-50"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
             ))}

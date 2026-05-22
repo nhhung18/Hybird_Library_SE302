@@ -12,7 +12,6 @@ const BorrowConfirmationView = ({ onBack, onConfirm, borrowMode }: BorrowConfirm
   const [paymentMethod, setPaymentMethod] = useState('Thanh toán qua ngân hàng');
   const [showPaymentMenu, setShowPaymentMenu] = useState(false);
   const [showDeliveryMenu, setShowDeliveryMenu] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     fullName: 'Nguyễn Huy Hùng',
     phone: '090 123 4567',
@@ -27,72 +26,8 @@ const BorrowConfirmationView = ({ onBack, onConfirm, borrowMode }: BorrowConfirm
       <h1 className="text-4xl font-bold text-gray-900 mb-10">Xác nhận mượn</h1>
       <div className="space-y-8">
         <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Địa chỉ giao hàng</h2>
-            <button 
-              onClick={() => setIsEditing(!isEditing)}
-              className="text-[#0066cc] font-bold text-sm hover:underline"
-            >
-              {isEditing ? 'Lưu' : 'Sửa'}
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="md:col-span-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Họ và Tên</label>
-              {isEditing ? (
-                <input 
-                  type="text" 
-                  value={userInfo.fullName} 
-                  onChange={(e) => setUserInfo({ ...userInfo, fullName: e.target.value })} 
-                  className="w-full bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700 border-none outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all"
-                />
-              ) : (
-                <div className="bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700">{userInfo.fullName}</div>
-              )}
-            </div>
-            
-            <div>
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Số điện thoại</label>
-              {isEditing ? (
-                <input 
-                  type="text" 
-                  value={userInfo.phone} 
-                  onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })} 
-                  className="w-full bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700 border-none outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all"
-                />
-              ) : (
-                <div className="bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700">{userInfo.phone}</div>
-              )}
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Email</label>
-              {isEditing ? (
-                <input 
-                  type="text" 
-                  value={userInfo.email} 
-                  onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })} 
-                  className="w-full bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700 border-none outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all"
-                />
-              ) : (
-                <div className="bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700">{userInfo.email}</div>
-              )}
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Địa chỉ chi tiết</label>
-              {isEditing ? (
-                <input 
-                  type="text" 
-                  value={userInfo.address} 
-                  onChange={(e) => setUserInfo({ ...userInfo, address: e.target.value })} 
-                  className="w-full bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700 border-none outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all"
-                />
-              ) : (
-                <div className="bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700">{userInfo.address}</div>
-              )}
-            </div>
-          </div>
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Địa chỉ chi tiết</label>
+          <div className="bg-[#f0f4f9] rounded-2xl px-6 py-4 font-bold text-gray-700">{userInfo.address}</div>
         </div>
 
         <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
