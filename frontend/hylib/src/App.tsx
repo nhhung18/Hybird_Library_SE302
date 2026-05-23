@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, startTransition } from 'react';
+// @ts-ignore
+import { ViewTransition } from 'react';
 import { AnimatePresence } from 'motion/react';
 
 // Components
-import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import { LoginModal, RegisterModal, OTPModal, SuccessModal } from './components/AuthModals';
+import { LoginModal, RegisterModal, OTPModal } from './components/AuthModals';
+import { ToastNotification } from './components/ToastNotification';
 
 // Pages
 import HomeView from './pages/HomeView';
@@ -173,13 +175,19 @@ export default function App() {
     if (!isLoggedIn && protectedPages.includes(page)) {
       setIsLoginOpen(true);
     } else {
-      setActivePage(page);
+      startTransition(() => {
+        // @ts-ignore
+        if (typeof addTransitionType === 'function') addTransitionType('nav-forward');
+        setActivePage(page);
+      });
     }
   };
 
   const handleBookClick = (id: string) => {
-    setSelectedBookId(id);
-    setActivePage('Chi tiết sách');
+    startTransition(() => {
+      setSelectedBookId(id);
+      setActivePage('Chi tiết sách');
+    });
   };
 
   const handleConfirmBorrow = (paymentMethod: string, amount: string = '30.000 VNĐ') => {
@@ -296,14 +304,19 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-[#0066cc]">
-      <Sidebar activePage={activePage} setActivePage={handleSetActivePage} onLogoutClick={() => { setIsLoggedIn(false); setActivePage('Khám phá'); }} />
+    <div className="min-h-screen bg-sand font-sans text-ink antialiased selection:bg-forest/20 selection:text-forest relative">
+      <div className="bg-noise"></div>
       
-      <main className="pl-64 transition-all duration-300">
+      <main className="transition-all duration-300 w-full">
         <Header 
+          activePage={activePage}
+          setActivePage={handleSetActivePage}
+          isLoggedIn={isLoggedIn}
+          onLoginClick={() => setIsLoginOpen(true)}
+          onRegisterClick={() => setIsRegisterOpen(true)}
           onProfileClick={() => {
             if (isLoggedIn) {
-              setActivePage('Cài đặt tài khoản');
+              handleSetActivePage('Cài đặt tài khoản');
             } else {
               setIsLoginOpen(true);
             }
@@ -317,34 +330,35 @@ export default function App() {
           onBookClick={handleBookClick}
         />
         
-        <AnimatePresence mode="wait">
+        <ViewTransition enter={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', default: 'fade-in' }} exit={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', default: 'fade-out' }} default="none">
           {activePage === 'Hỗ trợ' ? (
-            <SupportView onBack={() => setActivePage('Khám phá')} />
+            <SupportView onBack={() => handleSetActivePage('Khám phá')} />
           ) : activePage === 'Sách' ? (
-            <BooksView onBookClick={handleBookClick} onBack={() => setActivePage('Khám phá')} searchQuery={searchQuery} />
+            <BooksView onBookClick={handleBookClick} onBack={() => handleSetActivePage('Khám phá')} searchQuery={searchQuery} />
           ) : activePage === 'Sách của tôi' ? (
             <MyBooksView 
               books={books} 
               setBooks={setBooks} 
               onReturnSuccess={handleReturnSuccess} 
-              onReadClick={(id) => { setSelectedBookId(id); setActivePage('Đọc sách'); }} 
+              onReadClick={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }} 
               onRowClick={handleBookClick}
               onRenewSuccess={handleRenewSuccess} 
-              onLateReturn={() => setActivePage('Nộp phạt')} 
-              onBack={() => setActivePage('Khám phá')} 
+              onLateReturn={() => handleSetActivePage('Nộp phạt')} 
+              onNavigateTo={(page) => handleSetActivePage(page)}
+              onBack={() => handleSetActivePage('Khám phá')} 
             />
           ) : activePage === 'Nộp phạt' ? (
-            <LateFinePaymentView onBack={() => setActivePage('Sách của tôi')} onConfirm={handleConfirmLateFine} />
+            <LateFinePaymentView onBack={() => handleSetActivePage('Sách của tôi')} onConfirm={handleConfirmLateFine} />
           ) : activePage === 'Đọc sách' ? (
-            <ReaderView onBack={() => setActivePage('Sách của tôi')} />
+            <ReaderView onBack={() => handleSetActivePage('Sách của tôi')} />
           ) : activePage === 'Yêu thích' ? (
             <FavoritesView 
               books={favoriteBooks} 
               setBooks={setFavoriteBooks} 
               cartBooks={cartBooks} 
               setCartBooks={setCartBooks} 
-              onNavigateToCart={() => setActivePage('Giỏ sách')} 
-              onBack={() => setActivePage('Khám phá')} 
+              onNavigateToCart={() => handleSetActivePage('Giỏ sách')} 
+              onBack={() => handleSetActivePage('Khám phá')} 
             />
           ) : activePage === 'Giỏ sách' ? (
             <CartView 
@@ -352,9 +366,9 @@ export default function App() {
               setBooks={setCartBooks} 
               onBorrowTrigger={(mode) => {
                 setBorrowMode(mode);
-                setActivePage('Xác nhận mượn');
+                handleSetActivePage('Xác nhận mượn');
               }}
-              onBack={() => setActivePage('Khám phá')}
+              onBack={() => handleSetActivePage('Khám phá')}
             />
           ) : activePage === 'Thẻ thành viên' ? (
             <MembershipView 
@@ -362,22 +376,22 @@ export default function App() {
               currentPlan={currentMembershipPlan}
               onViewDetail={(plan) => {
                 setUpgradePlan(plan);
-                setActivePage('Chi tiết thẻ thành viên');
+                handleSetActivePage('Chi tiết thẻ thành viên');
               }}
-              onBack={() => setActivePage('Khám phá')}
+              onBack={() => handleSetActivePage('Khám phá')}
             />
           ) : activePage === 'Chi tiết thẻ thành viên' ? (
             <MembershipDetailView 
               plan={upgradePlan || 'Standard'} 
               expiryDate={membershipExpiry}
-              onBack={() => setActivePage('Thẻ thành viên')} 
+              onBack={() => handleSetActivePage('Thẻ thành viên')} 
               onUpgradePremium={() => {
                 setUpgradePlan('Premium');
                 setPaymentAmount('300.000 VNĐ');
                 setPaymentBackPage('Thẻ thành viên');
                 setPaymentSuccessMessage('Nâng cấp thành công!');
                 setSuccessConfirmText('Bắt đầu ngay');
-                setActivePage('Thanh toán qua ngân hàng');
+                handleSetActivePage('Thanh toán qua ngân hàng');
               }}
               onCancel={() => { setCurrentMembershipPlan(null); setSuccessMessage('Hủy thành công'); setIsSuccessOpen(true); }}
               onRenew={() => {
@@ -388,30 +402,30 @@ export default function App() {
               }}
             />
           ) : activePage === 'Cài đặt tài khoản' ? (
-            <ProfileView onBack={() => setActivePage('Khám phá')} profile={profile} setProfile={setProfile} />
+            <ProfileView onBack={() => handleSetActivePage('Khám phá')} profile={profile} setProfile={setProfile} />
           ) : activePage === 'Chi tiết sách' ? (
             <BookDetailView 
               bookId={selectedBookId || ''} 
-              onBack={() => setActivePage('Khám phá')} 
-              onStartBorrow={(mode) => { setBorrowMode(mode); setActivePage('Xác nhận mượn'); }} 
+              onBack={() => handleSetActivePage('Khám phá')} 
+              onStartBorrow={(mode) => { setBorrowMode(mode); handleSetActivePage('Xác nhận mượn'); }} 
               borrowedInfo={books.find(b => b.id === selectedBookId)}
               onRenew={handleRenew}
-              onRead={(id) => { setSelectedBookId(id); setActivePage('Đọc sách'); }}
+              onRead={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }}
             />
           ) : activePage === 'Xác nhận mượn' ? (
-            <BorrowConfirmationView borrowMode={borrowMode} onBack={() => setActivePage('Chi tiết sách')} onConfirm={handleConfirmBorrow} />
+            <BorrowConfirmationView borrowMode={borrowMode} onBack={() => handleSetActivePage('Chi tiết sách')} onConfirm={handleConfirmBorrow} />
           ) : activePage === 'Thanh toán qua ngân hàng' ? (
-            <BankPaymentView onBack={() => setActivePage(paymentBackPage)} onComplete={handlePaymentComplete} amount={paymentAmount} />
+            <BankPaymentView onBack={() => handleSetActivePage(paymentBackPage)} onComplete={handlePaymentComplete} amount={paymentAmount} />
           ) : (
             <HomeView onLoginClick={() => setIsLoginOpen(true)} onRegisterClick={() => setIsRegisterOpen(true)} isLoggedIn={isLoggedIn} onBookClick={handleBookClick} />
           )}
-        </AnimatePresence>
+        </ViewTransition>
       </main>
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} onSwitchToRegister={() => { setIsLoginOpen(false); setIsRegisterOpen(true); }} />
       <RegisterModal isOpen={isRegisterOpen} onClose={() => setIsRegisterOpen(false)} onSwitchToLogin={() => { setIsRegisterOpen(false); setIsLoginOpen(true); }} onRegisterSuccess={() => { setIsRegisterOpen(false); setIsOTPOpen(true); }} />
       <OTPModal isOpen={isOTPOpen} onClose={() => setIsOTPOpen(false)} onBack={() => { setIsOTPOpen(false); setIsRegisterOpen(true); }} onVerifySuccess={() => { setIsLoggedIn(true); setIsOTPOpen(false); setSuccessMessage('Đăng ký thành công!'); setSuccessConfirmText('Khám phá ngay'); setIsSuccessOpen(true); setActivePage('Khám phá'); }} />
-      <SuccessModal isOpen={isSuccessOpen} onClose={() => { setIsSuccessOpen(false); }} message={successMessage} confirmText={successConfirmText} />
+      <ToastNotification isOpen={isSuccessOpen} onClose={() => { setIsSuccessOpen(false); }} message={successMessage} />
     </div>
   );
 }

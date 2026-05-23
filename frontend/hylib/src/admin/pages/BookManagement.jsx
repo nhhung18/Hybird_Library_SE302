@@ -6,6 +6,7 @@ import { Search, Plus, Book as BookIcon, ChevronLeft, ChevronRight, Library, Edi
 
 export default function BookManagement() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [books, setBooks] = useState(() => {
     const saved = localStorage.getItem('libraryBooks');
@@ -51,6 +52,12 @@ export default function BookManagement() {
     }
   };
 
+  const filteredBooks = books.filter(book => 
+    book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    book.isbn.includes(searchQuery)
+  );
+
   return (
     <div className="flex h-screen bg-[#f8f9fb]">
       <Sidebar />
@@ -66,13 +73,25 @@ export default function BookManagement() {
               <p className="text-gray-500 text-sm">Quản lý và tra cứu toàn bộ danh mục tài liệu.</p>
             </div>
             
-            <button 
-              onClick={() => navigate('/books/create')}
-              className="flex items-center gap-2 bg-[#0056b3] hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-bold text-sm transition-colors shadow-sm"
-            >
-              <Plus size={18} />
-              THÊM SÁCH MỚI
-            </button>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm sách, tác giả..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:border-[#0056b3] focus:ring-1 focus:ring-[#0056b3] w-64 text-sm"
+                />
+              </div>
+              <button 
+                onClick={() => navigate('/books/create')}
+                className="flex items-center gap-2 bg-[#0056b3] hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-bold text-sm transition-colors shadow-sm"
+              >
+                <Plus size={18} />
+                THÊM SÁCH MỚI
+              </button>
+            </div>
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 flex flex-col flex-1 shadow-sm overflow-hidden">
@@ -91,7 +110,7 @@ export default function BookManagement() {
                   </tr>
                 </thead>
                 <tbody className="text-[14px] text-gray-700">
-                  {books.map((book, index) => (
+                  {filteredBooks.map((book, index) => (
                     <tr key={book.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
                       
                       {/* Cover */}
@@ -168,7 +187,7 @@ export default function BookManagement() {
 
             {/* Pagination */}
             <div className="p-5 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500 bg-white">
-              <span className="font-medium">Hiển thị 1 - {Math.min(10, books.length)} của {books.length} sách</span>
+              <span className="font-medium">Hiển thị 1 - {Math.min(10, filteredBooks.length)} của {filteredBooks.length} sách</span>
               <div className="flex items-center gap-2">
                 <button className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors font-medium">Trang trước</button>
                 <button className="px-4 py-1.5 rounded-md border border-gray-200 text-gray-800 font-bold hover:bg-gray-50 transition-colors">Tiếp theo</button>

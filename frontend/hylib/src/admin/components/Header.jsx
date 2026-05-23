@@ -1,30 +1,32 @@
 import React from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Bell, MessageSquare } from 'lucide-react';
 
-export default function Header() {
+export default function Header({ title = "Tổng quan" }) {
   return (
-    <header className="h-20 flex items-center justify-between px-10 sticky top-0 bg-white/80 backdrop-blur-md z-[60]">
-      <div className="flex items-center space-x-4 flex-1">
-        <div className="relative w-full max-w-2xl">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input
-            type="text"
-            placeholder="Tìm kiếm sách, tác giả,..."
-            className="w-full bg-[#f0f4f9] border-none rounded-full py-2.5 pl-12 pr-4 focus:ring-2 focus:ring-[#0066cc]/20 transition-all outline-none text-sm font-medium"
-          />
-        </div>
+    <header className="h-[72px] flex items-center justify-between px-8 bg-white border-b border-gray-200 z-40 sticky top-0 font-sans">
+      <div className="flex items-center">
+        <h1 className="text-xl font-bold text-gray-900 tracking-tight">{title}</h1>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-5">
+        <button className="text-gray-500 hover:text-gray-900 transition-colors">
+          <MessageSquare size={20} strokeWidth={2} />
+        </button>
+        
         <div className="relative">
-          <button className="p-2.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors relative">
-            <Bell size={22} />
+          <button className="text-gray-500 hover:text-gray-900 transition-colors relative">
+            <Bell size={20} strokeWidth={2} />
+            <span className="absolute 1 top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white" />
           </button>
         </div>
         
-        <button className="p-2.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
-          <User size={22} />
-        </button>
+        <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 cursor-pointer ml-2">
+          <img 
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" 
+            alt="Avatar" 
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
     </header>
   );

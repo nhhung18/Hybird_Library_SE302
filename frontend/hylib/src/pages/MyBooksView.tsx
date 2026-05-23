@@ -11,6 +11,7 @@ interface MyBooksViewProps {
   onRowClick: (id: string) => void;
   onRenewSuccess: () => void;
   onLateReturn: () => void;
+  onNavigateTo?: (page: string) => void;
   onBack: () => void;
 }
 
@@ -73,11 +74,12 @@ const GenericConfirmModal = ({ isOpen, onClose, onConfirm, message, confirmText,
   </AnimatePresence>
 );
 
-const MyBooksView = ({ books, setBooks, onReturnSuccess, onReadClick, onRowClick, onRenewSuccess, onLateReturn, onBack }: MyBooksViewProps) => {
+const MyBooksView = ({ books, setBooks, onReturnSuccess, onReadClick, onRowClick, onRenewSuccess, onLateReturn, onNavigateTo, onBack }: MyBooksViewProps) => {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const filters = ['Tất cả', 'Ebook', 'Offline', 'Đã đến hạn', 'Khả dụng'];
 
@@ -159,11 +161,47 @@ const MyBooksView = ({ books, setBooks, onReturnSuccess, onReadClick, onRowClick
       animate={{ opacity: 1, y: 0 }}
       className="max-w-7xl mx-auto px-10 py-12"
     >
-      <div className="flex items-center space-x-6 mb-10">
-        <button onClick={onBack} className="p-3 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center">
+      <div className="flex items-center space-x-6 mb-10 relative">
+        <button onClick={onBack} className="p-3 hover:bg-white/40 rounded-full transition-colors flex items-center justify-center">
           <ArrowLeft size={28} className="text-gray-900" />
         </button>
-        <h1 className="text-5xl font-bold text-gray-900 tracking-tight">Sách của tôi</h1>
+        <div className="relative">
+          <button 
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center gap-3 text-5xl font-bold text-gray-900 tracking-tight hover:opacity-80 transition-opacity"
+          >
+            Sách của tôi
+            <ChevronDown size={32} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+          
+          <AnimatePresence>
+            {isDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-full left-0 mt-4 w-64 glass rounded-2xl shadow-xl border border-white/40 overflow-hidden z-50"
+              >
+                <div className="py-2">
+                  <button className="w-full text-left px-6 py-3 font-bold text-forest bg-white/40">Sách đang mượn</button>
+                  <button 
+                    onClick={() => onNavigateTo && onNavigateTo('Yêu thích')}
+                    className="w-full text-left px-6 py-3 font-medium text-ink hover:bg-white/30 transition-colors"
+                  >
+                    Sách yêu thích
+                  </button>
+                  <button 
+                    onClick={() => onNavigateTo && onNavigateTo('Giỏ sách')}
+                    className="w-full text-left px-6 py-3 font-medium text-ink hover:bg-white/30 transition-colors"
+                  >
+                    Giỏ sách
+                  </button>
+                  <button className="w-full text-left px-6 py-3 font-medium text-ink hover:bg-white/30 transition-colors">Lịch sử mượn</button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <div className="flex items-center justify-between mb-8">

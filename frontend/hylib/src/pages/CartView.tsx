@@ -42,7 +42,7 @@ const CartView = ({ books, setBooks, onBorrowTrigger, onBack }: CartViewProps) =
       </motion.div>
     );
   }
-  
+
   const handleConfirmAction = () => {
     if (modalConfig.targetId === 'all') setBooks([]);
     else if (modalConfig.targetId !== null) setBooks(prev => prev.filter(b => b.id !== modalConfig.targetId));
@@ -55,7 +55,6 @@ const CartView = ({ books, setBooks, onBorrowTrigger, onBack }: CartViewProps) =
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="px-10 pb-20 pt-4">
       <div className="flex items-center justify-between mb-10">
         <div className="flex items-center space-x-6">
-          <button onClick={onBack} className="p-3 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft size={28} className="text-gray-900" /></button>
           <h1 className="text-6xl font-bold text-gray-900 tracking-tight">Giỏ sách</h1>
         </div>
         <div className="flex items-center space-x-4">

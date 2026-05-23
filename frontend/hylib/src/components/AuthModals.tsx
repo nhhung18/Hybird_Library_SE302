@@ -154,22 +154,5 @@ export const OTPModal = ({ isOpen, onClose, onBack, onVerifySuccess }: { isOpen:
   );
 };
 
-export const SuccessModal = ({ isOpen, onClose, message, confirmText = 'Hoàn thành' }: { isOpen: boolean; onClose: () => void; message: string; confirmText?: string }) => {
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/20 backdrop-blur-md" />
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-white rounded-[2.5rem] p-10 max-w-[420px] w-full text-center relative z-10 shadow-2xl">
-            <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4 px-4">Thông báo</h3>
-            <p className="text-gray-500 mb-10 font-medium leading-relaxed px-2">{message}</p>
-            <button onClick={onClose} className="w-full bg-[#0066cc] text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:shadow-blue-200 transition-all active:scale-95">{confirmText}</button>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  );
-};
-
 import { ArrowLeft } from 'lucide-react';
+

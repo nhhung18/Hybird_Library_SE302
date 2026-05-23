@@ -61,7 +61,7 @@ const Header = ({
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <header className="h-20 flex items-center justify-between px-10 sticky top-0 bg-white/80 backdrop-blur-md z-[60]">
+    <header className="h-20 flex items-center justify-between px-10 sticky top-0 glass z-[60]">
       <div className="flex items-center space-x-4 flex-1">
         <div className="relative w-full max-w-2xl">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -115,112 +115,105 @@ const Header = ({
 
       <div className="flex items-center space-x-4">
         <div className="relative" ref={notificationRef}>
-          <button 
+          <motion.button
             onClick={() => setShowNotifications(!showNotifications)}
-            className={`p-2.5 rounded-full transition-all relative ${showNotifications ? 'bg-blue-50 text-[#0066cc]' : 'text-gray-500 hover:bg-gray-100'}`}
+            className={`p-2 rounded-full transition-all relative ${showNotifications ? 'bg-white/40 text-forest' : 'hover:bg-white/30 text-ink/60 hover:text-ink'}`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Bell size={22} />
+            <Bell size={20} strokeWidth={1.5} />
             {unreadCount > 0 && (
-              <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white animate-in zoom-in duration-300">
-                {unreadCount}
-              </span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-terra rounded-full border border-sand" />
             )}
-          </button>
+          </motion.button>
 
           <AnimatePresence>
             {showNotifications && (
               <motion.div
-                initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                className="absolute top-full right-0 mt-4 w-[380px] bg-white rounded-[2rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] border border-gray-100 overflow-hidden z-50 origin-top-right"
+                exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full right-0 mt-4 w-[380px] glass rounded-3xl overflow-hidden z-50 origin-top-right border border-white/40"
               >
-                  <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-black text-gray-900 tracking-tight">Thông báo</h3>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
-                        Bạn có {unreadCount} thông báo mới
-                      </p>
-                    </div>
-                    {notifications.length > 0 && (
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          clearAllNotifications();
-                        }}
-                        className="text-xs font-bold text-[#0066cc] hover:underline"
-                      >
-                        Xóa tất cả
-                      </button>
-                    )}
+                <div className="p-5 border-b border-white/20 bg-white/30 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-display italic text-xl text-ink tracking-tight">Thông báo</h3>
                   </div>
-                  
-                  <div className="max-h-[420px] overflow-y-auto custom-scrollbar">
-                    {notifications.length > 0 ? (
-                      <div className="p-2">
-                        {notifications.map((notif) => (
-                          <div 
-                            key={notif.id}
-                            onClick={() => {
-                              markAsRead(notif.id);
-                              onNotificationClick(notif);
-                              setShowNotifications(false);
-                            }}
-                            className={`p-4 rounded-[1.5rem] transition-all cursor-pointer group relative mb-1 ${notif.isRead ? 'opacity-60 grayscale-[0.5]' : 'bg-gray-50/50 hover:bg-[#f0f4f9]'}`}
-                          >
-                            <div className="flex items-start space-x-4">
-                              <div className={`w-10 h-10 rounded-full shrink-0 flex items-center justify-center ${
-                                notif.type === 'warning' ? 'bg-amber-100 text-amber-600' : 
-                                notif.type === 'success' ? 'bg-green-100 text-green-600' : 
-                                'bg-blue-100 text-[#0066cc]'
-                              }`}>
-                                {notif.type === 'warning' ? <Clock size={18} /> : 
-                                 notif.type === 'success' ? <Check size={18} /> : 
-                                 <Bell size={18} />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-1">
-                                  <h4 className="font-bold text-gray-900 text-sm truncate pr-4">{notif.title}</h4>
-                                  <span className="text-[10px] font-bold text-gray-400 whitespace-nowrap">{notif.time}</span>
-                                </div>
-                                <p className="text-xs font-medium text-gray-500 leading-relaxed pr-2">
-                                  {notif.message}
-                                </p>
-                              </div>
-                            </div>
-                            {!notif.isRead && (
-                              <div className="absolute top-2 right-2 w-2 h-2 bg-[#0066cc] rounded-full" />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="py-20 flex flex-col items-center justify-center text-center px-10">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-200 mb-4">
-                          <Bell size={32} strokeWidth={1} />
-                        </div>
-                        <h4 className="font-bold text-gray-900 mb-1">Hết thông báo rồi</h4>
-                        <p className="text-xs font-medium text-gray-400">Chúng tôi sẽ báo cho bạn khi có tin mới!</p>
-                      </div>
-                    )}
-                  </div>
-                  
                   {notifications.length > 0 && (
-                    <button className="w-full py-4 text-[11px] font-black text-[#0066cc] bg-gray-50/50 hover:bg-gray-50 transition-colors uppercase tracking-[0.2em] border-t border-gray-50">
-                      Xem lịch sử thông báo
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearAllNotifications();
+                      }}
+                      className="text-[10px] uppercase tracking-widest font-medium text-ink/50 hover:text-ink transition-colors px-2 py-1 hover:bg-white/30 rounded-lg"
+                    >
+                      Xóa tất cả
                     </button>
                   )}
-                </motion.div>
+                </div>
+
+                <div className="max-h-[420px] overflow-y-auto custom-scrollbar">
+                  {notifications.length > 0 ? (
+                    <div className="p-2 space-y-1">
+                      {notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          onClick={() => {
+                            markAsRead(notif.id);
+                            onNotificationClick(notif);
+                            setShowNotifications(false);
+                          }}
+                          className={`p-4 rounded-2xl transition-all cursor-pointer group relative ${notif.isRead ? 'opacity-60 grayscale hover:bg-white/20' : 'bg-white/30 hover:bg-white/50'}`}
+                        >
+                          <div className="flex items-start space-x-4">
+                            <div className={`mt-0.5 shrink-0 flex items-center justify-center ${
+                              notif.type === 'warning' ? 'text-terra' :
+                              notif.type === 'success' ? 'text-forest' :
+                              'text-ink'
+                            }`}>
+                              {notif.type === 'warning' ? <Clock size={16} strokeWidth={1.5} /> :
+                               notif.type === 'success' ? <Check size={16} strokeWidth={1.5} /> :
+                               <Bell size={16} strokeWidth={1.5} />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <h4 className="font-medium text-ink text-sm truncate pr-4">{notif.title}</h4>
+                                <span className="text-[10px] text-ink/50 whitespace-nowrap">{notif.time}</span>
+                              </div>
+                              <p className="text-xs text-ink/70 leading-relaxed pr-2">
+                                {notif.message}
+                              </p>
+                            </div>
+                          </div>
+                          {!notif.isRead && (
+                            <div className="absolute top-1/2 -translate-y-1/2 right-4 w-1.5 h-1.5 bg-forest rounded-full" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-12 flex flex-col items-center justify-center text-center px-10">
+                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3">
+                        <Bell size={24} strokeWidth={1} className="text-ink/30" />
+                      </div>
+                      <h4 className="font-display italic text-lg text-ink/60">Không có thông báo mới</h4>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
         
-        <button 
+        <motion.button 
           onClick={onProfileClick}
-          className="p-2.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 rounded-full hover:bg-white/30 text-ink/60 hover:text-ink transition-colors"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <User size={22} />
-        </button>
+          <User size={20} strokeWidth={1.5} />
+        </motion.button>
       </div>
     </header>
   );

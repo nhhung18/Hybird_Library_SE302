@@ -16,6 +16,7 @@ export default function BorrowingManagement() {
   const [selectedCancelRequest, setSelectedCancelRequest] = useState(null);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedRejectRequest, setSelectedRejectRequest] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [delivering, setDelivering] = useState([
     { id: 'REQ-1004', user: 'Lê Văn C', book: 'Clean Code', address: '123 Đường A, Quận B, TP.HCM', status: 'Đang giao' }
@@ -137,6 +138,12 @@ export default function BorrowingManagement() {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   };
 
+  const filteredData = (data) => data.filter(item => 
+    item.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    item.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (item.book && item.book.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   const renderNewRequestsTable = () => (
     <table className="w-full text-left border-collapse min-w-[900px]">
       <thead>
@@ -151,14 +158,14 @@ export default function BorrowingManagement() {
         </tr>
       </thead>
       <tbody className="text-[14px] text-gray-700">
-        {newRequests.length === 0 && (
+        {filteredData(newRequests).length === 0 && (
           <tr>
             <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
-              Không có yêu cầu mới nào.
+              Không tìm thấy yêu cầu nào.
             </td>
           </tr>
         )}
-        {newRequests.map((row, index) => (
+        {filteredData(newRequests).map((row, index) => (
           <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
             <td className="px-6 py-6 font-bold text-gray-900">{row.id}</td>
             <td className="px-6 py-6 font-medium text-gray-800">{row.user}</td>
@@ -212,14 +219,14 @@ export default function BorrowingManagement() {
         </tr>
       </thead>
       <tbody className="text-[14px] text-gray-700">
-        {borrowing.length === 0 && (
+        {filteredData(borrowing).length === 0 && (
           <tr>
             <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
-              Không có sách nào đang được mượn.
+              Không tìm thấy sách nào.
             </td>
           </tr>
         )}
-        {borrowing.map((row, index) => (
+        {filteredData(borrowing).map((row, index) => (
           <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
             <td className="px-6 py-6 font-bold text-gray-900">{row.id}</td>
             <td className="px-6 py-6 font-medium text-gray-800">{row.user}</td>
@@ -255,7 +262,7 @@ export default function BorrowingManagement() {
         </tr>
       </thead>
       <tbody className="text-[14px] text-gray-700">
-        {returned.map((row, index) => (
+        {filteredData(returned).map((row, index) => (
           <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
             <td className="px-6 py-6 font-bold text-gray-900">{row.id}</td>
             <td className="px-6 py-6">
@@ -300,7 +307,7 @@ export default function BorrowingManagement() {
         </tr>
       </thead>
       <tbody className="text-[14px] text-gray-700">
-        {cancelled.map((row, index) => (
+        {filteredData(cancelled).map((row, index) => (
           <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
             <td className="px-6 py-6 font-bold text-gray-900">{row.id}</td>
             <td className="px-6 py-6">
@@ -345,7 +352,7 @@ export default function BorrowingManagement() {
         </tr>
       </thead>
       <tbody className="text-[14px] text-gray-700">
-        {delivering.map((row, index) => (
+        {filteredData(delivering).map((row, index) => (
           <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
             <td className="px-6 py-6 font-bold text-gray-900">{row.id}</td>
             <td className="px-6 py-6">
@@ -433,6 +440,8 @@ export default function BorrowingManagement() {
                   <input
                     type="text"
                     placeholder="Tìm kiếm mã đơn, người mượn..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-200 transition-shadow text-gray-700"
                   />
                 </div>

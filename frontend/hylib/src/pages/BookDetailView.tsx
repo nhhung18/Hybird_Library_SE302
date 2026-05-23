@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowLeft, 
-  Star, 
-  Heart, 
-  Library, 
-  Clock, 
-  History, 
-  HelpCircle, 
-  Sparkles, 
-  User, 
+import {
+  ArrowLeft,
+  Star,
+  Heart,
+  Library,
+  Clock,
+  History,
+  HelpCircle,
+  Sparkles,
+  User,
   X
 } from 'lucide-react';
 import { BorrowedBook } from '../types';
@@ -94,7 +94,7 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
     setLocalReviews(prev => [{ name: 'Bạn', date: 'Vừa xong', content: reviewText, rating: 5 }, ...prev]);
     setReviewText('');
   };
-  
+
   const bookTitle = borrowedInfo?.title || "The Art of Stillness";
   const bookAuthor = borrowedInfo?.author || "Pico Iyer";
   const bookImage = borrowedInfo?.image || "https://picsum.photos/seed/stillness/800/1067";
@@ -136,7 +136,7 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
           <div className="mb-8">
             <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 text-[#0066cc] text-[10px] font-black uppercase tracking-wider mb-8 border border-blue-100/50 shadow-sm shadow-blue-50">
               <div className="w-1.5 h-1.5 bg-[#0066cc] rounded-full mr-2"></div>
-              Khả dụng (Ebook/Offline)
+              Khả dụng (Ebook/Sách giấy)
             </span>
             <h1 className="text-6xl font-bold text-gray-900 mb-3 tracking-tight leading-[1.1]">{bookTitle}</h1>
             <p className="text-2xl font-bold text-gray-400 mb-10">{bookAuthor}</p>

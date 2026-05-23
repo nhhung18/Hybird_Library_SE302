@@ -16,7 +16,7 @@ import PenaltyDetails from './pages/PenaltyDetails';
 export default function AdminApp() {
   return (
     <BrowserRouter>
-      <div className="AdminApp">
+      <div className="min-h-screen bg-[#f9fafb] font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-[#0066cc]">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/employees" element={<EmployeeManagement />} />

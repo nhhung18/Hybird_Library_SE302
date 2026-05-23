@@ -40,11 +40,10 @@ const FavoritesView = ({ books, setBooks, cartBooks, setCartBooks, onNavigateToC
         <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center text-gray-200 mb-8"><Heart size={64} strokeWidth={1.5} /></div>
         <h2 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">Danh sách yêu thích trống</h2>
         <p className="text-gray-500 mb-10 max-w-sm leading-relaxed font-medium">Bạn chưa có cuốn sách yêu thích nào. Hãy khám phá kho sách khổng lồ của chúng tôi!</p>
-        <button onClick={onBack} className="bg-[#0066cc] text-white px-12 py-4 rounded-full font-bold shadow-xl hover:shadow-blue-200 transition-all active:scale-95">Khám phá ngay</button>
       </motion.div>
     );
   }
-  
+
   const handleConfirmAction = () => {
     if (modalConfig.targetId === 'all') setBooks([]);
     else if (modalConfig.targetId === 'addAllToCart') {
