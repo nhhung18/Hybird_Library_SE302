@@ -1,4 +1,12 @@
 package com.tlu.Hybird_Library_SE302.model.base;
 
-public class BaseIdObject {
+import jakarta.persistence.*;
+import lombok.Data;
+
+@MappedSuperclass
+@Data
+public abstract class BaseIdObject {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 }

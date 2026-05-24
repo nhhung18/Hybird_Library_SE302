@@ -12,7 +12,7 @@ interface ProfileViewProps {
 const Toggle = ({ active, onToggle }: { active: boolean; onToggle: () => void }) => (
   <button 
     onClick={onToggle}
-    className={`w-12 h-6 rounded-full transition-all relative ${active ? 'bg-[#0066cc]' : 'bg-gray-200'}`}
+    className={`w-12 h-6 rounded-full transition-all relative ${active ? 'bg-[#1e3b2b]' : 'bg-gray-200'}`}
   >
     <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${active ? 'left-7' : 'left-1'}`} />
   </button>
@@ -55,21 +55,21 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-10 pb-20 pt-4">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full max-w-none px-4 md:px-12 lg:px-16 py-12">
       <div className="flex items-center space-x-6 mb-10">
-        <button onClick={onBack} className="p-3 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center">
+        <button onClick={onBack} className="p-3 hover:bg-white/50 rounded-full transition-colors flex items-center justify-center">
           <ArrowLeft size={28} className="text-gray-900" />
         </button>
         <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight">Cài đặt tài khoản</h2>
       </div>
 
       <div className="flex gap-12 items-start">
-        <div className="w-72 bg-[#f0f4f9]/50 rounded-[2rem] p-4 space-y-2 border border-gray-100">
+        <div className="w-72 glass-panel rounded-[2.5rem] p-4 space-y-2">
           {tabs.map((tab) => (
             <button
               key={tab.label}
               onClick={() => setActiveTab(tab.label)}
-              className={`w-full flex items-center space-x-4 px-6 py-4 rounded-2xl transition-all font-bold text-sm ${activeTab === tab.label ? 'bg-[#0066cc]/10 text-[#0066cc]' : 'text-gray-500 hover:bg-gray-100'}`}
+              className={`w-full flex items-center space-x-4 px-6 py-4 rounded-full transition-all font-bold text-sm ${activeTab === tab.label ? 'bg-white/60 text-[#1e3b2b] shadow-sm' : 'text-gray-500 hover:bg-white/40'}`}
             >
               <tab.icon size={20} strokeWidth={activeTab === tab.label ? 2.5 : 2} />
               <span>{tab.label}</span>
@@ -77,7 +77,7 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
           ))}
         </div>
 
-        <div className="flex-1 bg-white rounded-[3rem] p-12 shadow-2xl shadow-gray-100 border border-gray-50 min-h-[700px] flex flex-col relative">
+        <div className="flex-1 glass-panel rounded-[3rem] p-12 min-h-[700px] flex flex-col relative">
           {activeTab === 'Thông tin cá nhân' ? (
             <div className="flex-1">
               <div className="flex items-center justify-between mb-16 pb-16 border-b border-gray-100">
@@ -86,7 +86,7 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
                     <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-50 ring-2 ring-gray-100">
                       <img src={editedProfile.avatar} alt="Profile" className="w-full h-full object-cover" />
                     </div>
-                    <button className="absolute bottom-0 right-0 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-gray-500 hover:text-[#0066cc] border border-gray-100">
+                    <button className="absolute bottom-0 right-0 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-gray-500 hover:text-[#1e3b2b] border border-gray-100">
                       <Camera size={18} />
                     </button>
                   </div>
@@ -95,8 +95,8 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
                     <span className="inline-block px-4 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-[10px] font-black uppercase tracking-wider">Độc giả</span>
                   </div>
                 </div>
-                <div className="bg-[#f0f4f9] rounded-2xl p-6 border border-blue-50/50">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Loại thẻ: <span className="text-[#0066cc] font-bold">Hạng Tiêu Chuẩn</span></p>
+                <div className="bg-white/50 backdrop-blur-md rounded-3xl p-6 border border-white/60 shadow-sm">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Loại thẻ: <span className="text-[#1e3b2b] font-bold">Hạng Tiêu Chuẩn</span></p>
                   <p className="text-[11px] font-bold text-gray-500">Ngày hết hạn: <span className="text-gray-900">15/06/2026</span></p>
                 </div>
               </div>
@@ -104,23 +104,23 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
               <div className="grid grid-cols-2 gap-10">
                 <div className="space-y-3">
                   <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-4">Họ và tên</label>
-                  <input type="text" value={editedProfile.fullName || ''} onChange={(e) => setEditedProfile({...editedProfile, fullName: e.target.value})} className="w-full bg-[#f0f4f9] border-none rounded-2xl py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all" />
+                  <input type="text" value={editedProfile.fullName || ''} onChange={(e) => setEditedProfile({...editedProfile, fullName: e.target.value})} className="w-full bg-white/50 backdrop-blur-md border border-white/60 rounded-full py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3b2b]/20 transition-all shadow-sm" />
                 </div>
                 <div className="space-y-3">
                   <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-4">Email</label>
-                  <input type="email" value={editedProfile.email || ''} onChange={(e) => setEditedProfile({...editedProfile, email: e.target.value})} className="w-full bg-[#f0f4f9] border-none rounded-2xl py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all" />
+                  <input type="email" value={editedProfile.email || ''} onChange={(e) => setEditedProfile({...editedProfile, email: e.target.value})} className="w-full bg-white/50 backdrop-blur-md border border-white/60 rounded-full py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3b2b]/20 transition-all shadow-sm" />
                 </div>
                 <div className="space-y-3">
                   <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-4">Số điện thoại</label>
-                  <input type="text" value={editedProfile.phone || ''} onChange={(e) => setEditedProfile({...editedProfile, phone: e.target.value})} className="w-full bg-[#f0f4f9] border-none rounded-2xl py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all" />
+                  <input type="text" value={editedProfile.phone || ''} onChange={(e) => setEditedProfile({...editedProfile, phone: e.target.value})} className="w-full bg-white/50 backdrop-blur-md border border-white/60 rounded-full py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3b2b]/20 transition-all shadow-sm" />
                 </div>
                 <div className="space-y-3">
                   <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-4">Ngày sinh</label>
-                  <input type="text" value={editedProfile.birthDate || ''} onChange={(e) => setEditedProfile({...editedProfile, birthDate: e.target.value})} className="w-full bg-[#f0f4f9] border-none rounded-2xl py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all" />
+                  <input type="text" value={editedProfile.birthDate || ''} onChange={(e) => setEditedProfile({...editedProfile, birthDate: e.target.value})} className="w-full bg-white/50 backdrop-blur-md border border-white/60 rounded-full py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3b2b]/20 transition-all shadow-sm" />
                 </div>
                 <div className="col-span-2 space-y-3">
                   <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-4">Địa chỉ</label>
-                  <input type="text" value={editedProfile.address || ''} onChange={(e) => setEditedProfile({...editedProfile, address: e.target.value})} className="w-full bg-[#f0f4f9] border-none rounded-2xl py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#0066cc]/20 transition-all" />
+                  <input type="text" value={editedProfile.address || ''} onChange={(e) => setEditedProfile({...editedProfile, address: e.target.value})} className="w-full bg-white/50 backdrop-blur-md border border-white/60 rounded-full py-4 px-6 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3b2b]/20 transition-all shadow-sm" />
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
           {activeTab === 'Thông tin cá nhân' && (
             <div className="mt-auto pt-10 flex justify-end space-x-6">
               <button onClick={onBack} className="px-10 py-4 font-bold text-gray-400 hover:text-gray-900 transition-colors">Hủy</button>
-              <button onClick={handleSave} className="bg-[#0066cc] text-white px-12 py-4 rounded-full font-bold shadow-lg active:scale-95 transition-all">
+              <button onClick={handleSave} className="bg-[#1e3b2b] text-white px-12 py-4 rounded-full font-bold shadow-md shadow-[#1e3b2b]/20 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all">
                 {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
               </button>
             </div>
@@ -155,8 +155,7 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
-              exit={{ opacity: 0, scale: 0.9, y: 20 }} 
-              className="bg-white rounded-[2rem] p-10 shadow-2xl relative w-[450px] text-center z-10"
+              className="glass-panel rounded-[2.5rem] p-10 relative w-[450px] text-center z-10"
             >
               <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-green-500 text-4xl font-bold">✓</span>
@@ -168,7 +167,7 @@ const AccountSettingsView = ({ onBack, profile, setProfile }: ProfileViewProps) 
                   setShowSuccess(false);
                   onBack();
                 }}
-                className="w-full py-4 rounded-full bg-[#0066cc] text-white font-bold hover:bg-blue-700 transition-colors shadow-lg active:scale-95"
+                className="w-full py-4 rounded-full bg-[#1e3b2b] text-white font-bold transition-colors shadow-md hover:-translate-y-0.5 shadow-[#1e3b2b]/20 hover:shadow-lg active:scale-95"
               >
                 Đóng
               </button>

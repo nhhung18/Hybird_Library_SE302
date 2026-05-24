@@ -14,9 +14,9 @@ const LateFinePaymentView = ({ onBack, onConfirm }: LateFinePaymentViewProps) =>
   const [showReturnMenu, setShowReturnMenu] = useState(false);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-7xl mx-auto px-10 py-12">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-none px-4 md:px-12 lg:px-16 py-12">
       <div className="flex items-center space-x-6 mb-12">
-        <button onClick={onBack} className="p-3 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center">
+        <button onClick={onBack} className="p-3 hover:bg-white/50 rounded-full transition-colors flex items-center justify-center">
           <ArrowLeft size={28} className="text-gray-900" />
         </button>
         <h1 className="text-5xl font-bold text-gray-900 tracking-tight">Nộp phạt trễ hạn</h1>
@@ -24,7 +24,7 @@ const LateFinePaymentView = ({ onBack, onConfirm }: LateFinePaymentViewProps) =>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+          <div className="glass-panel rounded-[2.5rem] p-10">
             <h2 className="text-2xl font-bold text-gray-900 mb-8">Thông tin trả sách</h2>
             <div className="space-y-8">
               <div className="flex items-center space-x-6">
@@ -49,21 +49,21 @@ const LateFinePaymentView = ({ onBack, onConfirm }: LateFinePaymentViewProps) =>
             </div>
           </div>
 
-          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+          <div className="glass-panel rounded-[2.5rem] p-10">
             <h2 className="text-2xl font-bold text-gray-900 mb-8">Hình thức trả sách</h2>
             <div className="relative">
               <button 
                 onClick={() => setShowReturnMenu(!showReturnMenu)}
-                className="w-full bg-[#f0f4f9] rounded-2xl px-8 py-5 font-bold text-gray-900 text-lg flex items-center justify-between"
+                className="w-full bg-white/50 border border-white/60 backdrop-blur-md rounded-2xl px-8 py-5 font-bold text-gray-900 text-lg flex items-center justify-between shadow-sm hover:bg-white/80 transition-all"
               >
                 <span>{returnMethod}</span>
                 <ChevronDown size={24} className={`transition-transform ${showReturnMenu ? 'rotate-180' : ''}`} />
               </button>
               <AnimatePresence>
                 {showReturnMenu && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-20">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute left-0 right-0 mt-2 glass-panel rounded-2xl shadow-xl overflow-hidden z-20">
                     {['Trả tại thư viện', 'ĐVVC qua lấy (Trong Hà Nội)'].map((method) => (
-                      <button key={method} onClick={() => { setReturnMethod(method); setShowReturnMenu(false); }} className={`w-full text-left px-8 py-5 text-lg font-bold hover:bg-gray-50 ${returnMethod === method ? 'text-[#0066cc]' : 'text-gray-600'}`}>
+                      <button key={method} onClick={() => { setReturnMethod(method); setShowReturnMenu(false); }} className={`w-full text-left px-8 py-5 text-lg font-bold hover:bg-white/80 ${returnMethod === method ? 'text-[#1e3b2b]' : 'text-gray-600'}`}>
                         {method}
                       </button>
                     ))}
@@ -75,13 +75,13 @@ const LateFinePaymentView = ({ onBack, onConfirm }: LateFinePaymentViewProps) =>
         </div>
 
         <div className="space-y-8">
-          <div className="bg-[#1a1c20] text-white rounded-[2.5rem] p-10 shadow-xl">
+          <div className="bg-[#1e3b2b] text-white rounded-[2.5rem] p-10 shadow-xl">
             <h2 className="text-2xl font-bold mb-8">Tổng cộng</h2>
             <div className="space-y-6 mb-10">
               <div className="flex justify-between items-center text-gray-400 font-medium"><span>Số tiền phạt</span><span className="text-white font-bold">10.000 VNĐ</span></div>
               <div className="flex justify-between items-center text-gray-400 font-medium"><span>Phí vận chuyển</span><span className="text-white font-bold">{returnMethod === 'Trả tại thư viện' ? '0 VNĐ' : '30.000 VNĐ'}</span></div>
               <div className="h-[1px] bg-white/10" />
-              <div className="flex justify-between items-center"><span className="text-xl font-bold">Thanh toán</span><span className="text-3xl font-bold text-[#0066cc]">{returnMethod === 'Trả tại thư viện' ? '10.000 VNĐ' : '40.000 VNĐ'}</span></div>
+              <div className="flex justify-between items-center"><span className="text-xl font-bold">Thanh toán</span><span className="text-3xl font-bold text-[#fff] drop-shadow-md">{returnMethod === 'Trả tại thư viện' ? '10.000 VNĐ' : '40.000 VNĐ'}</span></div>
             </div>
 
             <div className="space-y-6">
@@ -109,15 +109,15 @@ const LateFinePaymentView = ({ onBack, onConfirm }: LateFinePaymentViewProps) =>
 
               <button 
                 onClick={() => onConfirm(paymentMethod, returnMethod === 'Trả tại thư viện' ? '10.000 VNĐ' : '40.000 VNĐ', returnMethod)}
-                className="w-full bg-[#0066cc] text-white py-5 rounded-[2rem] font-bold shadow-xl shadow-blue-900/20 hover:bg-blue-600 active:scale-95 transition-all text-lg"
+                className="w-full bg-white text-[#1e3b2b] py-5 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all text-lg"
               >
                 Xác nhận thanh toán
               </button>
             </div>
           </div>
 
-          <div className="bg-blue-50/50 rounded-[2rem] p-8 border border-blue-100 flex items-start space-x-4">
-            <HelpCircle className="text-[#0066cc] shrink-0 mt-0.5" size={20} />
+          <div className="glass-panel rounded-[2.5rem] p-8 flex items-start space-x-4">
+            <HelpCircle className="text-[#1e3b2b] shrink-0 mt-0.5" size={20} />
             <p className="text-sm font-medium text-gray-600 leading-relaxed">Nếu quá hạn 7 ngày không trả, tài khoản sẽ bị tạm khóa cho đến khi hoàn thành nghĩa vụ. Vui lòng thanh toán đúng hạn.</p>
           </div>
         </div>

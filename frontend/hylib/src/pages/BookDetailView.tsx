@@ -30,26 +30,26 @@ const BorrowModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose:
       {isOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/40 backdrop-blur-md" />
-          <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white rounded-[2.5rem] w-full max-w-[440px] overflow-hidden shadow-2xl relative z-10 p-8">
+          <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="glass-panel rounded-[2.5rem] w-full max-w-[440px] overflow-hidden relative z-10 p-8">
             <div className="flex justify-between items-start mb-6">
               <h3 className="text-xl font-bold text-gray-900">Thông báo</h3>
-              <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full transition-colors"><X size={20} className="text-gray-400" /></button>
+              <button onClick={onClose} className="p-1 hover:bg-white/80 rounded-full transition-colors"><X size={20} className="text-gray-400" /></button>
             </div>
             <p className="text-gray-500 font-medium mb-10 text-lg">Hãy lựa chọn hình thức bạn muốn mượn!</p>
             <div className="mb-12">
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">HÌNH THỨC</p>
               <div className="grid grid-cols-2 gap-4">
-                <button onClick={() => setBorrowMode('ebook')} className={`flex items-center justify-center space-x-3 py-4 rounded-3xl border transition-all font-bold text-base ${borrowMode === 'ebook' ? 'border-[#0066cc] bg-blue-50 text-[#0066cc] ring-1 ring-[#0066cc]' : 'border-gray-100 text-gray-400 hover:border-gray-300'}`}>
+                <button onClick={() => setBorrowMode('ebook')} className={`flex items-center justify-center space-x-3 py-4 rounded-[2rem] border transition-all font-bold text-base ${borrowMode === 'ebook' ? 'border-[#1e3b2b] bg-[#1e3b2b]/5 text-[#1e3b2b] ring-1 ring-[#1e3b2b]' : 'border-white/60 bg-white/50 text-gray-400 hover:bg-white/80'}`}>
                   <span>Ebook</span>
                 </button>
-                <button onClick={() => setBorrowMode('offline')} className={`flex items-center justify-center space-x-3 py-4 rounded-3xl border transition-all font-bold text-base ${borrowMode === 'offline' ? 'border-[#0066cc] bg-blue-50 text-[#0066cc] ring-1 ring-[#0066cc]' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}>
+                <button onClick={() => setBorrowMode('offline')} className={`flex items-center justify-center space-x-3 py-4 rounded-[2rem] border transition-all font-bold text-base ${borrowMode === 'offline' ? 'border-[#1e3b2b] bg-[#1e3b2b]/5 text-[#1e3b2b] ring-1 ring-[#1e3b2b]' : 'border-white/60 bg-white/50 text-gray-400 hover:bg-white/80'}`}>
                   <span>Offline</span>
                 </button>
               </div>
             </div>
             <div className="flex gap-4">
               <button onClick={onClose} className="flex-1 py-4 font-bold text-gray-400 hover:text-gray-900 transition-colors">Hủy</button>
-              <button onClick={() => onConfirm(borrowMode)} className="flex-1 py-4 bg-[#0066cc] text-white font-bold rounded-2xl shadow-lg shadow-blue-100 hover:shadow-blue-200 transition-all active:scale-95">Xác nhận</button>
+              <button onClick={() => onConfirm(borrowMode)} className="flex-1 py-4 bg-[#1e3b2b] text-white font-bold rounded-full shadow-md shadow-[#1e3b2b]/20 hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95">Xác nhận</button>
             </div>
           </motion.div>
         </div>
@@ -63,15 +63,15 @@ const GenericConfirmModal = ({ isOpen, onClose, onConfirm, message, confirmText,
     {isOpen && (
       <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/40 backdrop-blur-md" />
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white rounded-[2.5rem] w-full max-w-[440px] overflow-hidden shadow-2xl relative z-10 p-8">
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="glass-panel rounded-[2.5rem] w-full max-w-[440px] overflow-hidden relative z-10 p-8">
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xl font-bold text-gray-900">Thông báo</h3>
-            <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full transition-colors"><X size={20} className="text-gray-400" /></button>
+            <button onClick={onClose} className="p-1 hover:bg-white/80 rounded-full transition-colors"><X size={20} className="text-gray-400" /></button>
           </div>
           <p className="text-gray-500 font-medium mb-10 text-lg text-center tracking-tight">{message}</p>
           <div className="flex gap-4">
-            <button onClick={onClose} className="flex-1 py-4 font-bold text-[#0066cc] hover:opacity-80 transition-opacity">Hủy</button>
-            <button onClick={onConfirm} className={`flex-1 py-4 text-white font-bold rounded-full shadow-lg transition-all active:scale-95 ${variant === 'primary' ? 'bg-[#0066cc] shadow-blue-100 hover:shadow-blue-200' : 'bg-red-600 shadow-red-100 hover:shadow-red-200'}`}>{confirmText}</button>
+            <button onClick={onClose} className="flex-1 py-4 font-bold text-[#1e3b2b] hover:opacity-80 transition-opacity">Hủy</button>
+            <button onClick={onConfirm} className={`flex-1 py-4 text-white font-bold rounded-full shadow-md hover:-translate-y-0.5 transition-all active:scale-95 ${variant === 'primary' ? 'bg-[#1e3b2b] shadow-[#1e3b2b]/20 hover:shadow-lg' : 'bg-red-500 shadow-red-500/20 hover:shadow-lg'}`}>{confirmText}</button>
           </div>
         </motion.div>
       </div>
@@ -115,15 +115,15 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
   ];
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="bg-white min-h-screen">
-      <div className="px-10 pt-8 pb-4">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-none px-4 md:px-12 lg:px-16 py-12">
+      <div className="pb-4">
         <button onClick={onBack} className="flex items-center space-x-2 text-gray-500 hover:text-gray-900 transition-colors group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span className="font-bold text-sm">Quay lại</span>
         </button>
       </div>
 
-      <section className="px-10 py-12 flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-20">
+      <section className="py-12 flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-20">
         <div className="w-full max-w-[450px] shrink-0">
           <div className="aspect-[3/4] bg-white rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] p-0 border border-gray-100 overflow-hidden relative group">
             <img src={bookImage} alt={bookTitle} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -134,8 +134,8 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
 
         <div className="flex-1 max-w-3xl text-center lg:text-left">
           <div className="mb-8">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 text-[#0066cc] text-[10px] font-black uppercase tracking-wider mb-8 border border-blue-100/50 shadow-sm shadow-blue-50">
-              <div className="w-1.5 h-1.5 bg-[#0066cc] rounded-full mr-2"></div>
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full glass-panel text-[#1e3b2b] text-[10px] font-black uppercase tracking-wider mb-8 shadow-sm">
+              <div className="w-1.5 h-1.5 bg-[#1e3b2b] rounded-full mr-2"></div>
               Khả dụng (Ebook/Sách giấy)
             </span>
             <h1 className="text-6xl font-bold text-gray-900 mb-3 tracking-tight leading-[1.1]">{bookTitle}</h1>
@@ -152,11 +152,11 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
           </p>
 
           {borrowedInfo && (
-            <div className="bg-[#f0f4f9] rounded-3xl p-8 mb-12 max-w-2xl">
+            <div className="glass-panel rounded-3xl p-8 mb-12 max-w-2xl">
               <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-gray-600"><HelpCircle size={18} className="text-[#0066cc]" /> <span className="font-bold">Hình thức mượn hiện tại:</span><span className="text-[#0066cc] font-black">{bookType}</span></div>
-                <div className="flex items-center space-x-3 text-gray-600"><Clock size={18} className="text-[#0066cc]" /> <span className="font-bold">Ngày hết hạn:</span><span className="text-red-500 font-black">{expiryDate}</span></div>
-                <div className="flex items-center space-x-3 text-gray-600"><History size={18} className="text-[#0066cc]" /> <span className="font-bold">Số lần gia hạn:</span><span className="text-gray-900 font-black">{renewCount}</span></div>
+                <div className="flex items-center space-x-3 text-gray-600"><HelpCircle size={18} className="text-[#1e3b2b]" /> <span className="font-bold">Hình thức mượn hiện tại:</span><span className="text-[#1e3b2b] font-black">{bookType}</span></div>
+                <div className="flex items-center space-x-3 text-gray-600"><Clock size={18} className="text-[#1e3b2b]" /> <span className="font-bold">Ngày hết hạn:</span><span className="text-red-500 font-black">{expiryDate}</span></div>
+                <div className="flex items-center space-x-3 text-gray-600"><History size={18} className="text-[#1e3b2b]" /> <span className="font-bold">Số lần gia hạn:</span><span className="text-gray-900 font-black">{renewCount}</span></div>
               </div>
             </div>
           )}
@@ -164,29 +164,29 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
             {borrowedInfo ? (
               <>
-                <button onClick={() => onRead && onRead(bookId)} className="bg-[#0066cc] text-white px-14 py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition-all active:scale-95">Đọc ngay</button>
-                <button onClick={() => setIsRenewModalOpen(true)} disabled={renewCount === '2/2'} className={`px-14 py-4 rounded-full font-bold border-2 transition-all active:scale-95 ${renewCount === '2/2' ? 'border-gray-100 text-gray-300' : 'border-gray-100 text-gray-900 hover:bg-gray-50'}`}>Gia hạn</button>
+                <button onClick={() => onRead && onRead(bookId)} className="bg-[#1e3b2b] text-white px-14 py-4 rounded-full font-bold shadow-md shadow-[#1e3b2b]/20 hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95">Đọc ngay</button>
+                <button onClick={() => setIsRenewModalOpen(true)} disabled={renewCount === '2/2'} className={`px-14 py-4 rounded-full font-bold border border-white/60 backdrop-blur-md transition-all active:scale-95 ${renewCount === '2/2' ? 'bg-white/30 text-gray-400' : 'bg-white/50 text-gray-900 hover:bg-white/80 hover:-translate-y-0.5'}`}>Gia hạn</button>
               </>
             ) : (
-              <button onClick={() => setIsBorrowModalOpen(true)} className="bg-[#0066cc] text-white px-14 py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition-all active:scale-95">Mượn ngay</button>
+              <button onClick={() => setIsBorrowModalOpen(true)} className="bg-[#1e3b2b] text-white px-14 py-4 rounded-full font-bold shadow-md shadow-[#1e3b2b]/20 hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95">Mượn ngay</button>
             )}
-            <button onClick={() => setIsLiked(!isLiked)} className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-all ${isLiked ? 'bg-red-50 border-red-200 text-red-500' : 'border-gray-100 text-[#0066cc]'}`}><Heart size={22} className={isLiked ? 'fill-red-500' : ''} /></button>
+            <button onClick={() => setIsLiked(!isLiked)} className={`w-14 h-14 rounded-full border border-white/60 bg-white/50 hover:bg-white/80 backdrop-blur-md flex items-center justify-center hover:-translate-y-0.5 transition-all shadow-sm ${isLiked ? 'text-red-500' : 'text-[#1e3b2b]'}`}><Heart size={22} className={isLiked ? 'fill-red-500' : ''} /></button>
           </div>
         </div>
       </section>
 
-      <section className="px-10 py-20 max-w-6xl mx-auto">
+      <section className="py-20 w-full max-w-6xl">
         <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-12">Đánh giá của độc giả</h2>
         <div className="mb-12 relative">
-          <textarea placeholder="Viết đánh giá của bạn" value={reviewText} onChange={(e) => setReviewText(e.target.value)} className="w-full bg-white border border-gray-100 rounded-[2rem] p-8 min-h-[180px] shadow-sm outline-none font-medium text-gray-700 resize-none transition-all" />
-          <button onClick={handleReviewSubmit} className="absolute bottom-6 right-8 bg-[#0066cc] text-white px-10 py-3 rounded-2xl font-bold transition-all active:scale-95">Gửi</button>
+          <textarea placeholder="Viết đánh giá của bạn" value={reviewText} onChange={(e) => setReviewText(e.target.value)} className="w-full bg-white/50 backdrop-blur-md border border-white/60 rounded-[2rem] p-8 min-h-[180px] shadow-sm outline-none font-medium text-gray-700 resize-none transition-all focus:ring-2 focus:ring-[#1e3b2b]/20" />
+          <button onClick={handleReviewSubmit} className="absolute bottom-6 right-8 bg-[#1e3b2b] text-white px-10 py-3 rounded-full font-bold shadow-md hover:-translate-y-0.5 transition-all active:scale-95">Gửi</button>
         </div>
         <div className="space-y-6">
           {localReviews.map((review, idx) => (
-            <div key={idx} className="bg-white rounded-[2rem] p-8 border border-gray-50 shadow-sm">
+            <div key={idx} className="glass-panel rounded-[2rem] p-8">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-[#f0f4f9] rounded-full flex items-center justify-center text-[#0066cc]"><User size={20} /></div>
+                  <div className="w-12 h-12 bg-white/80 shadow-sm border border-black/5 rounded-full flex items-center justify-center text-[#1e3b2b]"><User size={20} /></div>
                   <h4 className="font-bold text-gray-900">{review.name}</h4>
                 </div>
                 <span className="text-sm font-bold text-gray-400">{review.date}</span>

@@ -8,11 +8,11 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
   const totalPages = 342;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#f8fafc] flex flex-col">
+    <div className="fixed inset-0 z-[100] bg-[#f4f7f6] flex flex-col">
       {/* Reader Header */}
-      <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 shrink-0">
+      <header className="h-20 bg-white/80 backdrop-blur-md border-b border-white flex items-center justify-between px-10 shrink-0 shadow-sm z-10">
         <div className="flex items-center space-x-8">
-          <button onClick={onBack} className="p-3 hover:bg-gray-50 rounded-full transition-colors flex items-center justify-center">
+          <button onClick={onBack} className="p-3 hover:bg-white/50 rounded-full transition-colors flex items-center justify-center">
             <ArrowLeft size={24} className="text-gray-900" />
           </button>
           <div>
@@ -22,7 +22,7 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
         </div>
 
         <div className="flex items-center space-x-6">
-          <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 space-x-4">
+          <div className="flex items-center bg-white/50 backdrop-blur-sm border border-white/60 rounded-full px-4 py-2 space-x-4 shadow-sm">
             <button onClick={() => setZoom(Math.max(50, zoom - 10))} className="text-gray-500 hover:text-gray-900"><ZoomOut size={18} /></button>
             <span className="text-sm font-bold text-gray-900 min-w-[3rem] text-center">{zoom}%</span>
             <button onClick={() => setZoom(Math.min(200, zoom + 10))} className="text-gray-500 hover:text-gray-900"><ZoomIn size={18} /></button>
@@ -35,11 +35,11 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
       </header>
 
       {/* Content Area */}
-      <main className="flex-1 overflow-auto p-12 flex justify-center bg-[#f1f5f9]">
+      <main className="flex-1 overflow-auto p-12 flex justify-center bg-transparent relative">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white shadow-2xl rounded-sm w-full max-w-4xl p-24 relative min-h-[1200px]"
+          className="bg-white shadow-2xl rounded-[1rem] w-full max-w-[95%] lg:max-w-5xl xl:max-w-6xl p-12 md:p-24 relative min-h-[1200px]"
           style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
         >
           <div className="prose prose-slate max-w-none">
@@ -66,9 +66,9 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
       </main>
 
       {/* Reader Footer Control */}
-      <footer className="h-20 bg-white border-t border-gray-100 flex items-center justify-between px-10 shrink-0">
+      <footer className="h-20 bg-white/80 backdrop-blur-md border-t border-white flex items-center justify-between px-10 shrink-0 shadow-[0_-4px_6px_-1px_rgb(0,0,0,0.05)] z-10">
         <div className="flex items-center space-x-4">
-          <BookOpen size={20} className="text-[#0066cc]" />
+          <BookOpen size={20} className="text-[#1e3b2b]" />
           <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Progress</span>
         </div>
 
@@ -77,7 +77,7 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${(currentPage / totalPages) * 100}%` }}
-              className="h-full bg-[#0066cc]" 
+              className="h-full bg-[#1e3b2b]" 
             />
           </div>
           <div className="flex items-center space-x-4">
@@ -85,7 +85,7 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
               type="number" 
               value={currentPage}
               onChange={(e) => setCurrentPage(Math.min(totalPages, Math.max(1, parseInt(e.target.value) || 1)))}
-              className="w-16 h-10 border border-gray-100 rounded-lg text-center font-bold text-gray-900 outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-16 h-10 bg-white/50 backdrop-blur-sm border border-white/60 shadow-sm rounded-lg text-center font-bold text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3b2b]/20"
             />
             <span className="text-gray-400 font-bold">/</span>
             <span className="text-gray-900 font-bold">{totalPages}</span>
@@ -103,7 +103,7 @@ const ReaderView = ({ onBack }: { onBack: () => void }) => {
           <button 
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            className="px-10 py-2.5 bg-[#1a1c20] text-white rounded-full font-bold text-sm shadow-lg hover:shadow-gray-200 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-10 py-2.5 bg-[#1e3b2b] text-white rounded-full font-bold text-sm shadow-md hover:-translate-y-0.5 shadow-[#1e3b2b]/20 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
             Sau
           </button>

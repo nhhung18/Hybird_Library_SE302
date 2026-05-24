@@ -13,7 +13,7 @@ export const ToastNotification = ({ isOpen, onClose, message }: ToastNotificatio
     if (isOpen) {
       const timer = setTimeout(() => {
         onClose();
-      }, 3000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [isOpen, onClose]);
@@ -26,14 +26,14 @@ export const ToastNotification = ({ isOpen, onClose, message }: ToastNotificatio
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-8 right-6 z-[9999] pointer-events-none"
+          className="fixed top-22 right-6 z-[9999] pointer-events-none"
         >
-          <div className="w-[340px] bg-white/70 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-[24px] p-4 flex items-center gap-4">
-            <div className="shrink-0 w-11 h-11 bg-white rounded-2xl shadow-sm border border-black/5 flex items-center justify-center text-[#1e3b2b]">
+          <div className="w-[340px] glass-panel rounded-3xl p-4 flex items-center gap-4">
+            <div className="shrink-0 w-11 h-11 bg-white/80 rounded-full shadow-sm border border-black/5 flex items-center justify-center text-[#1e3b2b]">
               <Check size={22} strokeWidth={2.5} />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-gray-900 text-sm mb-0.5">Hybird Library</h4>
+              <h4 className="font-bold text-gray-900 text-sm mb-0.5">Thông báo</h4>
               <p className="text-xs font-medium text-gray-600 leading-relaxed pr-2">
                 {message}
               </p>
