@@ -1,0 +1,16 @@
+package com.tlu.Hybird_Library_SE302.dto.req;
+
+import com.tlu.Hybird_Library_SE302.model.User;
+import com.tlu.Hybird_Library_SE302.model.constants.RoleName;
+import com.tlu.Hybird_Library_SE302.model.constants.UserStatus;
+
+public class UpdateUserAddressReq {
+    private User user;
+    private String receiverName;
+    private String phone;
+    private String addressLine;
+    private String ward;
+    private String district;
+    private String city;
+    private boolean isDefault;
+}

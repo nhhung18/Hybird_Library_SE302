@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public abstract class BaseIdObject {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 }
