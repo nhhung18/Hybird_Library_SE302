@@ -2,11 +2,13 @@ package com.tlu.Hybird_Library_SE302.model;
 
 import com.tlu.Hybird_Library_SE302.model.base.BaseIdObject;
 import com.tlu.Hybird_Library_SE302.model.constants.RoleName;
+import com.tlu.Hybird_Library_SE302.model.constants.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 
 @Entity
 @Table(name = "users")
@@ -33,10 +35,20 @@ public class User extends BaseIdObject {
     @Column(name = "avatar_url", length = 255)
     private String avatarUrl;
 
-    @Column(name = "role_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private RoleName role;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String userStatus;
+    private UserStatus userStatus;
+
+//    public RoleName getRole() {
+//        return role;
+//    }
+//
+//    public void setRole(RoleName role) {
+//        this.role = role;
+//    }
+
 }

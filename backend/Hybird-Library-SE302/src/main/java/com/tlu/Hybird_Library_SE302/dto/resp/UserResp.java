@@ -1,6 +1,7 @@
 package com.tlu.Hybird_Library_SE302.dto.resp;
 
 import com.tlu.Hybird_Library_SE302.model.constants.RoleName;
+import com.tlu.Hybird_Library_SE302.model.constants.UserStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,6 +15,6 @@ public class UserResp {
     private String phoneNum;
     private String avatarUrl;
     private RoleName role;
-    private String userStatus;
+    private UserStatus userStatus;
 
 }

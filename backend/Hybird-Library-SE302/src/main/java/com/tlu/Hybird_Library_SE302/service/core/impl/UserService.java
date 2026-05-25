@@ -30,6 +30,7 @@ public class UserService implements IUserService {
                 .phoneNum(user.getPhoneNum())
                 .avatarUrl(user.getAvatarUrl())
                 .role(user.getRole())
-                .userStatus(user.getUserStatus()).build()).toList();
+                .userStatus(user.getUserStatus())
+                .build()).toList();
     }
 }
