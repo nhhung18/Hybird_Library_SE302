@@ -26,6 +26,7 @@ public class UserAddressController {
                         .status(HttpStatus.OK)
                         .code(200)
                         .data(iUserAddressService.getALlUserAddress())
+                        .build()
         );
     }
 
@@ -36,6 +37,7 @@ public class UserAddressController {
                         .status(HttpStatus.OK)
                         .code(200)
                         .data(iUserAddressService.updateUserAddress(userId, addressId, request))
+                        .build()
         );
     }
 }

@@ -1,10 +1,7 @@
 package com.tlu.Hybird_Library_SE302.model;
 
 import com.tlu.Hybird_Library_SE302.model.base.BaseIdObject;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.stereotype.Component;
 
-@Component
-@Table(name = "user_address")
+@Entity
+@Table(name = "user_addresses")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
