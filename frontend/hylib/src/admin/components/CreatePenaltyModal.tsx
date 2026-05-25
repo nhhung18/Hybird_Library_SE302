@@ -38,7 +38,7 @@ export default function CreatePenaltyModal({ isOpen, onClose, onAddPenalty }: Cr
       alert("Vui lòng điền đầy đủ các trường bắt buộc.");
       return;
     }
-    
+
     onAddPenalty(formData);
     onClose();
   };
@@ -46,7 +46,7 @@ export default function CreatePenaltyModal({ isOpen, onClose, onAddPenalty }: Cr
   return (
     <div className={`fixed inset-0 flex items-center justify-center z-[9999] transition-all duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'} font-sans p-4`}>
       {/* Blurred background overlay (10% dim) */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/10 backdrop-blur-[2px]"
         onClick={onClose}
       ></div>
