@@ -7,8 +7,8 @@ interface MyBooksViewProps {
   books: BorrowedBook[];
   setBooks: React.Dispatch<React.SetStateAction<BorrowedBook[]>>;
   onReturnSuccess: () => void;
-  onReadClick: (id: string) => void;
-  onRowClick: (id: string) => void;
+  onReadClick: (id: number) => void;
+  onRowClick: (id: number) => void;
   onRenewSuccess: () => void;
   onLateReturn: () => void;
   onNavigateTo?: (page: string) => void;
@@ -78,13 +78,13 @@ const MyBooksView = ({ books, setBooks, onReturnSuccess, onReadClick, onRowClick
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
-  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+  const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const func = ['Yêu thích', 'Giỏ sách', 'Theo dõi đơn sách'];
   const filters = ['Tất cả', 'Ebook', 'Offline', 'Đang mượn', 'Đã đến hạn'];
 
-  const handleRenewClick = (bookId: string) => {
+  const handleRenewClick = (bookId: number) => {
     setSelectedBookId(bookId);
     setIsRenewModalOpen(true);
   };
@@ -117,14 +117,14 @@ const MyBooksView = ({ books, setBooks, onReturnSuccess, onReadClick, onRowClick
     onRenewSuccess();
   };
 
-  const handleReturnClick = (id: string) => {
+  const handleReturnClick = (id: number) => {
     setSelectedBookId(id);
     setIsReturnModalOpen(true);
   };
 
   const handleReturnLocal = () => {
     if (selectedBookId) {
-      if (selectedBookId === '4') {
+      if (selectedBookId === 4) {
         setIsReturnModalOpen(false);
         onLateReturn();
         return;
@@ -227,7 +227,7 @@ const MyBooksView = ({ books, setBooks, onReturnSuccess, onReadClick, onRowClick
               >
                 <td className="px-8 py-6">
                   <div className="w-20 h-28 rounded-xl overflow-hidden bg-gray-100 shadow-md group-hover:scale-105 transition-transform">
-                    <img src={book.image} alt={book.title} className="w-full h-full object-cover" />
+                    <img src={book.imageUrl} alt={book.title} className="w-full h-full object-cover" />
                   </div>
                 </td>
                 <td className="px-8 py-6">

@@ -214,8 +214,8 @@ export default function App() {
     }
   };
 
-  const handleBookClick = (id: string) => {
-    setSelectedBookId(id);
+  const handleBookClick = (id: number | string) => {
+    setSelectedBookId(id.toString());
     navigate(`/books/${id}`);
   };
 
@@ -362,7 +362,7 @@ export default function App() {
         <Routes>
           <Route path="/support" element={<SupportView onBack={() => handleSetActivePage('Khám phá')} />} />
           <Route path="/books" element={<BooksView onBookClick={handleBookClick} onBack={() => handleSetActivePage('Khám phá')} searchQuery={searchQuery} />} />
-          <Route path="/my-books" element={<MyBooksView books={books} setBooks={setBooks} onReturnSuccess={handleReturnSuccess} onReadClick={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }} onRowClick={handleBookClick} onRenewSuccess={handleRenewSuccess} onLateReturn={() => handleSetActivePage('Nộp phạt')} onNavigateTo={(page) => handleSetActivePage(page)} onBack={() => handleSetActivePage('Khám phá')} />} />
+          <Route path="/my-books" element={<MyBooksView books={books} setBooks={setBooks} onReturnSuccess={handleReturnSuccess} onReadClick={(id) => { setSelectedBookId(id.toString()); handleSetActivePage('Đọc sách'); }} onRowClick={handleBookClick} onRenewSuccess={handleRenewSuccess} onLateReturn={() => handleSetActivePage('Nộp phạt')} onNavigateTo={(page) => handleSetActivePage(page)} onBack={() => handleSetActivePage('Khám phá')} />} />
           <Route path="/payment/fine" element={<LateFinePaymentView onBack={() => handleSetActivePage('Sách của tôi')} onConfirm={handleConfirmLateFine} />} />
           <Route path="/reader/:id" element={<ReaderView onBack={() => handleSetActivePage('Sách của tôi')} />} />
           <Route path="/favorites" element={<FavoritesView books={favoriteBooks} setBooks={setFavoriteBooks} cartBooks={cartBooks} setCartBooks={setCartBooks} onNavigateToCart={() => handleSetActivePage('Giỏ sách')} onBack={() => handleSetActivePage('Khám phá')} />} />
@@ -370,7 +370,7 @@ export default function App() {
           <Route path="/membership" element={<MembershipView onUpgrade={handleUpgradePlan} currentPlan={currentMembershipPlan} onViewDetail={(plan) => { setUpgradePlan(plan); handleSetActivePage('Chi tiết thẻ thành viên'); }} onBack={() => handleSetActivePage('Khám phá')} />} />
           <Route path="/membership/detail" element={<MembershipDetailView plan={upgradePlan || 'Standard'} expiryDate={membershipExpiry} onBack={() => handleSetActivePage('Thẻ thành viên')} onUpgradePremium={() => { setUpgradePlan('Premium'); setPaymentAmount('300.000 VNĐ'); setPaymentBackPage('Thẻ thành viên'); setPaymentSuccessMessage('Nâng cấp thành công!'); setSuccessConfirmText('Bắt đầu ngay'); handleSetActivePage('Thanh toán qua ngân hàng'); }} onCancel={() => { setCurrentMembershipPlan(null); setSuccessMessage('Hủy thành công'); setIsSuccessOpen(true); }} onRenew={() => { const parts = membershipExpiry.split('/'); setMembershipExpiry(`${parts[0]}/${parts[1]}/${parseInt(parts[2]) + 1}`); setSuccessMessage('Gia hạn thành công!'); setIsSuccessOpen(true); }} />} />
           <Route path="/profile" element={<ProfileView onBack={() => handleSetActivePage('Khám phá')} profile={profile} setProfile={setProfile} />} />
-          <Route path="/books/:id" element={<BookDetailView bookId={selectedBookId || ''} onBack={() => handleSetActivePage('Khám phá')} onStartBorrow={(mode) => { setBorrowMode(mode); handleSetActivePage('Xác nhận mượn'); }} borrowedInfo={books.find(b => b.id === selectedBookId)} onRenew={handleRenew} onRead={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }} />} />
+          <Route path="/books/:id" element={<BookDetailView bookId={selectedBookId || ''} onBack={() => handleSetActivePage('Khám phá')} onStartBorrow={(mode) => { setBorrowMode(mode); handleSetActivePage('Xác nhận mượn'); }} borrowedInfo={books.find(b => b.id.toString() === selectedBookId)} onRenew={(id) => handleRenew(id.toString())} onRead={(id) => { setSelectedBookId(id.toString()); handleSetActivePage('Đọc sách'); }} />} />
           <Route path="/borrow-confirm" element={<BorrowConfirmationView borrowMode={borrowMode} onBack={() => handleSetActivePage('Chi tiết sách')} onConfirm={handleConfirmBorrow} />} />
           <Route path="/payment/bank" element={<BankPaymentView onBack={() => handleSetActivePage(paymentBackPage)} onComplete={handlePaymentComplete} amount={paymentAmount} />} />
           <Route path="/" element={<HomeView onLoginClick={() => setIsLoginOpen(true)} onRegisterClick={() => setIsRegisterOpen(true)} isLoggedIn={isLoggedIn} onBookClick={handleBookClick} />} />

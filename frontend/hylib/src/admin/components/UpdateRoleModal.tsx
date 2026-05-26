@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { User, BookOpen, Star, CheckCircle2 } from 'lucide-react';
+import { User as UserIcon, BookOpen, Star, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { User, RoleName } from '../../types';
 
 interface UpdateRoleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: any;
-  onSave: (user: any) => void;
+  user: User | null;
+  onSave: (user: User) => void;
 }
 
 export default function UpdateRoleModal({ isOpen, onClose, user, onSave }: UpdateRoleModalProps) {
-  const [selectedRole, setSelectedRole] = useState('Reader');
+  const [selectedRole, setSelectedRole] = useState<RoleName>(RoleName.READER);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -22,44 +23,46 @@ export default function UpdateRoleModal({ isOpen, onClose, user, onSave }: Updat
 
   useEffect(() => {
     if (user) {
-      if (user.type === 'Khách') setSelectedRole('Guest');
-      else if (user.type === 'VIP') setSelectedRole('VIP');
-      else setSelectedRole('Reader');
+      setSelectedRole(user.role);
     }
   }, [user, isOpen]);
 
   if (!isOpen && !isVisible) return null;
 
   const handleSave = () => {
-    let displayType = 'Độc giả';
-    if (selectedRole === 'VIP') displayType = 'VIP';
-    else if (selectedRole === 'Guest') displayType = 'Khách';
-
-    onSave({
-      ...user,
-      type: displayType
-    });
+    if (user) {
+      onSave({
+        ...user,
+        role: selectedRole
+      });
+    }
     onClose();
   };
 
   const roles = [
     {
-      id: 'Guest',
+      id: RoleName.GUEST,
       title: 'Guest',
       description: 'Quyền truy cập hạn chế, chỉ xem danh mục công khai.',
-      icon: <User size={18} className={selectedRole === 'Guest' ? "text-[#0066cc]" : "text-gray-400"} />
+      icon: <UserIcon size={18} className={selectedRole === RoleName.GUEST ? "text-[#0066cc]" : "text-gray-400"} />
     },
     {
-      id: 'Reader',
+      id: RoleName.READER,
       title: 'Reader',
       description: 'Mượn sách cơ bản, sử dụng phòng đọc chung thư viện.',
-      icon: <BookOpen size={18} className={selectedRole === 'Reader' ? "text-[#0066cc]" : "text-gray-400"} />
+      icon: <BookOpen size={18} className={selectedRole === RoleName.READER ? "text-[#0066cc]" : "text-gray-400"} />
     },
     {
-      id: 'VIP',
-      title: 'VIP',
-      description: 'Phòng đọc riêng tư và mượn sách không giới hạn.',
-      icon: <Star size={18} className={selectedRole === 'VIP' ? "text-[#0066cc]" : "text-gray-400"} />
+      id: RoleName.LIBRARIAN,
+      title: 'Librarian',
+      description: 'Quyền quản lý mượn trả sách, quản lý người dùng cấp thấp.',
+      icon: <Star size={18} className={selectedRole === RoleName.LIBRARIAN ? "text-[#0066cc]" : "text-gray-400"} />
+    },
+    {
+      id: RoleName.ADMIN,
+      title: 'Admin',
+      description: 'Quyền quản trị cao nhất, toàn quyền hệ thống.',
+      icon: <ShieldAlert size={18} className={selectedRole === RoleName.ADMIN ? "text-[#0066cc]" : "text-gray-400"} />
     }
   ];
 
@@ -74,17 +77,17 @@ export default function UpdateRoleModal({ isOpen, onClose, user, onSave }: Updat
       {/* Modal Container */}
       <div className={`bg-white rounded-3xl w-[450px] p-10 shadow-2xl relative transition-all duration-300 ease-out transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Cập nhật quyền hạn</h2>
-        <p className="text-sm text-gray-500 mb-6">Thay đổi nhóm quyền người dùng cho {user?.name}.</p>
+        <p className="text-sm text-gray-500 mb-6">Thay đổi nhóm quyền người dùng cho {user?.fullName}.</p>
 
         <div className="space-y-6">
           {/* Current Group Info */}
           <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex justify-between items-center shadow-inner">
             <div>
-              <h3 className="font-bold text-gray-800 text-sm">{user?.name}</h3>
-              <p className="text-xs text-gray-400 mt-0.5">{user?.email}</p>
+              <h3 className="font-bold text-gray-800 text-sm">{user?.fullName}</h3>
+              <p className="text-xs text-gray-400 mt-0.5">@{user?.userName}</p>
             </div>
-            <span className="text-xs font-bold text-[#0066cc] bg-blue-50 border border-blue-100 px-3 py-1 rounded-full">
-              {user?.type}
+            <span className="text-xs font-bold text-[#0066cc] bg-blue-50 border border-blue-100 px-3 py-1 rounded-full uppercase">
+              {user?.role}
             </span>
           </div>
 

@@ -1,95 +1,109 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import { Image as ImageIcon, X, ArrowLeft } from 'lucide-react';
+import { Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { Book, BookType, BookCondition, Category } from '../../types';
+import { bookApi } from '../../api/bookApi';
+import { categoryApi } from '../../api/categoryApi';
 
 export default function CreateBook() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: '',
     author: '',
     publisher: '',
-    location: '',
-    stock: 1
+    publishYear: new Date().getFullYear(),
+    description: '',
+    categoryId: 1,
+    bookType: BookType.PHYSICAL_BOOK,
+    condition: BookCondition.NEW,
+    quantity: 1
   });
 
-  const [categories, setCategories] = useState([]);
-  const [categoryInput, setCategoryInput] = useState('');
-  const [coverImage, setCoverImage] = useState(null);
-  const [customPublisher, setCustomPublisher] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
 
-  // Handle standard inputs
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-  // Handle category multi-select logic
-  const handleCategoryKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      const val = categoryInput.trim().toUpperCase();
-      if (val && !categories.includes(val)) {
-        setCategories([...categories, val]);
-        setCategoryInput('');
+  const fetchCategories = async () => {
+    try {
+      const response = await categoryApi.getAllCategories();
+      if (Array.isArray(response)) {
+        setCategories(response);
+      } else {
+        // Mock fallback
+        setCategories([
+          { id: 1, categoryName: 'Công nghệ thông tin' },
+          { id: 2, categoryName: 'Khoa học' },
+          { id: 3, categoryName: 'Văn học' }
+        ]);
       }
-    } else if (e.key === 'Backspace' && categoryInput === '' && categories.length > 0) {
-      setCategories(categories.slice(0, -1));
+    } catch (error) {
+      console.error('Failed to fetch categories', error);
+      // Mock fallback
+      setCategories([
+        { id: 1, categoryName: 'Công nghệ thông tin' },
+        { id: 2, categoryName: 'Khoa học' },
+        { id: 3, categoryName: 'Văn học' }
+      ]);
     }
   };
 
-  const removeCategory = (indexToRemove) => {
-    setCategories(categories.filter((_, index) => index !== indexToRemove));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === 'publishYear' || name === 'quantity' || name === 'categoryId' ? Number(value) : value
+    });
   };
 
-  // Handle image upload mock
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCoverImage(reader.result);
+        setCoverImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.title || !formData.author) {
       alert("Vui lòng nhập tên sách và tác giả.");
       return;
     }
 
-    const saved = localStorage.getItem('libraryBooks');
-    const books = saved ? JSON.parse(saved) : [];
+    const category = categories.find(c => c.id === formData.categoryId) || categories[0];
 
-    const newId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
-    // Generate a random ISBN for mockup
-    const randomIsbn = `978-0${Math.floor(Math.random() * 1000000000)}`;
-
-    const finalPublisher = formData.publisher === 'Khác' ? customPublisher : formData.publisher;
-
-    const newBook = {
-      id: newId,
+    const newBook: Partial<Book> = {
       title: formData.title,
-      isbn: randomIsbn,
       author: formData.author,
-      publisher: finalPublisher,
-      categories: categories.length > 0 ? categories : ['CHƯA PHÂN LOẠI'],
-      location: formData.location || 'Chưa xếp kệ',
-      stock: parseInt(formData.stock) || 1,
-      coverData: coverImage // Base64 string if uploaded
+      publisher: formData.publisher,
+      publishYear: formData.publishYear,
+      description: formData.description,
+      category,
+      bookType: formData.bookType,
+      condition: formData.condition,
+      quantity: formData.quantity,
+      imageUrl: coverImage || '',
+      bookUrl: '',
+      likes: 0,
+      avgRating: 0
     };
 
-    localStorage.setItem('libraryBooks', JSON.stringify([newBook, ...books]));
-    
-    // Navigate back to Book Management
-    navigate('/books');
+    try {
+      await bookApi.createBook(newBook as Omit<Book, "id">);
+      navigate('/books');
+    } catch (error) {
+      console.error('Failed to create book', error);
+      alert('Tạo sách thất bại! Vui lòng kiểm tra lại.');
+    }
   };
 
   return (
@@ -176,7 +190,7 @@ export default function CreateBook() {
 
                   {/* Row 2 */}
                   <div className="flex flex-col sm:flex-row gap-8">
-                    <div className="flex-1">
+                    <div className="flex-[2]">
                       <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">TÊN TÁC GIẢ</label>
                       <input
                         type="text"
@@ -188,86 +202,98 @@ export default function CreateBook() {
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">NHÀ XUẤT BẢN</label>
-                      <div className="flex gap-4">
-                        <select
-                          name="publisher"
-                          value={formData.publisher}
-                          onChange={handleChange}
-                          className={`pb-3 border-b-2 border-gray-200 text-lg md:text-xl focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium bg-transparent cursor-pointer ${formData.publisher === 'Khác' ? 'w-1/3' : 'w-full'}`}
-                        >
-                          <option value="" disabled>Chọn nhà xuất bản...</option>
-                          <option value="NXB Trẻ">NXB Trẻ</option>
-                          <option value="NXB Kim Đồng">NXB Kim Đồng</option>
-                          <option value="O'Reilly Media">O'Reilly Media</option>
-                          <option value="Khác">Khác</option>
-                        </select>
-                        {formData.publisher === 'Khác' && (
-                          <input
-                            type="text"
-                            value={customPublisher}
-                            onChange={(e) => setCustomPublisher(e.target.value)}
-                            placeholder="Nhập tên NXB..."
-                            className="w-2/3 pb-3 border-b-2 border-gray-200 text-lg md:text-xl focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium placeholder-gray-400 bg-transparent animate-fade-in"
-                            autoFocus
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Row 3 - Custom Multi-select */}
-                  <div>
-                    <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">THỂ LOẠI (ĐA CHỌN)</label>
-                    <div className="w-full pb-3 border-b-2 border-gray-200 focus-within:border-[#0056b3] transition-colors flex flex-wrap gap-2 items-center min-h-[44px]">
-                      {categories.map((cat, index) => (
-                        <div key={index} className="flex items-center gap-1.5 bg-[#e6f0fa] text-[#0056b3] text-xs font-bold uppercase px-3 py-1.5 rounded-md">
-                          {cat}
-                          <button 
-                            onClick={() => removeCategory(index)}
-                            className="text-[#0056b3]/60 hover:text-[#0056b3] hover:bg-[#0056b3]/10 rounded-full p-0.5 transition-colors"
-                          >
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ))}
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">NĂM XUẤT BẢN</label>
                       <input
-                        type="text"
-                        value={categoryInput}
-                        onChange={(e) => setCategoryInput(e.target.value)}
-                        onKeyDown={handleCategoryKeyDown}
-                        placeholder={categories.length === 0 ? "Nhập và nhấn Enter để thêm..." : ""}
-                        className="flex-1 min-w-[180px] bg-transparent border-none outline-none text-lg md:text-xl text-gray-900 font-medium placeholder-gray-400"
+                        type="number"
+                        name="publishYear"
+                        value={formData.publishYear}
+                        onChange={handleChange}
+                        className="w-full pb-3 border-b-2 border-gray-200 text-lg md:text-xl focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium bg-transparent"
                       />
                     </div>
-                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                       <span className="inline-block px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200 text-[10px] font-mono">Enter</span> hoặc 
-                       <span className="inline-block px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200 text-[10px] font-mono">,</span> để thêm thể loại
-                    </p>
                   </div>
 
-                  {/* Row 4 */}
+                  {/* Row 3 */}
                   <div className="flex flex-col sm:flex-row gap-8">
-                    <div className="flex-[2]">
-                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">VỊ TRÍ VẬT LÝ</label>
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">NHÀ XUẤT BẢN</label>
                       <input
                         type="text"
-                        name="location"
-                        value={formData.location}
+                        name="publisher"
+                        value={formData.publisher}
                         onChange={handleChange}
-                        placeholder="VD: Kệ A, Tầng 2..."
+                        placeholder="Nhập tên NXB..."
                         className="w-full pb-3 border-b-2 border-gray-200 text-lg md:text-xl focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium placeholder-gray-400 bg-transparent"
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">SỐ LƯỢNG NHẬP</label>
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">THỂ LOẠI</label>
+                      <select
+                        name="categoryId"
+                        value={formData.categoryId}
+                        onChange={handleChange}
+                        className="w-full pb-3 border-b-2 border-gray-200 text-lg md:text-xl focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium bg-transparent cursor-pointer"
+                      >
+                        {categories.map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.categoryName}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Row 4 */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">MÔ TẢ SÁCH</label>
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      placeholder="Mô tả nội dung..."
+                      rows={3}
+                      className="w-full pb-3 border-b-2 border-gray-200 text-base focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium placeholder-gray-400 bg-transparent resize-none"
+                    />
+                  </div>
+
+                  {/* Row 5 */}
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">ĐỊNH DẠNG</label>
+                      <select
+                        name="bookType"
+                        value={formData.bookType}
+                        onChange={handleChange}
+                        className="w-full pb-3 border-b-2 border-gray-200 text-base focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium bg-transparent cursor-pointer"
+                      >
+                        <option value={BookType.PHYSICAL_BOOK}>Sách giấy</option>
+                        <option value={BookType.EBOOK}>Sách điện tử</option>
+                        <option value={BookType.BOTH}>Cả hai</option>
+                      </select>
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">TÌNH TRẠNG</label>
+                      <select
+                        name="condition"
+                        value={formData.condition}
+                        onChange={handleChange}
+                        className="w-full pb-3 border-b-2 border-gray-200 text-base focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-medium bg-transparent cursor-pointer"
+                      >
+                        <option value={BookCondition.NEW}>Mới</option>
+                        <option value={BookCondition.GOOD}>Tốt</option>
+                        <option value={BookCondition.FAIR}>Khá</option>
+                        <option value={BookCondition.POOR}>Kém</option>
+                        <option value={BookCondition.DAMAGED}>Hư hỏng</option>
+                        <option value={BookCondition.LOST}>Mất</option>
+                      </select>
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">SỐ LƯỢNG</label>
                       <input
                         type="number"
                         min="1"
-                        name="stock"
-                        value={formData.stock}
+                        name="quantity"
+                        value={formData.quantity}
                         onChange={handleChange}
-                        className="w-full pb-3 border-b-2 border-gray-200 text-lg md:text-xl focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-bold bg-transparent"
+                        className="w-full pb-3 border-b-2 border-gray-200 text-base focus:outline-none focus:border-[#0056b3] transition-colors text-gray-900 font-bold bg-transparent"
                       />
                     </div>
                   </div>

@@ -4,17 +4,8 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { Search, Plus, Book as BookIcon, ChevronDown, Library, Edit, Trash2 } from 'lucide-react';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
-
-interface Book {
-  id: number;
-  title: string;
-  isbn: string;
-  author: string;
-  categories: string[];
-  location: string;
-  stock: number;
-  coverData?: string;
-}
+import { Book, BookType, BookCondition } from '../../types';
+import { bookApi } from '../../api/bookApi';
 
 export default function BookManagement() {
   const navigate = useNavigate();
@@ -22,52 +13,74 @@ export default function BookManagement() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
   
-  const [books, setBooks] = useState<Book[]>(() => {
-    const saved = localStorage.getItem('libraryBooks');
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: 1,
-        title: 'The Design of Everyday Things',
-        isbn: '978-0465050659',
-        author: 'Don Norman',
-        categories: ['THIẾT KẾ', 'UX/UI'],
-        location: 'Kệ A2',
-        stock: 5
-      },
-      {
-        id: 2,
-        title: 'Clean Code: A Handbook of Agile Software Craftsmanship',
-        isbn: '978-0132350884',
-        author: 'Robert C. Martin',
-        categories: ['LẬP TRÌNH'],
-        location: 'Kệ C4',
-        stock: 12
-      },
-      {
-        id: 3,
-        title: 'Pragmatic Programmer',
-        isbn: '978-0135957059',
-        author: 'Andy Hunt',
-        categories: ['LẬP TRÌNH'],
-        location: 'Kệ C4',
-        stock: 8
-      }
-    ];
-  });
+  const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
-    localStorage.setItem('libraryBooks', JSON.stringify(books));
-  }, [books]);
+    fetchBooks();
+  }, []);
+
+  const fetchBooks = async () => {
+    try {
+      const response = await bookApi.getAllBooks();
+      if (Array.isArray(response)) {
+        setBooks(response);
+      } else {
+        // Fallback mock data matching the new Book interface
+        setBooks([
+          {
+            id: 1,
+            title: 'The Design of Everyday Things',
+            author: 'Don Norman',
+            publisher: 'Basic Books',
+            publishYear: 2013,
+            category: { id: 1, categoryName: 'Thiết kế' },
+            description: 'A primer on how design serves as the communication between object and user.',
+            bookType: BookType.PHYSICAL_BOOK,
+            likes: 120,
+            condition: BookCondition.GOOD,
+            quantity: 5,
+            bookUrl: '',
+            imageUrl: '',
+            avgRating: 4.8
+          },
+          {
+            id: 2,
+            title: 'Clean Code',
+            author: 'Robert C. Martin',
+            publisher: 'Prentice Hall',
+            publishYear: 2008,
+            category: { id: 2, categoryName: 'Lập trình' },
+            description: 'A Handbook of Agile Software Craftsmanship',
+            bookType: BookType.BOTH,
+            likes: 340,
+            condition: BookCondition.NEW,
+            quantity: 12,
+            bookUrl: '',
+            imageUrl: '',
+            avgRating: 4.9
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch books', error);
+    }
+  };
 
   const handleDeleteBook = (id: number) => {
     setBookToDelete(id);
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (bookToDelete !== null) {
-      setBooks(books.filter(b => b.id !== bookToDelete));
+      try {
+        await bookApi.deleteBook(bookToDelete.toString());
+        setBooks(books.filter(b => b.id !== bookToDelete));
+      } catch (error) {
+        console.error('Failed to delete book', error);
+        // Fallback for mock deletion
+        setBooks(books.filter(b => b.id !== bookToDelete));
+      }
     }
     setIsDeleteModalOpen(false);
     setBookToDelete(null);
@@ -76,7 +89,7 @@ export default function BookManagement() {
   const filteredBooks = books.filter(book => 
     book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    book.isbn.includes(searchQuery)
+    book.category?.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -125,7 +138,8 @@ export default function BookManagement() {
                     <th className="px-6 py-5">TÊN SÁCH</th>
                     <th className="px-6 py-5">TÁC GIẢ</th>
                     <th className="px-6 py-5">THỂ LOẠI</th>
-                    <th className="px-6 py-5">VỊ TRÍ</th>
+                    <th className="px-6 py-5">NĂM XB</th>
+                    <th className="px-6 py-5">ĐỊNH DẠNG</th>
                     <th className="px-6 py-5 text-right">TỒN KHO</th>
                     <th className="px-6 py-5 text-center">THAO TÁC</th>
                   </tr>
@@ -133,7 +147,7 @@ export default function BookManagement() {
                 <tbody className="text-[13px] text-gray-700">
                   {filteredBooks.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-500 font-medium">
+                      <td colSpan={8} className="px-6 py-12 text-center text-gray-500 font-medium">
                         Không tìm thấy sách nào trong thư viện.
                       </td>
                     </tr>
@@ -144,18 +158,18 @@ export default function BookManagement() {
                         {/* Cover */}
                         <td className="px-6 py-4">
                           <div className="w-12 h-16 bg-gray-50 rounded-md border border-gray-200 flex items-center justify-center text-gray-400 overflow-hidden shrink-0 shadow-sm">
-                             {book.coverData ? (
-                               <img src={book.coverData} alt="Cover" className="w-full h-full object-cover" />
+                             {book.imageUrl ? (
+                               <img src={book.imageUrl} alt="Cover" className="w-full h-full object-cover" />
                              ) : (
                                <BookIcon size={20} className={index % 2 === 0 ? "text-gray-400" : "text-[#0066cc]"} />
                              )}
                           </div>
                         </td>
 
-                        {/* Title & ISBN */}
+                        {/* Title & Publisher */}
                         <td className="px-6 py-4">
                            <p className="font-bold text-gray-900 mb-1">{book.title}</p>
-                           <p className="text-[11px] text-gray-500 font-medium">ISBN: {book.isbn}</p>
+                           <p className="text-[11px] text-gray-500 font-medium">NXB: {book.publisher}</p>
                         </td>
 
                         {/* Author */}
@@ -165,26 +179,30 @@ export default function BookManagement() {
 
                         {/* Categories */}
                         <td className="px-6 py-4">
-                          <div className="flex flex-wrap gap-2">
-                            {book.categories.map((cat, i) => (
-                              <span key={i} className="inline-flex items-center justify-center px-2.5 py-1 bg-gray-50 border border-gray-200 text-gray-600 rounded text-[10px] font-bold uppercase tracking-wider">
-                                {cat}
-                              </span>
-                            ))}
-                          </div>
+                          <span className="inline-flex items-center justify-center px-2.5 py-1 bg-gray-50 border border-gray-200 text-gray-600 rounded text-[10px] font-bold uppercase tracking-wider">
+                            {book.category?.categoryName || 'N/A'}
+                          </span>
                         </td>
 
-                        {/* Location */}
+                        {/* Publish Year */}
+                        <td className="px-6 py-4 text-gray-500 font-medium">
+                          {book.publishYear}
+                        </td>
+
+                        {/* Format */}
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-2 text-gray-500 font-medium text-xs uppercase tracking-wide">
-                            <Library size={14} className="text-gray-400" />
-                            {book.location}
-                          </div>
+                          <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
+                            book.bookType === BookType.EBOOK ? 'bg-purple-50 text-purple-700 border border-purple-200' :
+                            book.bookType === BookType.PHYSICAL_BOOK ? 'bg-blue-50 text-[#0066cc] border border-blue-200' :
+                            'bg-green-50 text-green-700 border border-green-200'
+                          }`}>
+                            {book.bookType}
+                          </span>
                         </td>
 
                         {/* Stock */}
                         <td className="px-6 py-4 text-right font-bold text-gray-900">
-                          {book.stock}
+                          {book.quantity}
                         </td>
 
                         {/* Actions */}

@@ -19,8 +19,8 @@ interface BookDetailViewProps {
   bookId: string;
   onStartBorrow: (mode: 'ebook' | 'offline') => void;
   borrowedInfo?: BorrowedBook;
-  onRenew?: (id: string) => void;
-  onRead?: (id: string) => void;
+  onRenew?: (id: number) => void;
+  onRead?: (id: number) => void;
 }
 
 const BorrowModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose: () => void, onConfirm: (mode: 'ebook' | 'offline') => void }) => {
@@ -97,7 +97,7 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
 
   const bookTitle = borrowedInfo?.title || "The Art of Stillness";
   const bookAuthor = borrowedInfo?.author || "Pico Iyer";
-  const bookImage = borrowedInfo?.image || "https://picsum.photos/seed/stillness/800/1067";
+  const bookImage = borrowedInfo?.imageUrl || "https://picsum.photos/seed/stillness/800/1067";
   const bookType = borrowedInfo?.type || "Online";
   const expiryDate = borrowedInfo?.expiryDate || "27-5-2026";
   const renewCount = borrowedInfo?.renewCount || "0/2";
@@ -164,7 +164,7 @@ const BookDetailView = ({ onBack, bookId, onStartBorrow, borrowedInfo, onRenew, 
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
             {borrowedInfo ? (
               <>
-                <button onClick={() => onRead && onRead(bookId)} className="bg-[#1e3b2b] text-white px-14 py-4 rounded-full font-bold shadow-md shadow-[#1e3b2b]/20 hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95">Đọc ngay</button>
+                <button onClick={() => onRead && onRead(Number(bookId))} className="bg-[#1e3b2b] text-white px-14 py-4 rounded-full font-bold shadow-md shadow-[#1e3b2b]/20 hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95">Đọc ngay</button>
                 <button onClick={() => setIsRenewModalOpen(true)} disabled={renewCount === '2/2'} className={`px-14 py-4 rounded-full font-bold border border-white/60 backdrop-blur-md transition-all active:scale-95 ${renewCount === '2/2' ? 'bg-white/30 text-gray-400' : 'bg-white/50 text-gray-900 hover:bg-white/80 hover:-translate-y-0.5'}`}>Gia hạn</button>
               </>
             ) : (

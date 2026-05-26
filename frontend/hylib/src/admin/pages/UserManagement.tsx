@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import CreateUserModal from '../components/CreateUserModal';
@@ -6,6 +6,8 @@ import UpdateRoleModal from '../components/UpdateRoleModal';
 import BorrowHistoryModal from '../components/BorrowHistoryModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { Search, ChevronDown, Shield, History, Plus, ChevronLeft, ChevronRight, Trash2, Filter } from 'lucide-react';
+import { User, RoleName, UserStatus } from '../../types';
+import { userApi } from '../../api/userApi';
 
 export default function UserManagement() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -13,100 +15,165 @@ export default function UserManagement() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [filterType, setFilterType] = useState('Tất cả');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [users, setUsers] = useState([
-    {
-      id: '#USR-001',
-      name: 'Nguyễn Văn A',
-      email: 'nva@email.com',
-      type: 'Độc giả',
-      date: '12/10/2023',
-      isActive: false
-    },
-    {
-      id: '#USR-002',
-      name: 'Trần Thị B',
-      email: 'ttb@email.com',
-      type: 'VIP',
-      date: '05/11/2023',
-      isActive: false
-    },
-    {
-      id: '#USR-003',
-      name: 'Lê Văn C',
-      email: 'lvc@email.com',
-      type: 'Khách',
-      date: '20/12/2023',
-      isActive: false
-    },
-    {
-      id: '#USR-004',
-      name: 'Alexei Vane',
-      email: 'example@email.com',
-      type: 'Khách',
-      date: '13/05/2023',
-      isActive: true
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      // In a real scenario, this will hit the backend. For now, it might return empty or mock data.
+      const response = await userApi.getAllUsers();
+      if (Array.isArray(response)) {
+        setUsers(response);
+      } else {
+        // Fallback mock data matching User interface if backend is not ready
+        setUsers([
+          {
+            id: 1,
+            userName: 'nva001',
+            fullName: 'Nguyễn Văn A',
+            email: 'nva@email.com',
+            phoneNum: '0901234567',
+            avatarUrl: '',
+            role: RoleName.READER,
+            userStatus: UserStatus.ACTIVE
+          },
+          {
+            id: 2,
+            userName: 'ttb002',
+            fullName: 'Trần Thị B',
+            email: 'ttb@email.com',
+            phoneNum: '0987654321',
+            avatarUrl: '',
+            role: RoleName.ADMIN,
+            userStatus: UserStatus.ACTIVE
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users', error);
     }
-  ]);
-
-  const handleAddUser = (newUser) => {
-    setUsers([newUser, ...users]);
   };
 
-  const toggleStatus = (id) => {
-    setUsers(users.map(user =>
-      user.id === id ? { ...user, isActive: !user.isActive } : user
-    ));
+  const handleAddUser = async (newUser: User, password?: string) => {
+    try {
+      const createdUser = await userApi.createUser({
+        userName: newUser.userName,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        phoneNum: newUser.phoneNum,
+        avatarUrl: newUser.avatarUrl,
+        role: newUser.role,
+        userStatus: newUser.userStatus,
+        password: password || 'password123'
+      });
+      if (createdUser) {
+        setUsers([createdUser, ...users]);
+      } else {
+        fetchUsers();
+      }
+    } catch (error) {
+      console.error('Failed to create user', error);
+      alert('Không thể tạo người dùng. Tên đăng nhập hoặc email có thể đã tồn tại!');
+    }
   };
 
-  const handleUpdateRole = (updatedUser) => {
-    setUsers(users.map(user =>
-      user.id === updatedUser.id ? updatedUser : user
-    ));
+  const toggleStatus = async (id: number, newStatus: UserStatus) => {
+    try {
+      const user = users.find(u => u.id === id);
+      if (user) {
+        const updated = await userApi.updateUser(id, {
+          fullName: user.fullName,
+          email: user.email,
+          phoneNum: user.phoneNum,
+          avatarUrl: user.avatarUrl,
+          role: user.role,
+          userStatus: newStatus
+        });
+        if (updated) {
+          setUsers(users.map(u => u.id === id ? updated : u));
+        } else {
+          fetchUsers();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update status', error);
+    }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleUpdateRole = async (updatedUser: User) => {
+    try {
+      const updated = await userApi.updateUser(updatedUser.id, {
+        fullName: updatedUser.fullName,
+        email: updatedUser.email,
+        phoneNum: updatedUser.phoneNum,
+        avatarUrl: updatedUser.avatarUrl,
+        role: updatedUser.role,
+        userStatus: updatedUser.userStatus
+      });
+      if (updated) {
+        setUsers(users.map(u => u.id === updatedUser.id ? updated : u));
+      } else {
+        fetchUsers();
+      }
+    } catch (error) {
+      console.error('Failed to update role', error);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
     if (selectedUser) {
-      setUsers(users.filter(user => user.id !== selectedUser.id));
+      try {
+        await userApi.deleteUser(selectedUser.id);
+        setUsers(users.filter(user => user.id !== selectedUser.id));
+      } catch (error) {
+        console.error('Failed to delete user', error);
+      }
     }
   };
 
-  const openUpdateRoleModal = (user) => {
+  const openUpdateRoleModal = (user: User) => {
     setSelectedUser(user);
     setIsUpdateRoleModalOpen(true);
   };
 
-  const openHistoryModal = (user) => {
+  const openHistoryModal = (user: User) => {
     setSelectedUser(user);
     setIsHistoryModalOpen(true);
   };
 
-  const openDeleteModal = (user) => {
+  const openDeleteModal = (user: User) => {
     setSelectedUser(user);
     setIsDeleteModalOpen(true);
   };
 
-  const getAccountTypeStyle = (type) => {
-    switch (type) {
-      case 'Độc giả':
-        return 'bg-blue-50 text-[#0056b3]';
-      case 'VIP':
-        return 'bg-[#fff8e1] text-[#f57f17]';
-      case 'Khách':
-        return 'bg-gray-100 text-gray-600';
+  const getAccountTypeStyle = (role: RoleName) => {
+    switch (role) {
+      case RoleName.ADMIN:
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      case RoleName.LIBRARIAN:
+        return 'bg-blue-50 text-[#0056b3] border-blue-200';
+      case RoleName.GUEST:
+        return 'bg-gray-100 text-gray-600 border-gray-200';
+      case RoleName.READER:
+        return 'bg-[#fff8e1] text-[#f57f17] border-orange-200';
       default:
-        return 'bg-gray-100 text-gray-600';
+        return 'bg-gray-100 text-gray-600 border-gray-200';
     }
   };
 
   const filteredUsers = users.filter(user => {
-    const matchesFilter = filterType === 'Tất cả' || user.type === filterType;
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          user.email.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          user.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = filterType === 'Tất cả' || user.role === filterType;
+    const matchesSearch = user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          user.id.toString().includes(searchQuery);
     return matchesFilter && matchesSearch;
   });
 
@@ -143,9 +210,10 @@ export default function UserManagement() {
                     className="appearance-none bg-white border border-gray-200 rounded-full pl-10 pr-8 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all shadow-sm focus:outline-none focus:border-[#0066cc] cursor-pointer"
                   >
                     <option value="Tất cả">Lọc: Tất cả</option>
-                    <option value="Độc giả">Độc giả</option>
-                    <option value="VIP">VIP</option>
-                    <option value="Khách">Khách</option>
+                    <option value={RoleName.READER}>Reader</option>
+                    <option value={RoleName.ADMIN}>Admin</option>
+                    <option value={RoleName.LIBRARIAN}>Librarian</option>
+                    <option value={RoleName.GUEST}>Guest</option>
                   </select>
                   <Filter size={16} className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
                   <ChevronDown size={14} className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
@@ -170,9 +238,9 @@ export default function UserManagement() {
                   <thead className="sticky top-0 z-10 bg-white shadow-sm">
                     <tr className="border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                       <th className="px-6 py-5">ID</th>
-                      <th className="px-6 py-5">TÊN NGƯỜI DÙNG</th>
-                      <th className="px-6 py-5">LOẠI TÀI KHOẢN</th>
-                      <th className="px-6 py-5">NGÀY ĐĂNG KÝ</th>
+                      <th className="px-6 py-5">NGƯỜI DÙNG</th>
+                      <th className="px-6 py-5">THÔNG TIN LIÊN HỆ</th>
+                      <th className="px-6 py-5">VAI TRÒ</th>
                       <th className="px-6 py-5">TRẠNG THÁI</th>
                       <th className="px-6 py-5 text-center">THAO TÁC</th>
                     </tr>
@@ -180,37 +248,55 @@ export default function UserManagement() {
                   <tbody className="text-[13px] text-gray-700">
                     {filteredUsers.map((user, index) => (
                       <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
-                        <td className="px-6 py-5 font-bold text-gray-500">{user.id}</td>
+                        <td className="px-6 py-5 font-bold text-gray-500">#{user.id}</td>
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                              {user.avatarUrl ? (
+                                <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="font-bold text-gray-500 text-lg">{user.fullName.charAt(0)}</span>
+                              )}
+                            </div>
                             <div>
-                              <p className="font-bold text-gray-900">{user.name}</p>
-                              <p className="text-xs text-gray-500 mt-0.5">{user.email}</p>
+                              <p className="font-bold text-gray-900">{user.fullName}</p>
+                              <p className="text-xs text-gray-500 mt-0.5">@{user.userName}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-5">
-                          <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap ${getAccountTypeStyle(user.type)}`}>
-                            {user.type}
+                          <div className="flex flex-col gap-1">
+                            <span className="font-medium">{user.phoneNum}</span>
+                            <span className="text-gray-500 text-xs">{user.email}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap border ${getAccountTypeStyle(user.role)}`}>
+                            {user.role}
                           </span>
                         </td>
-                        <td className="px-6 py-5 text-gray-500 font-medium">{user.date}</td>
                         <td className="px-6 py-5">
                           <div className="relative inline-block">
                             <select
-                              value={user.isActive ? 'active' : 'inactive'}
-                              onChange={() => toggleStatus(user.id)}
+                              value={user.userStatus}
+                              onChange={(e) => toggleStatus(user.id, e.target.value as UserStatus)}
                               className={`appearance-none outline-none cursor-pointer text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${
-                                user.isActive 
+                                user.userStatus === UserStatus.ACTIVE 
                                   ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' 
+                                  : user.userStatus === UserStatus.BANNED
+                                  ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
                                   : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                               }`}
                             >
-                              <option value="active">Hoạt động</option>
-                              <option value="inactive">Ngừng HĐ</option>
+                              <option value={UserStatus.ACTIVE}>Active</option>
+                              <option value={UserStatus.INACTIVE}>Inactive</option>
+                              <option value={UserStatus.BANNED}>Banned</option>
                             </select>
                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                              <ChevronDown size={14} className={user.isActive ? 'text-green-600' : 'text-gray-500'} />
+                              <ChevronDown size={14} className={
+                                user.userStatus === UserStatus.ACTIVE ? 'text-green-600' : 
+                                user.userStatus === UserStatus.BANNED ? 'text-red-600' : 'text-gray-500'
+                              } />
                             </div>
                           </div>
                         </td>
@@ -232,9 +318,6 @@ export default function UserManagement() {
                 <div className="flex items-center gap-2">
                   <button className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 transition-colors"><ChevronLeft size={16} /></button>
                   <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#0056b3] text-white font-medium">1</button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-700 font-medium transition-colors">2</button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-700 font-medium transition-colors">3</button>
-                  <span>...</span>
                   <button className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 transition-colors"><ChevronRight size={16} /></button>
                 </div>
               </div>
@@ -256,11 +339,13 @@ export default function UserManagement() {
         onSave={handleUpdateRole}
       />
 
+      {/* 
       <BorrowHistoryModal
         isOpen={isHistoryModalOpen}
         onClose={() => setIsHistoryModalOpen(false)}
         user={selectedUser}
       />
+      */}
 
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
@@ -270,3 +355,4 @@ export default function UserManagement() {
     </div>
   );
 }
+
