@@ -60,8 +60,8 @@ public class UserService implements IUserService {
                 .userStatus(status)
                 .build();
 
-        User savedUser = iUserRepository.save(user);
-        return mapToUserResp(savedUser);
+        User create = iUserRepository.save(user);
+        return mapToUserResp(create);
     }
 
     @Override

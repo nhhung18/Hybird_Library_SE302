@@ -1,5 +1,6 @@
 package com.tlu.Hybird_Library_SE302.service.core.impl;
 
+import com.tlu.Hybird_Library_SE302.dto.req.CreateUserAddressReq;
 import com.tlu.Hybird_Library_SE302.dto.req.UpdateUserAddressReq;
 import com.tlu.Hybird_Library_SE302.dto.resp.UserAddressResp;
 import com.tlu.Hybird_Library_SE302.model.User;
@@ -9,6 +10,7 @@ import com.tlu.Hybird_Library_SE302.repository.IUserRepository;
 import com.tlu.Hybird_Library_SE302.service.core.intf.IUserAddressService;
 import com.tlu.Hybird_Library_SE302.service.core.intf.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,33 @@ public class UserAddressService implements IUserAddressService {
     public List<UserAddressResp> getALlUserAddress() {
         List<UserAddress> userAddressList = iUserAddressRepository.findAll();
         return userAddressList.stream().map(this::mapToUserAddressResp).toList();
+    }
+
+    @Override
+    public UserAddressResp createUserAddress(int userId, CreateUserAddressReq request) {
+        User user = iUserRepository.findById(userId).orElseThrow((() -> new RuntimeException("Không tìm thấy người dùng với ID: " + userId)));
+        User convertInt = new User();
+        convertInt.setId(userId);
+        UserAddress userAddress = UserAddress.builder()
+                .user(convertInt)
+                .receiverName(request.getReceiverName())
+                .phone(request.getPhone())
+                .addressLine(request.getAddressLine())
+                .ward(request.getWard())
+                .city(request.getCity())
+                .isDefault(request.isDefault())
+                .build();
+
+        UserAddress create = iUserAddressRepository.save(userAddress);
+        return mapToUserAddressResp(create);
+    }
+
+    @Override
+    public void deleteUserAddress(int userId, int addressId) {
+        UserAddress userAddress = iUserAddressRepository.findById(addressId).orElseThrow(() -> new RuntimeException("Không tìm thấy địa chỉ với ID: " + addressId));
+        User user = iUserRepository.findById(userId).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với ID: " + userId));
+
+        iUserAddressRepository.delete(userAddress);
     }
 
     @Override
@@ -47,10 +76,6 @@ public class UserAddressService implements IUserAddressService {
             userAddress.setWard(request.getWard());
         }
 
-        if(request.getDistrict() != null){
-            userAddress.setDistrict(request.getDistrict());
-        }
-
         if(request.isDefault() == true || request.isDefault() == false){
             userAddress.setDefault(request.isDefault());
         }
@@ -67,7 +92,6 @@ public class UserAddressService implements IUserAddressService {
                         .phone(userAddress.getPhone())
                         .addressLine(userAddress.getAddressLine())
                         .ward(userAddress.getWard())
-                        .district(userAddress.getDistrict())
                         .city(userAddress.getCity())
                         .isDefault(userAddress.isDefault())
                     .build();

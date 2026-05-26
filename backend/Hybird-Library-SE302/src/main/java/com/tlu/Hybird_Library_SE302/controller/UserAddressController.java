@@ -1,5 +1,6 @@
 package com.tlu.Hybird_Library_SE302.controller;
 
+import com.tlu.Hybird_Library_SE302.dto.req.CreateUserAddressReq;
 import com.tlu.Hybird_Library_SE302.dto.req.UpdateUserAddressReq;
 import com.tlu.Hybird_Library_SE302.dto.resp.UserAddressResp;
 import com.tlu.Hybird_Library_SE302.service.core.ResponseWrapper;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.service.annotation.DeleteExchange;
 
 @RestController
 @RequestMapping("/api/user-addresses")
@@ -30,6 +32,17 @@ public class UserAddressController {
         );
     }
 
+    @PostMapping("/{userId}")
+    public ResponseEntity<?> createUserAddress(@PathVariable int userId, @RequestBody CreateUserAddressReq request){
+        return ResponseEntity.ok(
+                ResponseWrapper.builder()
+                        .status(HttpStatus.CREATED)
+                        .code(201)
+                        .data(iUserAddressService.createUserAddress(userId, request))
+                        .build()
+        );
+    }
+
     @PutMapping("/{userId}/update/{addressId}")
     public ResponseEntity<?> updateUserAddress(@PathVariable int userId, @PathVariable int addressId, @RequestBody UpdateUserAddressReq request){
         return ResponseEntity.ok(
@@ -40,4 +53,17 @@ public class UserAddressController {
                         .build()
         );
     }
+
+    @DeleteMapping("/{userId}/delete/{addressId}")
+    public ResponseEntity<?> deleteUserAddress(@PathVariable int userId, @PathVariable int addressId){
+        iUserAddressService.deleteUserAddress(userId, addressId);
+        return ResponseEntity.ok(
+                ResponseWrapper.builder()
+                        .status(HttpStatus.OK)
+                        .code(200)
+                        .data("Xóa địa chỉ của người dùng có id là " + userId + " thành công!")
+                        .build()
+        );
+    }
+
 }

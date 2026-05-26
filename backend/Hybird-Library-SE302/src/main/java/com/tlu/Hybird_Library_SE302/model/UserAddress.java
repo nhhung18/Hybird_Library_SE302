@@ -29,9 +29,6 @@ public class UserAddress extends BaseIdObject {
     @Column(name = "ward", length = 255, nullable = false)
     private String ward;
 
-    @Column(name = "district", length = 255, nullable = false)
-    private String district;
-
     @Column(name = "city", length = 255, nullable = false)
     private String city;
 

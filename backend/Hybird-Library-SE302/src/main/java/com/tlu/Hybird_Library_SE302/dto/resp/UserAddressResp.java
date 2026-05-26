@@ -14,7 +14,6 @@ public class UserAddressResp {
     private String phone;
     private String addressLine;
     private String ward;
-    private String district;
     private String city;
     private boolean isDefault;
 }
