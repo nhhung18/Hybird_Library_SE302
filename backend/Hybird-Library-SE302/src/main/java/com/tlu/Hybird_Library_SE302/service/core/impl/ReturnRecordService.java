@@ -1,0 +1,83 @@
+package com.tlu.Hybird_Library_SE302.service.core.impl;
+import com.tlu.Hybird_Library_SE302.dto.req.*;
+import com.tlu.Hybird_Library_SE302.dto.resp.ReturnRecordResp;
+import com.tlu.Hybird_Library_SE302.model.ReturnRecord;
+import com.tlu.Hybird_Library_SE302.model.BorrowRecord;
+import com.tlu.Hybird_Library_SE302.model.DamageLevel;
+import com.tlu.Hybird_Library_SE302.repository.IReturnRecordRepository;
+import com.tlu.Hybird_Library_SE302.repository.IBorrowRecordRepository;
+import com.tlu.Hybird_Library_SE302.repository.IDamageLevelRepository;
+import com.tlu.Hybird_Library_SE302.service.core.intf.IReturnRecordService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+import java.util.List;
+@Service
+@RequiredArgsConstructor
+public class ReturnRecordService implements IReturnRecordService {
+    private final IReturnRecordRepository iReturnRecordRepository;
+    private final IBorrowRecordRepository iBorrowRecordRepository;
+    private final IDamageLevelRepository iDamageLevelRepository;
+    
+    @Override
+    public List<ReturnRecordResp> getAllReturnRecords() {
+        return iReturnRecordRepository.findAll().stream().map(this::mapToResp).toList();
+    }
+    @Override
+    public ReturnRecordResp getReturnRecordById(int id) {
+        ReturnRecord record = iReturnRecordRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu trả!"));
+        return mapToResp(record);
+    }
+    @Override
+    public ReturnRecordResp createReturnRecord(CreateReturnRecordReq request) {
+        BorrowRecord borrowRecord = iBorrowRecordRepository.findById(request.getBorrowId()).orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu mượn!"));
+        DamageLevel damageLevel = null;
+        if(request.getDamageLevelId() != null) {
+            damageLevel = iDamageLevelRepository.findById(request.getDamageLevelId()).orElse(null);
+        }
+        
+        ReturnRecord record = ReturnRecord.builder()
+            .borrowRecord(borrowRecord)
+            .returnDate(request.getReturnDate())
+            .returnDelayDays(request.getReturnDelayDays() != null ? request.getReturnDelayDays() : 0)
+            .fineAmount(request.getFineAmount() != null ? request.getFineAmount() : BigDecimal.ZERO)
+            .approvalStatus(request.getApprovalStatus() != null ? request.getApprovalStatus() : com.tlu.Hybird_Library_SE302.model.constants.ApprovalStatus.PENDING)
+            .damageLevel(damageLevel)
+            .isLost(request.getIsLost() != null ? request.getIsLost() : false)
+            .returnMethod(request.getReturnMethod() != null ? request.getReturnMethod() : com.tlu.Hybird_Library_SE302.model.constants.ReturnMethod.LIBRARY_RETURN)
+            .build();
+        return mapToResp(iReturnRecordRepository.save(record));
+    }
+    @Override
+    public ReturnRecordResp updateReturnRecord(int id, UpdateReturnRecordReq request) {
+        ReturnRecord record = iReturnRecordRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu trả!"));
+        if(request.getDamageLevelId() != null) {
+            DamageLevel damageLevel = iDamageLevelRepository.findById(request.getDamageLevelId()).orElse(null);
+            record.setDamageLevel(damageLevel);
+        }
+        if(request.getReturnDelayDays() != null) record.setReturnDelayDays(request.getReturnDelayDays());
+        if(request.getFineAmount() != null) record.setFineAmount(request.getFineAmount());
+        if(request.getApprovalStatus() != null) record.setApprovalStatus(request.getApprovalStatus());
+        if(request.getIsLost() != null) record.setIsLost(request.getIsLost());
+        if(request.getReturnMethod() != null) record.setReturnMethod(request.getReturnMethod());
+        return mapToResp(iReturnRecordRepository.save(record));
+    }
+    @Override
+    public void deleteReturnRecord(int id) {
+        ReturnRecord record = iReturnRecordRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu trả!"));
+        iReturnRecordRepository.delete(record);
+    }
+    private ReturnRecordResp mapToResp(ReturnRecord record) {
+        return ReturnRecordResp.builder()
+            .id(record.getId())
+            .borrowId(record.getBorrowRecord() != null ? record.getBorrowRecord().getId() : null)
+            .returnDate(record.getReturnDate())
+            .returnDelayDays(record.getReturnDelayDays())
+            .fineAmount(record.getFineAmount())
+            .approvalStatus(record.getApprovalStatus())
+            .damageLevelId(record.getDamageLevel() != null ? record.getDamageLevel().getId() : null)
+            .isLost(record.getIsLost())
+            .returnMethod(record.getReturnMethod())
+            .build();
+    }
+}

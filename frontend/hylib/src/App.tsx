@@ -1,6 +1,5 @@
 import React, { useState, startTransition } from 'react';
-// @ts-ignore
-import { ViewTransition } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 
 // Components
@@ -31,7 +30,27 @@ import AdminApp from './admin/App';
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activePage, setActivePage] = useState('Khám phá');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getActivePageName = (path: string) => {
+    if (path === '/') return 'Khám phá';
+    if (path === '/support') return 'Hỗ trợ';
+    if (path === '/books') return 'Sách';
+    if (path.startsWith('/books/')) return 'Chi tiết sách';
+    if (path === '/my-books') return 'Sách của tôi';
+    if (path === '/favorites') return 'Yêu thích';
+    if (path === '/cart') return 'Giỏ sách';
+    if (path === '/membership') return 'Thẻ thành viên';
+    if (path === '/membership/detail') return 'Chi tiết thẻ thành viên';
+    if (path === '/profile') return 'Cài đặt tài khoản';
+    if (path === '/payment/fine') return 'Nộp phạt';
+    if (path.startsWith('/reader/')) return 'Đọc sách';
+    if (path === '/payment/bank') return 'Thanh toán qua ngân hàng';
+    if (path === '/borrow-confirm') return 'Xác nhận mượn';
+    return 'Khám phá';
+  };
+  const activePage = getActivePageName(location.pathname);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isOTPOpen, setIsOTPOpen] = useState(false);
@@ -85,9 +104,9 @@ export default function App() {
   const handleNotificationClick = (notif: Notification) => {
     if (notif.targetPage === 'Chi tiết sách' && notif.targetId) {
       setSelectedBookId(notif.targetId);
-      setActivePage('Chi tiết sách');
+      navigate(`/books/${notif.targetId}`);
     } else if (notif.targetPage) {
-      setActivePage(notif.targetPage);
+      handleSetActivePage(notif.targetPage);
     }
   };
 
@@ -175,19 +194,29 @@ export default function App() {
     if (!isLoggedIn && protectedPages.includes(page)) {
       setIsLoginOpen(true);
     } else {
-      startTransition(() => {
-        // @ts-ignore
-        if (typeof addTransitionType === 'function') addTransitionType('nav-forward');
-        setActivePage(page);
-      });
+      const pageToPath: Record<string, string> = {
+        'Khám phá': '/',
+        'Hỗ trợ': '/support',
+        'Sách': '/books',
+        'Sách của tôi': '/my-books',
+        'Yêu thích': '/favorites',
+        'Giỏ sách': '/cart',
+        'Thẻ thành viên': '/membership',
+        'Chi tiết thẻ thành viên': '/membership/detail',
+        'Cài đặt tài khoản': '/profile',
+        'Chi tiết sách': `/books/${selectedBookId || 'default'}`,
+        'Nộp phạt': '/payment/fine',
+        'Đọc sách': `/reader/${selectedBookId || 'default'}`,
+        'Thanh toán qua ngân hàng': '/payment/bank',
+        'Xác nhận mượn': '/borrow-confirm',
+      };
+      navigate(pageToPath[page] || '/');
     }
   };
 
   const handleBookClick = (id: string) => {
-    startTransition(() => {
-      setSelectedBookId(id);
-      setActivePage('Chi tiết sách');
-    });
+    setSelectedBookId(id);
+    navigate(`/books/${id}`);
   };
 
   const handleConfirmBorrow = (paymentMethod: string, amount: string = '30.000 VNĐ') => {
@@ -207,12 +236,12 @@ export default function App() {
       setPaymentAmount(amount);
       setPaymentBackPage('Xác nhận mượn');
       setPaymentSuccessMessage(successMsg);
-      setActivePage('Thanh toán qua ngân hàng');
+      handleSetActivePage('Thanh toán qua ngân hàng');
     } else {
       setSuccessMessage(successMsg);
       setCartBooks([]);
       setIsSuccessOpen(true);
-      setActivePage('Sách của tôi');
+      handleSetActivePage('Sách của tôi');
     }
   };
 
@@ -224,12 +253,12 @@ export default function App() {
       setPaymentAmount(amount);
       setPaymentBackPage('Nộp phạt');
       setPaymentSuccessMessage(successMsg);
-      setActivePage('Thanh toán qua ngân hàng');
+      handleSetActivePage('Thanh toán qua ngân hàng');
     } else {
       setBooks(prev => prev.map(book => book.id === '4' ? { ...book, status: 'Đã trả sách', statusColor: 'text-green-500', actions: ['Trả sách disabled'] } : book));
       setSuccessMessage(successMsg);
       setIsSuccessOpen(true);
-      setActivePage('Sách của tôi');
+      handleSetActivePage('Sách của tôi');
     }
   };
 
@@ -243,8 +272,8 @@ export default function App() {
     }
     setSuccessMessage(paymentSuccessMessage);
     setIsSuccessOpen(true);
-    if (paymentBackPage === 'Thẻ thành viên') setActivePage('Thẻ thành viên');
-    else setActivePage('Sách của tôi');
+    if (paymentBackPage === 'Thẻ thành viên') handleSetActivePage('Thẻ thành viên');
+    else handleSetActivePage('Sách của tôi');
   };
 
   const handleUpgradePlan = (plan: { name: string, price: string }) => {
@@ -253,7 +282,7 @@ export default function App() {
     setPaymentBackPage('Thẻ thành viên');
     setPaymentSuccessMessage(`Nâng cấp gói ${plan.name} thành công!`);
     setSuccessConfirmText('Bắt đầu ngay');
-    setActivePage('Thanh toán qua ngân hàng');
+    handleSetActivePage('Thanh toán qua ngân hàng');
   };
 
   const handleLoginSuccess = (email: string) => {
@@ -267,7 +296,7 @@ export default function App() {
     setSuccessMessage('Đăng nhập thành công!');
     setSuccessConfirmText('Khám phá ngay');
     setIsSuccessOpen(true);
-    setActivePage('Khám phá');
+    handleSetActivePage('Khám phá');
   };
 
   const handleReturnSuccess = (customMessage?: string) => {
@@ -330,101 +359,27 @@ export default function App() {
           onBookClick={handleBookClick}
         />
         
-        <ViewTransition enter={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', default: 'fade-in' }} exit={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', default: 'fade-out' }} default="none">
-          {activePage === 'Hỗ trợ' ? (
-            <SupportView onBack={() => handleSetActivePage('Khám phá')} />
-          ) : activePage === 'Sách' ? (
-            <BooksView onBookClick={handleBookClick} onBack={() => handleSetActivePage('Khám phá')} searchQuery={searchQuery} />
-          ) : activePage === 'Sách của tôi' ? (
-            <MyBooksView 
-              books={books} 
-              setBooks={setBooks} 
-              onReturnSuccess={handleReturnSuccess} 
-              onReadClick={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }} 
-              onRowClick={handleBookClick}
-              onRenewSuccess={handleRenewSuccess} 
-              onLateReturn={() => handleSetActivePage('Nộp phạt')} 
-              onNavigateTo={(page) => handleSetActivePage(page)}
-              onBack={() => handleSetActivePage('Khám phá')} 
-            />
-          ) : activePage === 'Nộp phạt' ? (
-            <LateFinePaymentView onBack={() => handleSetActivePage('Sách của tôi')} onConfirm={handleConfirmLateFine} />
-          ) : activePage === 'Đọc sách' ? (
-            <ReaderView onBack={() => handleSetActivePage('Sách của tôi')} />
-          ) : activePage === 'Yêu thích' ? (
-            <FavoritesView 
-              books={favoriteBooks} 
-              setBooks={setFavoriteBooks} 
-              cartBooks={cartBooks} 
-              setCartBooks={setCartBooks} 
-              onNavigateToCart={() => handleSetActivePage('Giỏ sách')} 
-              onBack={() => handleSetActivePage('Khám phá')} 
-            />
-          ) : activePage === 'Giỏ sách' ? (
-            <CartView 
-              books={cartBooks} 
-              setBooks={setCartBooks} 
-              onBorrowTrigger={(mode) => {
-                setBorrowMode(mode);
-                handleSetActivePage('Xác nhận mượn');
-              }}
-              onBack={() => handleSetActivePage('Khám phá')}
-            />
-          ) : activePage === 'Thẻ thành viên' ? (
-            <MembershipView 
-              onUpgrade={handleUpgradePlan} 
-              currentPlan={currentMembershipPlan}
-              onViewDetail={(plan) => {
-                setUpgradePlan(plan);
-                handleSetActivePage('Chi tiết thẻ thành viên');
-              }}
-              onBack={() => handleSetActivePage('Khám phá')}
-            />
-          ) : activePage === 'Chi tiết thẻ thành viên' ? (
-            <MembershipDetailView 
-              plan={upgradePlan || 'Standard'} 
-              expiryDate={membershipExpiry}
-              onBack={() => handleSetActivePage('Thẻ thành viên')} 
-              onUpgradePremium={() => {
-                setUpgradePlan('Premium');
-                setPaymentAmount('300.000 VNĐ');
-                setPaymentBackPage('Thẻ thành viên');
-                setPaymentSuccessMessage('Nâng cấp thành công!');
-                setSuccessConfirmText('Bắt đầu ngay');
-                handleSetActivePage('Thanh toán qua ngân hàng');
-              }}
-              onCancel={() => { setCurrentMembershipPlan(null); setSuccessMessage('Hủy thành công'); setIsSuccessOpen(true); }}
-              onRenew={() => {
-                const parts = membershipExpiry.split('/');
-                setMembershipExpiry(`${parts[0]}/${parts[1]}/${parseInt(parts[2]) + 1}`);
-                setSuccessMessage('Gia hạn thành công!');
-                setIsSuccessOpen(true);
-              }}
-            />
-          ) : activePage === 'Cài đặt tài khoản' ? (
-            <ProfileView onBack={() => handleSetActivePage('Khám phá')} profile={profile} setProfile={setProfile} />
-          ) : activePage === 'Chi tiết sách' ? (
-            <BookDetailView 
-              bookId={selectedBookId || ''} 
-              onBack={() => handleSetActivePage('Khám phá')} 
-              onStartBorrow={(mode) => { setBorrowMode(mode); handleSetActivePage('Xác nhận mượn'); }} 
-              borrowedInfo={books.find(b => b.id === selectedBookId)}
-              onRenew={handleRenew}
-              onRead={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }}
-            />
-          ) : activePage === 'Xác nhận mượn' ? (
-            <BorrowConfirmationView borrowMode={borrowMode} onBack={() => handleSetActivePage('Chi tiết sách')} onConfirm={handleConfirmBorrow} />
-          ) : activePage === 'Thanh toán qua ngân hàng' ? (
-            <BankPaymentView onBack={() => handleSetActivePage(paymentBackPage)} onComplete={handlePaymentComplete} amount={paymentAmount} />
-          ) : (
-            <HomeView onLoginClick={() => setIsLoginOpen(true)} onRegisterClick={() => setIsRegisterOpen(true)} isLoggedIn={isLoggedIn} onBookClick={handleBookClick} />
-          )}
-        </ViewTransition>
+        <Routes>
+          <Route path="/support" element={<SupportView onBack={() => handleSetActivePage('Khám phá')} />} />
+          <Route path="/books" element={<BooksView onBookClick={handleBookClick} onBack={() => handleSetActivePage('Khám phá')} searchQuery={searchQuery} />} />
+          <Route path="/my-books" element={<MyBooksView books={books} setBooks={setBooks} onReturnSuccess={handleReturnSuccess} onReadClick={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }} onRowClick={handleBookClick} onRenewSuccess={handleRenewSuccess} onLateReturn={() => handleSetActivePage('Nộp phạt')} onNavigateTo={(page) => handleSetActivePage(page)} onBack={() => handleSetActivePage('Khám phá')} />} />
+          <Route path="/payment/fine" element={<LateFinePaymentView onBack={() => handleSetActivePage('Sách của tôi')} onConfirm={handleConfirmLateFine} />} />
+          <Route path="/reader/:id" element={<ReaderView onBack={() => handleSetActivePage('Sách của tôi')} />} />
+          <Route path="/favorites" element={<FavoritesView books={favoriteBooks} setBooks={setFavoriteBooks} cartBooks={cartBooks} setCartBooks={setCartBooks} onNavigateToCart={() => handleSetActivePage('Giỏ sách')} onBack={() => handleSetActivePage('Khám phá')} />} />
+          <Route path="/cart" element={<CartView books={cartBooks} setBooks={setCartBooks} onBorrowTrigger={(mode) => { setBorrowMode(mode); handleSetActivePage('Xác nhận mượn'); }} onBack={() => handleSetActivePage('Khám phá')} />} />
+          <Route path="/membership" element={<MembershipView onUpgrade={handleUpgradePlan} currentPlan={currentMembershipPlan} onViewDetail={(plan) => { setUpgradePlan(plan); handleSetActivePage('Chi tiết thẻ thành viên'); }} onBack={() => handleSetActivePage('Khám phá')} />} />
+          <Route path="/membership/detail" element={<MembershipDetailView plan={upgradePlan || 'Standard'} expiryDate={membershipExpiry} onBack={() => handleSetActivePage('Thẻ thành viên')} onUpgradePremium={() => { setUpgradePlan('Premium'); setPaymentAmount('300.000 VNĐ'); setPaymentBackPage('Thẻ thành viên'); setPaymentSuccessMessage('Nâng cấp thành công!'); setSuccessConfirmText('Bắt đầu ngay'); handleSetActivePage('Thanh toán qua ngân hàng'); }} onCancel={() => { setCurrentMembershipPlan(null); setSuccessMessage('Hủy thành công'); setIsSuccessOpen(true); }} onRenew={() => { const parts = membershipExpiry.split('/'); setMembershipExpiry(`${parts[0]}/${parts[1]}/${parseInt(parts[2]) + 1}`); setSuccessMessage('Gia hạn thành công!'); setIsSuccessOpen(true); }} />} />
+          <Route path="/profile" element={<ProfileView onBack={() => handleSetActivePage('Khám phá')} profile={profile} setProfile={setProfile} />} />
+          <Route path="/books/:id" element={<BookDetailView bookId={selectedBookId || ''} onBack={() => handleSetActivePage('Khám phá')} onStartBorrow={(mode) => { setBorrowMode(mode); handleSetActivePage('Xác nhận mượn'); }} borrowedInfo={books.find(b => b.id === selectedBookId)} onRenew={handleRenew} onRead={(id) => { setSelectedBookId(id); handleSetActivePage('Đọc sách'); }} />} />
+          <Route path="/borrow-confirm" element={<BorrowConfirmationView borrowMode={borrowMode} onBack={() => handleSetActivePage('Chi tiết sách')} onConfirm={handleConfirmBorrow} />} />
+          <Route path="/payment/bank" element={<BankPaymentView onBack={() => handleSetActivePage(paymentBackPage)} onComplete={handlePaymentComplete} amount={paymentAmount} />} />
+          <Route path="/" element={<HomeView onLoginClick={() => setIsLoginOpen(true)} onRegisterClick={() => setIsRegisterOpen(true)} isLoggedIn={isLoggedIn} onBookClick={handleBookClick} />} />
+        </Routes>
       </main>
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLoginSuccess={handleLoginSuccess} onSwitchToRegister={() => { setIsLoginOpen(false); setIsRegisterOpen(true); }} />
       <RegisterModal isOpen={isRegisterOpen} onClose={() => setIsRegisterOpen(false)} onSwitchToLogin={() => { setIsRegisterOpen(false); setIsLoginOpen(true); }} onRegisterSuccess={() => { setIsRegisterOpen(false); setIsOTPOpen(true); }} />
-      <OTPModal isOpen={isOTPOpen} onClose={() => setIsOTPOpen(false)} onBack={() => { setIsOTPOpen(false); setIsRegisterOpen(true); }} onVerifySuccess={() => { setIsLoggedIn(true); setIsOTPOpen(false); setSuccessMessage('Đăng ký thành công!'); setSuccessConfirmText('Khám phá ngay'); setIsSuccessOpen(true); setActivePage('Khám phá'); }} />
+      <OTPModal isOpen={isOTPOpen} onClose={() => setIsOTPOpen(false)} onBack={() => { setIsOTPOpen(false); setIsRegisterOpen(true); }} onVerifySuccess={() => { setIsLoggedIn(true); setIsOTPOpen(false); setSuccessMessage('Đăng ký thành công!'); setSuccessConfirmText('Khám phá ngay'); setIsSuccessOpen(true); handleSetActivePage('Khám phá'); }} />
       <ToastNotification isOpen={isSuccessOpen} onClose={() => { setIsSuccessOpen(false); }} message={successMessage} />
     </div>
   );

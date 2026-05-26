@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import EmployeeManagement from './pages/EmployeeManagement';
 import ShiftManagement from './pages/ShiftManagement';
@@ -25,32 +25,30 @@ export default function AdminApp() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-[#f9fafb] font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-[#0066cc]">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/employees" element={<EmployeeManagement />} />
-          <Route path="/shifts" element={<ShiftManagement />} />
-          <Route path="/payments" element={<PaymentManagement />} />
-          <Route path="/users" element={<UserManagement />} />
-          <Route path="/borrowing" element={<BorrowingManagement />} />
-          <Route path="/support" element={<SupportManagement />} />
-          <Route path="/support/:id" element={<TicketDetails />} />
-          <Route path="/membership-cards" element={<MembershipCardManagement />} />
-          <Route path="/books" element={<BookManagement />} />
-          <Route path="/books/create" element={<CreateBook />} />
-          <Route path="/books/edit/:id" element={<EditBook />} />
-          <Route path="/fines" element={<PenaltyManagement />} />
-          <Route path="/fines/:id" element={<PenaltyDetails />} />
-        </Routes>
-        
-        {showToast && (
-          <ToastNotification 
-            message="Đăng nhập thành công với vai trò Admin!" 
-            onClose={() => setShowToast(false)} 
-          />
-        )}
-      </div>
-    </BrowserRouter>
+    <div className="min-h-screen bg-[#f9fafb] font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-[#0066cc]">
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/employees" element={<EmployeeManagement />} />
+        <Route path="/shifts" element={<ShiftManagement />} />
+        <Route path="/payments" element={<PaymentManagement />} />
+        <Route path="/users" element={<UserManagement />} />
+        <Route path="/borrowing" element={<BorrowingManagement />} />
+        <Route path="/support" element={<SupportManagement />} />
+        <Route path="/support/:id" element={<TicketDetails />} />
+        <Route path="/membership-cards" element={<MembershipCardManagement />} />
+        <Route path="/books" element={<BookManagement />} />
+        <Route path="/books/create" element={<CreateBook />} />
+        <Route path="/books/edit/:id" element={<EditBook />} />
+        <Route path="/fines" element={<PenaltyManagement />} />
+        <Route path="/fines/:id" element={<PenaltyDetails />} />
+      </Routes>
+      
+      {showToast && (
+        <ToastNotification 
+          message="Đăng nhập thành công với vai trò Admin!" 
+          onClose={() => setShowToast(false)} 
+        />
+      )}
+    </div>
   );
 }

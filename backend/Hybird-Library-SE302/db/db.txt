@@ -1,0 +1,240 @@
+CREATE DATABASE hylib
+use hylib
+
+CREATE TABLE `users` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `user_name` VARCHAR(255) UNIQUE NOT NULL,
+  `full_name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) UNIQUE NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `phone_num` VARCHAR(10) UNIQUE NOT NULL,
+  `role_id` INT NOT NULL,
+  `avatar_url` VARCHAR(255),
+  `status` ENUM ('ACTIVE', 'BANNED', 'INACTIVE') DEFAULT 'ACTIVE',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+);
+
+CREATE TABLE user_addresses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+
+    user_id INT NOT NULL,
+
+    receiver_name VARCHAR(255) NOT NULL,
+
+    phone VARCHAR(10) NOT NULL,
+
+    address_line VARCHAR(255) NOT NULL,
+
+    ward VARCHAR(100) NOT NULL,
+
+    district VARCHAR(100) NOT NULL,
+
+    city VARCHAR(100) NOT NULL,
+
+    is_default BOOLEAN DEFAULT FALSE NULL,
+
+    FOREIGN KEY(user_id)
+        REFERENCES users(id)
+);
+
+CREATE TABLE `categories` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `category_name` VARCHAR(255) NOT NULL UNIQUE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `books` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `author` VARCHAR(255),
+  `publisher` VARCHAR(255),
+  `publish_year` YEAR,
+  `category_id` INT NOT NULL,
+  `description` TEXT,
+  `book_type` ENUM ('EBOOK', 'PHYSICAL_BOOK', 'BOTH') NOT NULL,
+  `likes` INT NOT NULL DEFAULT 0,
+  `condition` ENUM ('GOOD', 'DAMAGED', 'LOST') DEFAULT 'GOOD',
+  `quantity` INT NOT NULL DEFAULT 0,
+  `book_url` VARCHAR(255),
+  `image_url` VARCHAR(255),
+  `avg_rating` DECIMAL(2,1) DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+);
+
+CREATE TABLE `borrow_records` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `book_id` INT NOT NULL,
+  `borrow_date` DATETIME NOT NULL,
+  `due_date` DATETIME NOT NULL,
+  `book_type` ENUM ('EBOOK', 'PHYSICAL_BOOK') NOT NULL,
+  `borrow_status` ENUM ('BORROWING', 'RETURNED', 'AUTO_RETURNED') DEFAULT 'BORROWING',
+  `approval_status` ENUM ('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+  `renew` INT DEFAULT 0,
+  `receive_method` ENUM ('LIBRARY_PICKUP', 'HOME_PICKUP') DEFAULT ('LIBRARY_PICKUP'),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`book_id`) REFERENCES `books` (`id`)
+);
+
+CREATE TABLE `return_records` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `borrow_id` INT NOT NULL,
+  `return_date` DATETIME NOT NULL,
+  `return_delay_days` INT NOT NULL DEFAULT 0,
+  `fine_amount` DECIMAL(10,1) DEFAULT 0,
+  `approval_status` ENUM ('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+  `damaged_level_id` INT null,
+  `is_lost` boolean DEFAULT false,
+  `return_method` ENUM ('LIBRARY_RETURN', 'HOME_RETURN') DEFAULT ('LIBRARY_RETURN'),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`borrow_id`) REFERENCES `borrow_records` (`id`)
+	
+  ALTER TABLE return_records
+	ADD COLUMN damage_level_id INT NULL,
+	ADD COLUMN is_lost BOOLEAN DEFAULT FALSE;
+	
+	ALTER TABLE return_records
+	ADD CONSTRAINT fk_return_damage_level
+	FOREIGN KEY (damage_level_id)
+	REFERENCES damage_levels(id);
+
+);
+
+CREATE TABLE `membership_plans` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `plan_name` ENUM ('STANDARD', 'PREMIUM') UNIQUE NOT NULL,
+  `price` DECIMAL(10,1) NOT NULL,
+  `duration_days` INT NOT NULL,
+  `max_borrow_books` INT NOT NULL,
+  `description` TEXT,
+  `is_active` BOOLEAN NOT NULL DEFAULT TRUE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `penalty_costs` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `penalty_cost_name` ENUM ('LATE', 'LOST_BOOK', 'DAMAGED') UNIQUE NOT NULL,
+  calculation_type ENUM('FIXED', 'PER_DAY', 'BOOK_PRICE', 'BOOK_PRICE_PERCENT') NOT NULL,
+  `price` DECIMAL(10,1) NOT NULL DEFAULT 0,
+  `description` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `payment_transactions` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `transaction_code` VARCHAR(255) UNIQUE NOT NULL,
+  `user_id` INT NOT NULL,
+  `amount` DECIMAL(10,1) NOT NULL,
+  `status` ENUM ('UNPAID', 'PAID', 'REFUNDED', 'FAILED', 'PENDING') DEFAULT 'PENDING',
+  `payment_method` ENUM ('CASH', 'BANKING') NOT NULL,
+  `paid_at` TIMESTAMP NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE payment_items(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+
+    payment_transaction_id INT NOT NULL,
+    
+--     Lưu id của các bảng có chi phí
+    cost_id  INT,
+
+    item_type ENUM(
+        'SHIPMENT',
+        'LATE_PENALTY',
+        'DAMAGED_BOOK',
+        'LOST_BOOK',
+        'MEMBERSHIP'
+    ),
+
+    amount DECIMAL(10,1) NOT NULL,
+
+    description VARCHAR(255),
+
+    FOREIGN KEY(payment_transaction_id)
+        REFERENCES payment_transactions(id)
+);
+
+
+CREATE TABLE `carts` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INT NOT NULL UNIQUE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE `cart_items` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `cart_id` INT NOT NULL,
+  `book_id` INT NOT NULL,
+  `book_type` ENUM ('EBOOK', 'PHYSICAL_BOOK') NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`),
+  FOREIGN KEY (`book_id`) REFERENCES `books` (`id`)
+);
+
+CREATE TABLE shipments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    borrow_record_id INT,
+    return_record_id INT,
+    tracking_code VARCHAR(100),
+    shipping_fee DECIMAL(10,2) DEFAULT 0,
+    shipment_status ENUM(
+        'WAITING_CONFIRMATION',
+        'WAITING_FOR_PICKUP',
+        'ON_DELIVERY',
+        'DELIVERED',
+        'DELIVERED'
+        'FAILED',
+        'RETURNED_TO_LIB'
+    ) DEFAULT 'WAITING_CONFIRMATION',
+    shipped_at DATETIME,
+    delivered_at DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        
+	UNIQUE (borrow_record_id),
+    UNIQUE (return_record_id),
+
+    FOREIGN KEY (borrow_record_id)
+        REFERENCES borrow_records(id),
+
+    FOREIGN KEY (return_record_id)
+        REFERENCES return_records(id),
+
+    CHECK (
+        (borrow_record_id IS NOT NULL AND return_record_id IS NULL)
+        OR
+        (borrow_record_id IS NULL AND return_record_id IS NOT NULL)
+    )
+);
+
+CREATE TABLE damage_levels (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+
+    level_name VARCHAR(50) UNIQUE NOT NULL,
+
+    percent_value DECIMAL(5,2) NOT NULL,
+
+    description TEXT
+);
+
