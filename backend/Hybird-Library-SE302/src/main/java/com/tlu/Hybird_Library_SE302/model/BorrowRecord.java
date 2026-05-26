@@ -3,6 +3,8 @@ import com.tlu.Hybird_Library_SE302.model.base.BaseIdObject;
 import com.tlu.Hybird_Library_SE302.model.constants.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 @Entity
 @Table(name = "borrow_records")
@@ -19,6 +21,7 @@ public class BorrowRecord extends BaseIdObject {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+//    @CreationTimestamp
     @Column(name = "borrow_date", nullable = false)
     private LocalDateTime borrowDate;
 
@@ -32,7 +35,7 @@ public class BorrowRecord extends BaseIdObject {
     @Enumerated(EnumType.STRING)
     @Column(name = "borrow_status")
     @Builder.Default
-    private BorrowStatus borrowStatus = BorrowStatus.BORROWING;
+    private BorrowStatus borrowStatus = BorrowStatus.REQUESTING;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "approval_status")

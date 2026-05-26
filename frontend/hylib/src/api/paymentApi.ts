@@ -3,18 +3,18 @@ import { PaymentTransaction } from '../types';
 
 export const paymentApi = {
   getAllPayments: () => {
-    return axiosClient.get('/payments');
+    return axiosClient.get('/payment-transactions');
   },
   
   createPayment: (data: Partial<PaymentTransaction>) => {
-    return axiosClient.post('/payments', data);
+    return axiosClient.post('/payment-transactions', data);
   },
 
   updatePayment: (id: number, data: Partial<PaymentTransaction>) => {
-    return axiosClient.put(`/payments/${id}`, data);
+    return axiosClient.put(`/payment-transactions/${id}`, data);
   },
 
   deletePayment: (id: number) => {
-    return axiosClient.delete(`/payments/${id}`);
+    return axiosClient.delete(`/payment-transactions/${id}`);
   }
 };

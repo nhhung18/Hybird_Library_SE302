@@ -3,18 +3,18 @@ import { PenaltyCost } from '../types';
 
 export const penaltyApi = {
   getAllPenalties: () => {
-    return axiosClient.get('/penalties');
+    return axiosClient.get('/penalty-costs');
   },
   
   createPenalty: (data: Partial<PenaltyCost>) => {
-    return axiosClient.post('/penalties', data);
+    return axiosClient.post('/penalty-costs', data);
   },
 
   updatePenalty: (id: number, data: Partial<PenaltyCost>) => {
-    return axiosClient.put(`/penalties/${id}`, data);
+    return axiosClient.put(`/penalty-costs/${id}`, data);
   },
 
   deletePenalty: (id: number) => {
-    return axiosClient.delete(`/penalties/${id}`);
+    return axiosClient.delete(`/penalty-costs/${id}`);
   }
 };

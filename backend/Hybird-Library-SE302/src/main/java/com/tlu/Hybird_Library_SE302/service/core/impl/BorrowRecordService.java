@@ -4,13 +4,22 @@ import com.tlu.Hybird_Library_SE302.dto.resp.BorrowRecordResp;
 import com.tlu.Hybird_Library_SE302.model.BorrowRecord;
 import com.tlu.Hybird_Library_SE302.model.Book;
 import com.tlu.Hybird_Library_SE302.model.User;
+import com.tlu.Hybird_Library_SE302.model.constants.ApprovalStatus;
+import com.tlu.Hybird_Library_SE302.model.constants.BookType;
+import com.tlu.Hybird_Library_SE302.model.constants.BorrowStatus;
+import com.tlu.Hybird_Library_SE302.model.constants.ReceiveMethod;
 import com.tlu.Hybird_Library_SE302.repository.IBorrowRecordRepository;
 import com.tlu.Hybird_Library_SE302.repository.IBookRepository;
 import com.tlu.Hybird_Library_SE302.repository.IUserRepository;
 import com.tlu.Hybird_Library_SE302.service.core.intf.IBorrowRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.tlu.Hybird_Library_SE302.model.constants.BorrowStatus.BORROWING;
+
 @Service
 @RequiredArgsConstructor
 public class BorrowRecordService implements IBorrowRecordService {
@@ -29,21 +38,43 @@ public class BorrowRecordService implements IBorrowRecordService {
     }
     @Override
     public BorrowRecordResp createBorrowRecord(CreateBorrowRecordReq request) {
-        User user = iUserRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
-        Book book = iBookRepository.findById(request.getBookId()).orElseThrow(() -> new RuntimeException("Không tìm thấy sách!"));
-        
-        BorrowRecord record = BorrowRecord.builder()
-            .user(user)
-            .book(book)
-            .borrowDate(request.getBorrowDate())
-            .dueDate(request.getDueDate())
-            .bookType(request.getBookType())
-            .borrowStatus(request.getBorrowStatus() != null ? request.getBorrowStatus() : com.tlu.Hybird_Library_SE302.model.constants.BorrowStatus.BORROWING)
-            .approvalStatus(request.getApprovalStatus() != null ? request.getApprovalStatus() : com.tlu.Hybird_Library_SE302.model.constants.ApprovalStatus.PENDING)
-            .renew(request.getRenew() != null ? request.getRenew() : 0)
-            .receiveMethod(request.getReceiveMethod() != null ? request.getReceiveMethod() : com.tlu.Hybird_Library_SE302.model.constants.ReceiveMethod.LIBRARY_PICKUP)
-            .build();
-        return mapToResp(iBorrowRecordRepository.save(record));
+        User user = iUserRepository.findById(request.getUser().getId()).orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+        Book book = iBookRepository.findById(request.getBook().getId()).orElseThrow(() -> new RuntimeException("Không tìm thấy sách!"));
+        if(iBorrowRecordRepository.existsByUser_IdAndBook_IdAndBorrowStatus(request.getUser().getId(), request.getBook().getId(), BORROWING)){
+            throw new RuntimeException("Không thể tạo yêu cầu mượn vì đã tồn tại!");
+        }
+        if (iBorrowRecordRepository.existsByUser_IdAndBook_IdAndBorrowStatus(request.getUser().getId(), request.getBook().getId(), BorrowStatus.REQUESTING)){
+            throw new RuntimeException("Không thể tạo yêu cầu mượn vì đã tồn tại!");
+        }
+        LocalDateTime borrowDate = LocalDateTime.now();
+
+        if (request.getBookType() == BookType.EBOOK){
+            BorrowRecord ebookRecord = BorrowRecord.builder()
+                    .user(user)
+                    .book(book)
+                    .borrowDate(borrowDate)
+                    .dueDate(borrowDate.plusDays(14))
+                    .bookType(request.getBookType())
+                    .borrowStatus(BORROWING)
+                    .approvalStatus(ApprovalStatus.APPROVED)
+                    .renew(0)
+                    .receiveMethod(ReceiveMethod.EBOOK)
+                    .build();
+            return mapToResp(iBorrowRecordRepository.save(ebookRecord));
+        }
+            BorrowRecord physicalRecord = BorrowRecord.builder()
+                    .user(user)
+                    .book(book)
+                    .borrowDate(borrowDate)
+                    .dueDate(borrowDate.plusDays(14))
+                    .bookType(request.getBookType())
+                    .borrowStatus(request.getBorrowStatus() != null ? request.getBorrowStatus() : BorrowStatus.REQUESTING)
+                    .approvalStatus(request.getApprovalStatus() != null ? request.getApprovalStatus() : ApprovalStatus.PENDING)
+                    .renew(0)
+                    .receiveMethod(request.getReceiveMethod() != null ? request.getReceiveMethod() : ReceiveMethod.LIBRARY_PICKUP)
+                    .build();
+            iBorrowRecordRepository.save(physicalRecord);
+        return mapToResp(iBorrowRecordRepository.save(physicalRecord));
     }
     @Override
     public BorrowRecordResp updateBorrowRecord(int id, UpdateBorrowRecordReq request) {
@@ -63,8 +94,8 @@ public class BorrowRecordService implements IBorrowRecordService {
     private BorrowRecordResp mapToResp(BorrowRecord record) {
         return BorrowRecordResp.builder()
             .id(record.getId())
-            .userId(record.getUser() != null ? record.getUser().getId() : null)
-            .bookId(record.getBook() != null ? record.getBook().getId() : null)
+            .user(record.getUser() != null ? record.getUser() : null)
+            .book(record.getBook() != null ? record.getBook() : null)
             .borrowDate(record.getBorrowDate())
             .dueDate(record.getDueDate())
             .bookType(record.getBookType())

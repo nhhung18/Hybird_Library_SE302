@@ -130,9 +130,9 @@ export default function EmployeeTable({
                   </td>
 
                   <td className="px-6 py-5 text-center">
-                     <div className="flex justify-center gap-4 text-gray-400">
-                        <button onClick={() => onEdit(emp)} className="hover:text-gray-600 transition-colors" title="Sửa"><Edit2 size={16}/></button>
-                        <button onClick={() => onDelete(emp)} className="hover:text-red-500 transition-colors" title="Xóa"><Trash2 size={16}/></button>
+                     <div className="flex items-center justify-center gap-4 text-gray-400">
+                        <button onClick={() => onEdit(emp)} className="hover:text-gray-600 transition-colors" title="Sửa thông tin"><Edit2 size={18}/></button>
+                        <button onClick={() => onDelete(emp)} className="hover:text-red-500 transition-colors" title="Xoá nhân viên"><Trash2 size={18}/></button>
                      </div>
                   </td>
                 </tr>

@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import CreateUserModal from '../components/CreateUserModal';
-import UpdateRoleModal from '../components/UpdateRoleModal';
-import BorrowHistoryModal from '../components/BorrowHistoryModal';
+import EditUserModal from '../components/EditUserModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
-import { Search, ChevronDown, Shield, History, Plus, ChevronLeft, ChevronRight, Trash2, Filter } from 'lucide-react';
+import { Search, ChevronDown, Edit, Plus, ChevronLeft, ChevronRight, Trash2, Filter } from 'lucide-react';
 import { User, RoleName, UserStatus } from '../../types';
 import { userApi } from '../../api/userApi';
 
 export default function UserManagement() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isUpdateRoleModalOpen, setIsUpdateRoleModalOpen] = useState(false);
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -138,14 +136,9 @@ export default function UserManagement() {
     }
   };
 
-  const openUpdateRoleModal = (user: User) => {
+  const openEditModal = (user: User) => {
     setSelectedUser(user);
-    setIsUpdateRoleModalOpen(true);
-  };
-
-  const openHistoryModal = (user: User) => {
-    setSelectedUser(user);
-    setIsHistoryModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const openDeleteModal = (user: User) => {
@@ -156,15 +149,30 @@ export default function UserManagement() {
   const getAccountTypeStyle = (role: RoleName) => {
     switch (role) {
       case RoleName.ADMIN:
-        return 'bg-purple-50 text-purple-700 border-purple-200';
+        return 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100';
       case RoleName.LIBRARIAN:
-        return 'bg-blue-50 text-[#0056b3] border-blue-200';
+        return 'bg-blue-50 text-[#0056b3] border-blue-200 hover:bg-blue-100';
       case RoleName.GUEST:
-        return 'bg-gray-100 text-gray-600 border-gray-200';
+        return 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100';
       case RoleName.READER:
-        return 'bg-[#fff8e1] text-[#f57f17] border-orange-200';
+        return 'bg-[#fff8e1] text-[#f57f17] border-orange-200 hover:bg-[#fff3cd]';
       default:
-        return 'bg-gray-100 text-gray-600 border-gray-200';
+        return 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100';
+    }
+  };
+
+  const getRoleChevronStyle = (role: RoleName) => {
+    switch (role) {
+      case RoleName.ADMIN:
+        return 'text-purple-600';
+      case RoleName.LIBRARIAN:
+        return 'text-blue-600';
+      case RoleName.GUEST:
+        return 'text-gray-500';
+      case RoleName.READER:
+        return 'text-[#f57f17]';
+      default:
+        return 'text-gray-500';
     }
   };
 
@@ -271,9 +279,21 @@ export default function UserManagement() {
                           </div>
                         </td>
                         <td className="px-6 py-5">
-                          <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap border ${getAccountTypeStyle(user.role)}`}>
-                            {user.role}
-                          </span>
+                          <div className="relative inline-block">
+                            <select
+                              value={user.role}
+                              onChange={(e) => handleUpdateRole({ ...user, role: e.target.value as RoleName })}
+                              className={`appearance-none outline-none cursor-pointer text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${getAccountTypeStyle(user.role)}`}
+                            >
+                              <option value={RoleName.READER}>Reader</option>
+                              <option value={RoleName.ADMIN}>Admin</option>
+                              <option value={RoleName.LIBRARIAN}>Librarian</option>
+                              <option value={RoleName.GUEST}>Guest</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                              <ChevronDown size={14} className={getRoleChevronStyle(user.role)} />
+                            </div>
+                          </div>
                         </td>
                         <td className="px-6 py-5">
                           <div className="relative inline-block">
@@ -302,8 +322,7 @@ export default function UserManagement() {
                         </td>
                         <td className="px-6 py-5">
                           <div className="flex items-center justify-center gap-4 text-gray-400">
-                            <button onClick={() => openUpdateRoleModal(user)} className="hover:text-gray-600 transition-colors" title="Cập nhật quyền"><Shield size={18} /></button>
-                            <button onClick={() => openHistoryModal(user)} className="hover:text-gray-600 transition-colors" title="Lịch sử mượn trả"><History size={18} /></button>
+                            <button onClick={() => openEditModal(user)} className="hover:text-gray-600 transition-colors" title="Sửa thông tin"><Edit size={18} /></button>
                             <button onClick={() => openDeleteModal(user)} className="hover:text-red-500 transition-colors" title="Xoá người dùng"><Trash2 size={18} /></button>
                           </div>
                         </td>
@@ -332,20 +351,12 @@ export default function UserManagement() {
         onSave={handleAddUser}
       />
 
-      <UpdateRoleModal
-        isOpen={isUpdateRoleModalOpen}
-        onClose={() => setIsUpdateRoleModalOpen(false)}
+      <EditUserModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         user={selectedUser}
         onSave={handleUpdateRole}
       />
-
-      {/* 
-      <BorrowHistoryModal
-        isOpen={isHistoryModalOpen}
-        onClose={() => setIsHistoryModalOpen(false)}
-        user={selectedUser}
-      />
-      */}
 
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}

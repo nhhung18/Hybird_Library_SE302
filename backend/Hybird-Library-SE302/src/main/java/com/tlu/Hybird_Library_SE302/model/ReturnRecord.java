@@ -32,6 +32,11 @@ public class ReturnRecord extends BaseIdObject {
     @Builder.Default
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "return_status")
+    @Builder.Default
+    private BorrowStatus borrowStatus = BorrowStatus.REQUESTING;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "damage_level_id")
     private DamageLevel damageLevel;

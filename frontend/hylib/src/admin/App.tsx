@@ -10,8 +10,6 @@ import SupportManagement from './pages/SupportManagement';
 import TicketDetails from './pages/TicketDetails';
 import MembershipCardManagement from './pages/MembershipCardManagement';
 import BookManagement from './pages/BookManagement';
-import CreateBook from './pages/CreateBook';
-import EditBook from './pages/EditBook';
 import PenaltyManagement from './pages/PenaltyManagement';
 import PenaltyDetails from './pages/PenaltyDetails';
 import ToastNotification from './components/ToastNotification';
@@ -37,8 +35,6 @@ export default function AdminApp() {
         <Route path="/support/:id" element={<TicketDetails />} />
         <Route path="/membership-cards" element={<MembershipCardManagement />} />
         <Route path="/books" element={<BookManagement />} />
-        <Route path="/books/create" element={<CreateBook />} />
-        <Route path="/books/edit/:id" element={<EditBook />} />
         <Route path="/fines" element={<PenaltyManagement />} />
         <Route path="/fines/:id" element={<PenaltyDetails />} />
       </Routes>

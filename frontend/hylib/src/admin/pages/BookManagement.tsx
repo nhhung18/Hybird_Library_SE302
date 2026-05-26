@@ -4,6 +4,8 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { Search, Plus, Book as BookIcon, ChevronDown, Library, Edit, Trash2 } from 'lucide-react';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import AddBookModal from '../components/AddBookModal';
+import EditBookModal from '../components/EditBookModal';
 import { Book, BookType, BookCondition } from '../../types';
 import { bookApi } from '../../api/bookApi';
 
@@ -11,7 +13,10 @@ export default function BookManagement() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   
   const [books, setBooks] = useState<Book[]>([]);
 
@@ -119,7 +124,7 @@ export default function BookManagement() {
                 />
               </div>
               <button 
-                onClick={() => navigate('/books/create')}
+                onClick={() => setIsAddModalOpen(true)}
                 className="flex items-center gap-2 bg-[#0066cc] hover:bg-[#0052a3] text-white px-5 py-2 rounded-full font-bold text-sm transition-colors shadow-md"
               >
                 <Plus size={18} />
@@ -209,7 +214,10 @@ export default function BookManagement() {
                         <td className="px-6 py-4 text-center">
                           <div className="flex items-center justify-center gap-3 text-gray-400">
                             <button 
-                              onClick={() => navigate(`/books/edit/${book.id}`)}
+                              onClick={() => {
+                                setSelectedBook(book);
+                                setIsEditModalOpen(true);
+                              }}
                               className="hover:text-[#0056b3] transition-colors p-1 active:scale-95"
                               title="Sửa"
                             >
@@ -245,6 +253,17 @@ export default function BookManagement() {
         onConfirm={confirmDelete}
         title="Xóa sách"
         message="Bạn có chắc chắn muốn xóa cuốn sách này không? Thao tác này không thể hoàn tác."
+      />
+      <AddBookModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={fetchBooks}
+      />
+      <EditBookModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        book={selectedBook}
+        onSave={fetchBooks}
       />
     </div>
   );
