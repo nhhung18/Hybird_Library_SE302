@@ -99,7 +99,7 @@ export interface Shipment {
 
 export interface MembershipPlan {
   id: number;
-  planName: MembershipPlanName;
+  planName: string;
   price: number;
   durationDays: number;
   maxBorrowBooks: number;

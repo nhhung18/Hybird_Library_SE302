@@ -10,6 +10,13 @@ export const userApi = {
   },
 
   /**
+   * Fetch all librarians
+   */
+  getLibrarians: () => {
+    return axiosClient.get('/users/librarians');
+  },
+
+  /**
    * Add a new user
    */
   createUser: (data: any) => {

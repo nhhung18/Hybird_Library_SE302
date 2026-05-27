@@ -28,7 +28,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("/librarian")
+    @GetMapping("/librarians")
     public ResponseEntity<?> getAllLibrarian() {
         return ResponseEntity.ok(
                 ResponseWrapper.builder()

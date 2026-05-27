@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class CreateMembershipPlanReq {
-    private MembershipPlanName planName;
+    private String planName;
     private BigDecimal price;
     private Integer durationDays;
     private Integer maxBorrowBooks;

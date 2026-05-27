@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import { Search, Plus, Edit2, Trash2 } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, ChevronDown } from 'lucide-react';
 import MembershipPlanModal from '../components/MembershipPlanModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { MembershipPlan } from '../../types';
@@ -88,7 +88,7 @@ export default function MembershipCardManagement() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Gói Thành Viên</h1>
             <p className="text-sm text-gray-500 font-medium mb-4">Cấu hình các hạng thẻ (Basic, Standard, Premium) dành cho độc giả.</p>
             
-            <div className="flex justify-between items-center">
+            <div className="flex justify-end items-center gap-3">
               <div className="relative w-72">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 <input
@@ -149,13 +149,27 @@ export default function MembershipCardManagement() {
                           <td className="px-6 py-5 text-center font-bold text-gray-700">
                             {plan.maxBorrowBooks} cuốn
                           </td>
-                          <td className="px-6 py-5 text-center">
-                             <button
-                               onClick={() => handleToggleActive(plan)}
-                               className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${plan.isActive ? 'bg-[#0066cc]' : 'bg-gray-300'}`}
-                             >
-                               <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${plan.isActive ? 'translate-x-4.5' : 'translate-x-1'}`} style={{ transform: plan.isActive ? 'translateX(18px)' : 'translateX(4px)' }} />
-                             </button>
+                          <td className="px-6 py-5">
+                            <div className="relative inline-block w-[110px]">
+                              <select
+                                value={plan.isActive.toString()}
+                                onChange={(e) => {
+                                  const newStatus = e.target.value === 'true';
+                                  if (newStatus !== plan.isActive) {
+                                    handleToggleActive(plan);
+                                  }
+                                }}
+                                className={`appearance-none outline-none cursor-pointer text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors w-full ${
+                                  plan.isActive ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-500 border-gray-200'
+                                }`}
+                              >
+                                <option value="true">Hoạt động</option>
+                                <option value="false">Tạm khóa</option>
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                                <ChevronDown size={14} className={plan.isActive ? 'text-green-700' : 'text-gray-500'} />
+                              </div>
+                            </div>
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex items-center justify-center gap-4 text-gray-400">

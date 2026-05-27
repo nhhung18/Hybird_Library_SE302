@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface IPenaltyCostRepository extends JpaRepository<PenaltyCost, Integer> {
     boolean existsByPenaltyCostName(PenaltyCostName penaltyCostName);
     Optional<PenaltyCost> findByPenaltyCostName(PenaltyCostName penaltyCostName);
+
 }

@@ -1,4 +1,5 @@
-1. Tạo lại các modal mới cho các trang admin: AddBookModal, EditBookModal không để dạng page nữa
-2. Kiểm tra và import tất cả các API của các page trong admin
-3. Phần UserManagement phần vai trò hiển thị dạng dropbox giống như cột trạng thái. Phần cột thao tác xóa 2 icon bên ngoài đi thay bằng icon "Hình bút chì" để hiển thị ra Edit User Modal (giữ icon hình thùng rác)
-
+1. Khi ấn vào trang "BorrowManagement" hiển thị phần Yêu cầu mượn
+2. MembershipCardManagement: Tìm kiếm chuyển sang bên phải, trạng thái có thể thay đổi được (Giao diện giống như này: `className={`appearance-none outline-none cursor-pointer text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${getAccountTypeStyle(user.role)}`}`). Add Membership tắt dropbox cho phần tên đi. 
+3. API của phần quản lý nhân viên: /api/users/librarian. Sửa table của EmployeeManagement giống UserManagement 100%
+4. AddBorrowManagement: Sửa lại giao diện bao gồm: tìm kiếm và chọn người dùng, tìm kiếm và chọn sách, chọn kiểu mượn: tại thư viện hay qua ĐVVC
+ 

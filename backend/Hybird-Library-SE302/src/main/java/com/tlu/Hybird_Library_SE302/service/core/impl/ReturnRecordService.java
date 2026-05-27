@@ -1,9 +1,12 @@
 package com.tlu.Hybird_Library_SE302.service.core.impl;
 import com.tlu.Hybird_Library_SE302.dto.req.*;
 import com.tlu.Hybird_Library_SE302.dto.resp.ReturnRecordResp;
+import com.tlu.Hybird_Library_SE302.model.PenaltyCost;
 import com.tlu.Hybird_Library_SE302.model.ReturnRecord;
 import com.tlu.Hybird_Library_SE302.model.BorrowRecord;
 import com.tlu.Hybird_Library_SE302.model.DamageLevel;
+import com.tlu.Hybird_Library_SE302.model.constants.PenaltyCostName;
+import com.tlu.Hybird_Library_SE302.repository.IPenaltyCostRepository;
 import com.tlu.Hybird_Library_SE302.repository.IReturnRecordRepository;
 import com.tlu.Hybird_Library_SE302.repository.IBorrowRecordRepository;
 import com.tlu.Hybird_Library_SE302.repository.IDamageLevelRepository;
@@ -11,6 +14,8 @@ import com.tlu.Hybird_Library_SE302.service.core.intf.IReturnRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -18,6 +23,7 @@ public class ReturnRecordService implements IReturnRecordService {
     private final IReturnRecordRepository iReturnRecordRepository;
     private final IBorrowRecordRepository iBorrowRecordRepository;
     private final IDamageLevelRepository iDamageLevelRepository;
+    private final IPenaltyCostRepository iPenaltyCostRepository;
     
     @Override
     public List<ReturnRecordResp> getAllReturnRecords() {
@@ -30,17 +36,24 @@ public class ReturnRecordService implements IReturnRecordService {
     }
     @Override
     public ReturnRecordResp createReturnRecord(CreateReturnRecordReq request) {
-        BorrowRecord borrowRecord = iBorrowRecordRepository.findById(request.getBorrowId()).orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu mượn!"));
+        BorrowRecord borrowRecord = iBorrowRecordRepository.findById(request.getBorrowRecord().getId()).orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu mượn!"));
         DamageLevel damageLevel = null;
+        PenaltyCost penaltyCost = iPenaltyCostRepository.findByPenaltyCostName(PenaltyCostName.LATE).orElseThrow(() -> new RuntimeException("Không tìm thấy tên phiếu !"));
         if(request.getDamageLevelId() != null) {
             damageLevel = iDamageLevelRepository.findById(request.getDamageLevelId()).orElse(null);
         }
+        LocalDateTime returnDate = request.getReturnDate();
+        returnDate = LocalDateTime.now();
+        long lateDays = Math.max(
+                0,
+                ChronoUnit.DAYS.between(borrowRecord.getDueDate(), returnDate)
+        );
         
         ReturnRecord record = ReturnRecord.builder()
             .borrowRecord(borrowRecord)
-            .returnDate(request.getReturnDate())
-            .returnDelayDays(request.getReturnDelayDays() != null ? request.getReturnDelayDays() : 0)
-            .fineAmount(request.getFineAmount() != null ? request.getFineAmount() : BigDecimal.ZERO)
+            .returnDate(returnDate)
+            .returnDelayDays(Integer.valueOf((int) lateDays))
+            .fineAmount(penaltyCost.getPrice().multiply(BigDecimal.valueOf(lateDays)))
             .approvalStatus(request.getApprovalStatus() != null ? request.getApprovalStatus() : com.tlu.Hybird_Library_SE302.model.constants.ApprovalStatus.PENDING)
             .damageLevel(damageLevel)
             .isLost(request.getIsLost() != null ? request.getIsLost() : false)
@@ -70,7 +83,7 @@ public class ReturnRecordService implements IReturnRecordService {
     private ReturnRecordResp mapToResp(ReturnRecord record) {
         return ReturnRecordResp.builder()
             .id(record.getId())
-            .borrowId(record.getBorrowRecord() != null ? record.getBorrowRecord().getId() : null)
+            .borrowRecord(record.getBorrowRecord() != null ? record.getBorrowRecord() : null)
             .returnDate(record.getReturnDate())
             .returnDelayDays(record.getReturnDelayDays())
             .fineAmount(record.getFineAmount())

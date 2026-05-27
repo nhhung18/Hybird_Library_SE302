@@ -13,7 +13,7 @@ export default function MembershipPlanModal({ isOpen, onClose, plan, onSave }: M
   const [isVisible, setIsVisible] = useState(false);
 
   const [formData, setFormData] = useState({
-    planName: MembershipPlanName.BASIC,
+    planName: '',
     price: 0,
     durationDays: 30,
     maxBorrowBooks: 3,
@@ -35,7 +35,7 @@ export default function MembershipPlanModal({ isOpen, onClose, plan, onSave }: M
         });
       } else {
         setFormData({
-          planName: MembershipPlanName.BASIC,
+          planName: '',
           price: 0,
           durationDays: 30,
           maxBorrowBooks: 3,
@@ -97,16 +97,14 @@ export default function MembershipPlanModal({ isOpen, onClose, plan, onSave }: M
             
             <div>
               <label className="block text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-2">TÊN GÓI (PLAN NAME)</label>
-              <select
+              <input
+                type="text"
                 name="planName"
                 value={formData.planName}
                 onChange={handleChange}
-                className="w-full border-b border-gray-200 py-2 focus:outline-none focus:border-[#0056b3] transition-colors bg-transparent cursor-pointer text-sm font-medium"
-              >
-                {Object.values(MembershipPlanName).map(val => (
-                  <option key={val} value={val}>{val}</option>
-                ))}
-              </select>
+                placeholder="Ví dụ: Gói Cơ Bản"
+                className="w-full border-b border-gray-200 py-2 focus:outline-none focus:border-[#0056b3] transition-colors bg-transparent text-sm font-medium"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-6">

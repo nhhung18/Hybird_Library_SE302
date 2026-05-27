@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Builder
 public class MembershipPlanResp {
     private Integer id;
-    private MembershipPlanName planName;
+    private String planName;
     private BigDecimal price;
     private Integer durationDays;
     private Integer maxBorrowBooks;

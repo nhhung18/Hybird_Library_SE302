@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import EmployeeTable from '../components/EmployeeTable';
-import AddEmployeeModal from '../components/AddEmployeeModal';
-import DeleteEmployeeModal from '../components/DeleteEmployeeModal';
-import EditEmployeeModal from '../components/EditEmployeeModal';
+import CreateUserModal from '../components/CreateUserModal';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import EditUserModal from '../components/EditUserModal';
+import { userApi } from '../../api/userApi';
 import { Search, ChevronDown, Plus, Filter } from 'lucide-react';
 
 export default function EmployeeManagement() {
@@ -18,6 +19,24 @@ export default function EmployeeManagement() {
 
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleAddUser = async (data: any) => {
+    await userApi.createUser(data);
+    handleRefresh();
+  };
+
+  const handleUpdateRole = async (user: any) => {
+    await userApi.updateUser(user.id, user);
+    handleRefresh();
+  };
+
+  const handleDeleteUser = async () => {
+    if (deleteEmployeeData) {
+      await userApi.deleteUser(deleteEmployeeData.id);
+      setDeleteEmployeeData(null);
+      handleRefresh();
+    }
   };
 
   return (
@@ -104,24 +123,25 @@ export default function EmployeeManagement() {
         </div>
       </main>
 
-      <AddEmployeeModal 
+      <CreateUserModal 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
-        onSuccess={handleRefresh} 
+        onSave={handleAddUser} 
       />
 
-      <DeleteEmployeeModal 
+      <ConfirmDeleteModal 
         isOpen={!!deleteEmployeeData} 
         onClose={() => setDeleteEmployeeData(null)} 
-        onSuccess={handleRefresh}
-        employee={deleteEmployeeData}
+        onConfirm={handleDeleteUser}
+        title="Xoá nhân viên"
+        message="Bạn có chắc chắn muốn xóa nhân viên này khỏi hệ thống? Hành động này không thể hoàn tác."
       />
 
-      <EditEmployeeModal
+      <EditUserModal
         isOpen={!!editEmployeeData}
         onClose={() => setEditEmployeeData(null)}
-        onSuccess={handleRefresh}
-        employee={editEmployeeData}
+        onSave={handleUpdateRole}
+        user={editEmployeeData}
       />
     </div>
   );

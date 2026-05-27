@@ -2,19 +2,30 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { Search, Globe, Store, CheckCircle2, XCircle, ChevronDown, Plus, Edit, Trash2 } from 'lucide-react';
-import CreateBorrowRequestModal from '../components/CreateBorrowRequestModal';
-import { BorrowRecord, ApprovalStatus, BorrowStatus, ReceiveMethod, ShipmentStatus, Shipment, BookType } from '../../types';
+import CreateRequestModal from '../components/CreateBorrowRequestModal';
+import { BorrowRecord, ReturnRecord, ApprovalStatus, BorrowStatus, ReceiveMethod, ShipmentStatus, Shipment, BookType } from '../../types';
 import { borrowApi } from '../../api/borrowApi';
+import { returnApi } from '../../api/returnApi';
 import { shipmentApi } from '../../api/shipmentApi';
+import EditRecordModal from '../components/EditRecordModal';
+import BorrowRecordDetailModal from '../components/BorrowRecordDetailModal';
 
 export default function BorrowingManagement() {
-  const [activeTab, setActiveTab] = useState('Yêu cầu mới');
+  const [activeTab, setActiveTab] = useState('Yêu cầu mượn');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const [records, setRecords] = useState<BorrowRecord[]>([]);
+  const [returnRecords, setReturnRecords] = useState<ReturnRecord[]>([]);
   const [shipments, setShipments] = useState<Shipment[]>([]);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<BorrowRecord | ReturnRecord | null>(null);
+  const [editingType, setEditingType] = useState<'borrow' | 'return'>('borrow');
+
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [viewingRecord, setViewingRecord] = useState<BorrowRecord | null>(null);
 
   const tabs = ['Yêu cầu mượn', 'Yêu cầu trả', 'Đang mượn', 'Đã trả', 'Đã hủy', 'Đang giao sách'];
 
@@ -24,11 +35,13 @@ export default function BorrowingManagement() {
 
   const fetchData = async () => {
     try {
-      const [borrowResponse, shipmentResponse] = await Promise.all([
+      const [borrowResponse, returnResponse, shipmentResponse] = await Promise.all([
         borrowApi.getAllBorrowRecords(),
+        returnApi.getAllReturnRecords(),
         shipmentApi.getAllShipments()
       ]);
       setRecords(Array.isArray(borrowResponse) ? borrowResponse : []);
+      setReturnRecords(Array.isArray(returnResponse) ? returnResponse : []);
       setShipments(Array.isArray(shipmentResponse) ? shipmentResponse : []);
     } catch (error) {
       console.error('Failed to fetch data', error);
@@ -36,6 +49,7 @@ export default function BorrowingManagement() {
   };
 
   const newRequests = records.filter(r => r?.approvalStatus === ApprovalStatus.PENDING);
+  const returnRequests = returnRecords.filter(r => r?.approvalStatus === ApprovalStatus.PENDING);
   const borrowing = records.filter(r => r?.approvalStatus === ApprovalStatus.APPROVED && (r?.borrowStatus === BorrowStatus.BORROWING || r?.borrowStatus === BorrowStatus.REQUESTING));
   const returned = records.filter(r => r?.borrowStatus === BorrowStatus.RETURNED || r?.borrowStatus === BorrowStatus.AUTO_RETURNED);
   const cancelled = records.filter(r => r?.approvalStatus === ApprovalStatus.REJECTED);
@@ -69,7 +83,7 @@ export default function BorrowingManagement() {
         } else if (newStatus === ApprovalStatus.REJECTED) {
           setActiveTab('Đã hủy');
         } else if (newStatus === ApprovalStatus.PENDING) {
-          setActiveTab('Yêu cầu mới');
+          setActiveTab('Yêu cầu mượn');
         }
       }
     } catch (error) {
@@ -90,7 +104,7 @@ export default function BorrowingManagement() {
         } else if (newStatus === BorrowStatus.BORROWING) {
           setActiveTab('Đang mượn');
         } else if (newStatus === BorrowStatus.REQUESTING) {
-          setActiveTab('Yêu cầu mới');
+          setActiveTab('Yêu cầu mượn');
         }
       }
     } catch (error) {
@@ -106,6 +120,76 @@ export default function BorrowingManagement() {
       } catch (error) {
         console.error('Delete failed', error);
       }
+    }
+  };
+
+  const handleUpdateReturnApproval = async (id: number, newStatus: string) => {
+    try {
+      const record = returnRecords.find(r => r.id === id);
+      if (record) {
+        await returnApi.updateReturnRecord(id, {
+          ...record,
+          approvalStatus: newStatus as ApprovalStatus,
+        });
+        fetchData();
+        if (newStatus === ApprovalStatus.APPROVED) {
+          setActiveTab('Đã trả');
+        } else if (newStatus === ApprovalStatus.REJECTED) {
+          setActiveTab('Đã hủy');
+        }
+      }
+    } catch (error) {
+      console.error('Update return approval status failed', error);
+    }
+  };
+
+  const handleUpdateReturnLost = async (id: number, isLostVal: boolean) => {
+    try {
+      const record = returnRecords.find(r => r.id === id);
+      if (record) {
+        await returnApi.updateReturnRecord(id, {
+          ...record,
+          isLost: isLostVal,
+        });
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Update return lost status failed', error);
+    }
+  };
+
+  const handleDeleteReturn = async (id: number) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa yêu cầu trả này?')) {
+      try {
+        await returnApi.deleteReturnRecord(id);
+        fetchData();
+      } catch (error) {
+        console.error('Delete failed', error);
+      }
+    }
+  };
+
+  const handleEditRecord = (record: BorrowRecord | ReturnRecord, type: 'borrow' | 'return') => {
+    setEditingRecord(record);
+    setEditingType(type);
+    setIsEditModalOpen(true);
+  };
+
+  const handleViewBorrowRecord = (record: BorrowRecord) => {
+    setViewingRecord(record);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleSaveEdit = async (id: number, data: any) => {
+    try {
+      if (editingType === 'borrow') {
+        await borrowApi.updateBorrowRecord(id, data);
+      } else {
+        await returnApi.updateReturnRecord(id, data);
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Lỗi khi cập nhật:', error);
     }
   };
 
@@ -214,9 +298,9 @@ export default function BorrowingManagement() {
                 <div className="relative inline-block">
                   <select
                     value={row.borrowStatus}
-                    disabled={row.approvalStatus === ApprovalStatus.PENDING}
+                    disabled={row.approvalStatus === ApprovalStatus.PENDING || row.approvalStatus === ApprovalStatus.REJECTED}
                     onChange={(e) => handleUpdateBorrowStatus(row.id, e.target.value)}
-                    className={`appearance-none outline-none text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${row.approvalStatus === ApprovalStatus.PENDING
+                    className={`appearance-none outline-none text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${row.approvalStatus === ApprovalStatus.PENDING || row.approvalStatus === ApprovalStatus.REJECTED
                       ? 'cursor-not-allowed opacity-80'
                       : 'cursor-pointer'
                       } ${getBorrowStatusStyle(row.borrowStatus)}`}
@@ -255,8 +339,97 @@ export default function BorrowingManagement() {
               </td>
               <td className="px-6 py-6 text-center">
                 <div className="flex items-center justify-center gap-4 text-gray-400">
-                  <button onClick={() => { }} className="hover:text-gray-600 transition-colors" title="Sửa thông tin"><Edit size={18} /></button>
+                  <button onClick={() => handleEditRecord(row, 'borrow')} className="hover:text-gray-600 transition-colors" title="Sửa thông tin"><Edit size={18} /></button>
                   <button onClick={() => handleDelete(row.id)} className="hover:text-red-500 transition-colors" title="Xoá yêu cầu"><Trash2 size={18} /></button>
+                </div>
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  );
+
+  const filteredReturnData = (data: any[]) => (data || []).filter(item =>
+    item && (
+      item.id?.toString().includes(searchQuery) ||
+      item.borrowRecord?.user?.userName?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
+      item.borrowRecord?.book?.title?.toLowerCase()?.includes(searchQuery.toLowerCase())
+    )
+  );
+
+  const renderReturnTable = (data: ReturnRecord[]) => (
+    <table className="w-full text-left border-collapse min-w-[1100px]">
+      <thead className="sticky top-0 z-10 bg-white shadow-sm">
+        <tr className="border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider bg-white">
+          <th className="px-6 py-5">MÃ ĐƠN MƯỢN</th>
+          <th className="px-6 py-5">NGÀY HẾT HẠN</th>
+          <th className="px-6 py-5">NGÀY TRẢ</th>
+          <th className="px-6 py-5 text-center">SỐ NGÀY TRỄ</th>
+          <th className="px-6 py-5 text-center">PHÍ PHẠT</th>
+          <th className="px-6 py-5 text-center">BÁO MẤT SÁCH</th>
+          <th className="px-6 py-5">PHÊ DUYỆT</th>
+          <th className="px-6 py-5 text-center">THAO TÁC</th>
+        </tr>
+      </thead>
+      <tbody className="text-[13px] text-gray-700">
+        {filteredReturnData(data).length === 0 ? (
+          <tr>
+            <td colSpan={8} className="px-6 py-12 text-center text-gray-500 font-medium">Không tìm thấy dữ liệu.</td>
+          </tr>
+        ) : (
+          filteredReturnData(data).map((row: ReturnRecord, index) => (
+            <tr key={row.id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white">
+              <td 
+                className="px-6 py-6 font-bold text-[#0066cc] cursor-pointer hover:underline"
+                onClick={() => row.borrowRecord && handleViewBorrowRecord(row.borrowRecord)}
+                title="Xem thông tin đơn mượn"
+              >
+                {row.borrowRecord?.id}
+              </td>
+              <td className="px-6 py-6 text-gray-500 font-medium">{formatDateTime(row.borrowRecord?.dueDate)}</td>
+              <td className="px-6 py-6 text-gray-500 font-medium">{formatDateTime(row.returnDate)}</td>
+              <td className="px-6 py-6 text-gray-500 font-medium text-center">{row.returnDelayDays || 0}</td>
+              <td className="px-6 py-6 text-gray-500 font-medium text-center">{row.fineAmount || 0}</td>
+              <td className="px-6 py-6 text-center">
+                <div className="relative inline-block">
+                  <select
+                    value={row.isLost ? "true" : "false"}
+                    onChange={(e) => handleUpdateReturnLost(row.id, e.target.value === "true")}
+                    className={`appearance-none outline-none cursor-pointer text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${
+                      row.isLost
+                        ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    <option value="false">Không</option>
+                    <option value="true">Đã mất</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                    <ChevronDown size={14} className={row.isLost ? 'text-red-600' : 'text-gray-500'} />
+                  </div>
+                </div>
+              </td>
+              <td className="px-6 py-6">
+                <div className="relative inline-block">
+                  <select
+                    value={row.approvalStatus}
+                    onChange={(e) => handleUpdateReturnApproval(row.id, e.target.value)}
+                    className={`appearance-none outline-none cursor-pointer text-xs font-bold rounded-full px-3 py-1.5 pr-8 border transition-colors ${getApprovalStatusStyle(row.approvalStatus)}`}
+                  >
+                    <option value={ApprovalStatus.PENDING}>Chờ duyệt</option>
+                    <option value={ApprovalStatus.APPROVED}>Đã duyệt</option>
+                    <option value={ApprovalStatus.REJECTED}>Từ chối</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                    <ChevronDown size={14} className={getApprovalStatusArrowStyle(row.approvalStatus)} />
+                  </div>
+                </div>
+              </td>
+              <td className="px-6 py-6 text-center">
+                <div className="flex items-center justify-center gap-4 text-gray-400">
+                  <button onClick={() => handleEditRecord(row, 'return')} className="hover:text-gray-600 transition-colors" title="Sửa thông tin"><Edit size={18} /></button>
+                  <button onClick={() => handleDeleteReturn(row.id)} className="hover:text-red-500 transition-colors" title="Xoá yêu cầu"><Trash2 size={18} /></button>
                 </div>
               </td>
             </tr>
@@ -358,7 +531,7 @@ export default function BorrowingManagement() {
                   onClick={() => setIsCreateModalOpen(true)}
                   className="flex items-center gap-2 bg-[#0066cc] hover:bg-[#0052a3] text-white px-5 py-2 rounded-full font-bold text-sm transition-colors shadow-md whitespace-nowrap"
                 >
-                  <Plus size={18} /> Tạo yêu cầu
+                  <Plus size={18} /> Tạo ghi nhận
                 </button>
               </div>
             </div>
@@ -366,7 +539,8 @@ export default function BorrowingManagement() {
           <div className="flex-1 overflow-hidden flex flex-col min-h-0">
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col h-full shadow-sm">
               <div className="overflow-x-auto flex-1 overflow-y-auto custom-scrollbar">
-                {activeTab === 'Yêu cầu mới' && renderBorrowTable(newRequests)}
+                {activeTab === 'Yêu cầu mượn' && renderBorrowTable(newRequests)}
+                {activeTab === 'Yêu cầu trả' && renderReturnTable(returnRequests)}
                 {activeTab === 'Đang mượn' && renderBorrowTable(borrowing)}
                 {activeTab === 'Đã trả' && renderBorrowTable(returned)}
                 {activeTab === 'Đã hủy' && renderBorrowTable(cancelled)}
@@ -377,8 +551,19 @@ export default function BorrowingManagement() {
         </div>
       </main>
 
-      <CreateBorrowRequestModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onCreate={handleCreateRequest} />
-
+      <CreateRequestModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onCreate={handleCreateRequest} />
+      <EditRecordModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        record={editingRecord}
+        type={editingType}
+        onSave={handleSaveEdit}
+      />
+      <BorrowRecordDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        record={viewingRecord}
+      />
     </div>
   );
 }
